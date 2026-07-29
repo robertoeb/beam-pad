@@ -193,7 +193,7 @@ describe('PairingProtocol', () => {
     });
     // SHA-256 of: [2,17,5,1, 1,3, 1,2,3,4, 1,2,3, 0xB2,0xC3]
     const expected =
-      '131d32b302ed1528407d0c3f2a8963e7e5cb1b94c78792de2aa22d0208ae1c60';
+      '15c7ccdea44707780846069b527968d5a1eb732f3aaa764e65e5587c9fdaae9f';
     expect(bytesToHex(secret)).toBe(expected);
   });
 

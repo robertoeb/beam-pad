@@ -5,7 +5,7 @@ var $protobuf = require("protobufjs/minimal");
 
 // Common aliases
 var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
-var $Object = $util.global.Object, $undefined = $util.global.undefined, $Error = $util.global.Error, $TypeError = $util.global.TypeError, $String = $util.global.String, $Array = $util.global.Array;
+var $Object = $util.global.Object, $undefined = $util.global.undefined, $Error = $util.global.Error, $TypeError = $util.global.TypeError, $String = $util.global.String, $Number = $util.global.Number, $Array = $util.global.Array;
 
 // Exported root namespace
 var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
@@ -114,7 +114,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingRequest.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingRequest = function PairingRequest(properties) {
+        var PairingRequest = function (properties) {
             if (properties)
                 for (var keys = $Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -162,17 +162,20 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingRequest.encode = function PairingRequest$encode(message, writer, _depth) {
+        PairingRequest.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
-            if (message.serviceName != null && $Object.hasOwnProperty.call(message, "serviceName"))
+            if (message.serviceName != null && $Object.hasOwnProperty.call(message, "serviceName") && message.serviceName !== "")
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.serviceName);
-            if (message.clientName != null && $Object.hasOwnProperty.call(message, "clientName"))
+            if (message.clientName != null && $Object.hasOwnProperty.call(message, "clientName") && message.clientName !== "")
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.clientName);
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -200,32 +203,50 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingRequest.decode = function PairingRequest$decode(reader, length, error, long) {
+        PairingRequest.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingRequest(), value;
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                case 1: {
-                        message.serviceName = reader.string();
-                        break;
-                    }
-                case 2: {
-                        message.clientName = reader.string();
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                var wireType = tag & 7;
+                switch (tag >>>= 3) {
+                case 1: {
+                        if (wireType !== 2)
+                            break;
+                        if ((value = reader.stringVerify()).length)
+                            message.serviceName = value;
+                        else
+                            delete message.serviceName;
+                        continue;
+                    }
+                case 2: {
+                        if (wireType !== 2)
+                            break;
+                        if ((value = reader.stringVerify()).length)
+                            message.clientName = value;
+                        else
+                            delete message.clientName;
+                        continue;
+                    }
+                }
+                reader.skipType(wireType, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -253,13 +274,13 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingRequest.verify = function PairingRequest$verify(message, long) {
+        PairingRequest.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             if (message.serviceName != null && $Object.hasOwnProperty.call(message, "serviceName"))
                 if (!$util.isString(message.serviceName))
                     return "serviceName: string expected";
@@ -277,20 +298,22 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingRequest} PairingRequest
          */
-        PairingRequest.fromObject = function PairingRequest$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingRequest.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingRequest)
                 return object;
             if (!$util.isObject(object))
                 throw $TypeError(".pairing.PairingRequest: object expected");
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            var message = new $root.pairing.PairingRequest();
             if (object.serviceName != null)
-                message.serviceName = $String(object.serviceName);
+                if (typeof object.serviceName !== "string" || object.serviceName.length)
+                    message.serviceName = $String(object.serviceName);
             if (object.clientName != null)
-                message.clientName = $String(object.clientName);
+                if (typeof object.clientName !== "string" || object.clientName.length)
+                    message.clientName = $String(object.clientName);
             return message;
         };
 
@@ -303,7 +326,7 @@ $root.pairing = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        PairingRequest.toObject = function PairingRequest$toObject(message, options, _depth) {
+        PairingRequest.toObject = function (message, options, _depth) {
             if (!options)
                 options = {};
             if (_depth === $undefined)
@@ -379,7 +402,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingRequestAck.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingRequestAck = function PairingRequestAck(properties) {
+        var PairingRequestAck = function (properties) {
             if (properties)
                 for (var keys = $Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -411,13 +434,16 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingRequestAck.encode = function PairingRequestAck$encode(message, writer, _depth) {
+        PairingRequestAck.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -445,24 +471,29 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingRequestAck.decode = function PairingRequestAck$decode(reader, length, error, long) {
+        PairingRequestAck.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingRequestAck();
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                reader.skipType(tag & 7, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -490,13 +521,13 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingRequestAck.verify = function PairingRequestAck$verify(message, long) {
+        PairingRequestAck.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             return null;
         };
 
@@ -508,10 +539,16 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingRequestAck} PairingRequestAck
          */
-        PairingRequestAck.fromObject = function PairingRequestAck$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingRequestAck.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingRequestAck)
                 return object;
-            return new this.ctor();
+            if (!$util.isObject(object))
+                throw $TypeError(".pairing.PairingRequestAck: object expected");
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            return new $root.pairing.PairingRequestAck();
         };
 
         /**
@@ -586,7 +623,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingEncoding.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingEncoding = function PairingEncoding(properties) {
+        var PairingEncoding = function (properties) {
             if (properties)
                 for (var keys = $Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -634,17 +671,20 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingEncoding.encode = function PairingEncoding$encode(message, writer, _depth) {
+        PairingEncoding.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
-            if (message.type != null && $Object.hasOwnProperty.call(message, "type"))
+            if (message.type != null && $Object.hasOwnProperty.call(message, "type") && message.type !== 0)
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
-            if (message.symbolLength != null && $Object.hasOwnProperty.call(message, "symbolLength"))
+            if (message.symbolLength != null && $Object.hasOwnProperty.call(message, "symbolLength") && message.symbolLength !== 0)
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.symbolLength);
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -672,32 +712,50 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingEncoding.decode = function PairingEncoding$decode(reader, length, error, long) {
+        PairingEncoding.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingEncoding(), value;
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                case 1: {
-                        message.type = reader.int32();
-                        break;
-                    }
-                case 2: {
-                        message.symbolLength = reader.int32();
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                var wireType = tag & 7;
+                switch (tag >>>= 3) {
+                case 1: {
+                        if (wireType !== 0)
+                            break;
+                        if (value = reader.int32())
+                            message.type = value;
+                        else
+                            delete message.type;
+                        continue;
+                    }
+                case 2: {
+                        if (wireType !== 0)
+                            break;
+                        if (value = reader.int32())
+                            message.symbolLength = value;
+                        else
+                            delete message.symbolLength;
+                        continue;
+                    }
+                }
+                reader.skipType(wireType, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -725,24 +783,16 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingEncoding.verify = function PairingEncoding$verify(message, long) {
+        PairingEncoding.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             if (message.type != null && $Object.hasOwnProperty.call(message, "type"))
-                switch (message.type) {
-                default:
+                if (typeof message.type !== "number" || (message.type | 0) !== message.type)
                     return "type: enum value expected";
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    break;
-                }
             if (message.symbolLength != null && $Object.hasOwnProperty.call(message, "symbolLength"))
                 if (!$util.isInteger(message.symbolLength))
                     return "symbolLength: integer expected";
@@ -757,46 +807,45 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingEncoding} PairingEncoding
          */
-        PairingEncoding.fromObject = function PairingEncoding$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingEncoding.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingEncoding)
                 return object;
             if (!$util.isObject(object))
                 throw $TypeError(".pairing.PairingEncoding: object expected");
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var message = new this.ctor();
-            switch (object.type) {
-            default:
-                if (typeof object.type === "number") {
-                    message.type = object.type;
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            var message = new $root.pairing.PairingEncoding();
+            if (object.type !== 0 && (typeof object.type !== "string" || $root.pairing.EncodingType[object.type] !== 0))
+                switch (object.type) {
+                case "ENCODING_TYPE_UNKNOWN":
+                case 0:
+                    message.type = 0;
                     break;
+                case "ENCODING_TYPE_ALPHANUMERIC":
+                case 1:
+                    message.type = 1;
+                    break;
+                case "ENCODING_TYPE_NUMERIC":
+                case 2:
+                    message.type = 2;
+                    break;
+                case "ENCODING_TYPE_HEXADECIMAL":
+                case 3:
+                    message.type = 3;
+                    break;
+                case "ENCODING_TYPE_QRCODE":
+                case 4:
+                    message.type = 4;
+                    break;
+                default:
+                    if (typeof object.type === "number" && (object.type | 0) === object.type)
+                        message.type = object.type;
                 }
-                break;
-            case "ENCODING_TYPE_UNKNOWN":
-            case 0:
-                message.type = 0;
-                break;
-            case "ENCODING_TYPE_ALPHANUMERIC":
-            case 1:
-                message.type = 1;
-                break;
-            case "ENCODING_TYPE_NUMERIC":
-            case 2:
-                message.type = 2;
-                break;
-            case "ENCODING_TYPE_HEXADECIMAL":
-            case 3:
-                message.type = 3;
-                break;
-            case "ENCODING_TYPE_QRCODE":
-            case 4:
-                message.type = 4;
-                break;
-            }
             if (object.symbolLength != null)
-                message.symbolLength = object.symbolLength | 0;
+                if ($Number(object.symbolLength) !== 0)
+                    message.symbolLength = object.symbolLength | 0;
             return message;
         };
 
@@ -809,7 +858,7 @@ $root.pairing = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        PairingEncoding.toObject = function PairingEncoding$toObject(message, options, _depth) {
+        PairingEncoding.toObject = function (message, options, _depth) {
             if (!options)
                 options = {};
             if (_depth === $undefined)
@@ -888,7 +937,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingOption.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingOption = function PairingOption(properties) {
+        var PairingOption = function (properties) {
             this.outputEncodings = [];
             this.inputEncodings = [];
             if (properties)
@@ -946,14 +995,14 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingOption.encode = function PairingOption$encode(message, writer, _depth) {
+        PairingOption.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
-            if (message.preferredRole != null && $Object.hasOwnProperty.call(message, "preferredRole"))
+            if (message.preferredRole != null && $Object.hasOwnProperty.call(message, "preferredRole") && message.preferredRole !== 0)
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.preferredRole);
             if (message.outputEncodings != null && message.outputEncodings.length)
                 for (var i = 0; i < message.outputEncodings.length; ++i)
@@ -961,6 +1010,9 @@ $root.pairing = (function() {
             if (message.inputEncodings != null && message.inputEncodings.length)
                 for (var i = 0; i < message.inputEncodings.length; ++i)
                     $root.pairing.PairingEncoding.encode(message.inputEncodings[i], writer.uint32(/* id 3, wireType 2 =*/26).fork(), _depth + 1).ldelim();
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -988,40 +1040,57 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingOption.decode = function PairingOption$decode(reader, length, error, long) {
+        PairingOption.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingOption(), value;
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                case 1: {
-                        message.preferredRole = reader.int32();
-                        break;
-                    }
-                case 2: {
-                        if (!(message.outputEncodings && message.outputEncodings.length))
-                            message.outputEncodings = [];
-                        message.outputEncodings.push($root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, long + 1));
-                        break;
-                    }
-                case 3: {
-                        if (!(message.inputEncodings && message.inputEncodings.length))
-                            message.inputEncodings = [];
-                        message.inputEncodings.push($root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, long + 1));
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                var wireType = tag & 7;
+                switch (tag >>>= 3) {
+                case 1: {
+                        if (wireType !== 0)
+                            break;
+                        if (value = reader.int32())
+                            message.preferredRole = value;
+                        else
+                            delete message.preferredRole;
+                        continue;
+                    }
+                case 2: {
+                        if (wireType !== 2)
+                            break;
+                        if (!(message.outputEncodings && message.outputEncodings.length))
+                            message.outputEncodings = [];
+                        message.outputEncodings.push($root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, _depth + 1));
+                        continue;
+                    }
+                case 3: {
+                        if (wireType !== 2)
+                            break;
+                        if (!(message.inputEncodings && message.inputEncodings.length))
+                            message.inputEncodings = [];
+                        message.inputEncodings.push($root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, _depth + 1));
+                        continue;
+                    }
+                }
+                reader.skipType(wireType, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -1049,13 +1118,13 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingOption.verify = function PairingOption$verify(message, long) {
+        PairingOption.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             if (message.preferredRole != null && $Object.hasOwnProperty.call(message, "preferredRole"))
                 if (!$util.isInteger(message.preferredRole))
                     return "preferredRole: integer expected";
@@ -1063,7 +1132,7 @@ $root.pairing = (function() {
                 if (!$Array.isArray(message.outputEncodings))
                     return "outputEncodings: array expected";
                 for (var i = 0; i < message.outputEncodings.length; ++i) {
-                    var error = $root.pairing.PairingEncoding.verify(message.outputEncodings[i], long + 1);
+                    var error = $root.pairing.PairingEncoding.verify(message.outputEncodings[i], _depth + 1);
                     if (error)
                         return "outputEncodings." + error;
                 }
@@ -1072,7 +1141,7 @@ $root.pairing = (function() {
                 if (!$Array.isArray(message.inputEncodings))
                     return "inputEncodings: array expected";
                 for (var i = 0; i < message.inputEncodings.length; ++i) {
-                    var error = $root.pairing.PairingEncoding.verify(message.inputEncodings[i], long + 1);
+                    var error = $root.pairing.PairingEncoding.verify(message.inputEncodings[i], _depth + 1);
                     if (error)
                         return "inputEncodings." + error;
                 }
@@ -1088,36 +1157,37 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingOption} PairingOption
          */
-        PairingOption.fromObject = function PairingOption$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingOption.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingOption)
                 return object;
             if (!$util.isObject(object))
                 throw $TypeError(".pairing.PairingOption: object expected");
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            var message = new $root.pairing.PairingOption();
             if (object.preferredRole != null)
-                message.preferredRole = object.preferredRole | 0;
+                if ($Number(object.preferredRole) !== 0)
+                    message.preferredRole = object.preferredRole | 0;
             if (object.outputEncodings) {
                 if (!$Array.isArray(object.outputEncodings))
                     throw $TypeError(".pairing.PairingOption.outputEncodings: array expected");
-                message.outputEncodings = [];
+                message.outputEncodings = $Array(object.outputEncodings.length);
                 for (var i = 0; i < object.outputEncodings.length; ++i) {
                     if (!$util.isObject(object.outputEncodings[i]))
                         throw $TypeError(".pairing.PairingOption.outputEncodings: object expected");
-                    message.outputEncodings[i] = $root.pairing.PairingEncoding.fromObject(object.outputEncodings[i], long + 1);
+                    message.outputEncodings[i] = $root.pairing.PairingEncoding.fromObject(object.outputEncodings[i], _depth + 1);
                 }
             }
             if (object.inputEncodings) {
                 if (!$Array.isArray(object.inputEncodings))
                     throw $TypeError(".pairing.PairingOption.inputEncodings: array expected");
-                message.inputEncodings = [];
+                message.inputEncodings = $Array(object.inputEncodings.length);
                 for (var i = 0; i < object.inputEncodings.length; ++i) {
                     if (!$util.isObject(object.inputEncodings[i]))
                         throw $TypeError(".pairing.PairingOption.inputEncodings: object expected");
-                    message.inputEncodings[i] = $root.pairing.PairingEncoding.fromObject(object.inputEncodings[i], long + 1);
+                    message.inputEncodings[i] = $root.pairing.PairingEncoding.fromObject(object.inputEncodings[i], _depth + 1);
                 }
             }
             return message;
@@ -1132,7 +1202,7 @@ $root.pairing = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        PairingOption.toObject = function PairingOption$toObject(message, options, _depth) {
+        PairingOption.toObject = function (message, options, _depth) {
             if (!options)
                 options = {};
             if (_depth === $undefined)
@@ -1149,12 +1219,12 @@ $root.pairing = (function() {
             if (message.preferredRole != null && $Object.hasOwnProperty.call(message, "preferredRole"))
                 object.preferredRole = message.preferredRole;
             if (message.outputEncodings && message.outputEncodings.length) {
-                object.outputEncodings = [];
+                object.outputEncodings = $Array(message.outputEncodings.length);
                 for (var j = 0; j < message.outputEncodings.length; ++j)
                     object.outputEncodings[j] = $root.pairing.PairingEncoding.toObject(message.outputEncodings[j], options, _depth + 1);
             }
             if (message.inputEncodings && message.inputEncodings.length) {
-                object.inputEncodings = [];
+                object.inputEncodings = $Array(message.inputEncodings.length);
                 for (var j = 0; j < message.inputEncodings.length; ++j)
                     object.inputEncodings[j] = $root.pairing.PairingEncoding.toObject(message.inputEncodings[j], options, _depth + 1);
             }
@@ -1220,7 +1290,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingConfiguration.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingConfiguration = function PairingConfiguration(properties) {
+        var PairingConfiguration = function (properties) {
             if (properties)
                 for (var keys = $Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -1268,7 +1338,7 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingConfiguration.encode = function PairingConfiguration$encode(message, writer, _depth) {
+        PairingConfiguration.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
@@ -1277,8 +1347,11 @@ $root.pairing = (function() {
                 throw $Error("max depth exceeded");
             if (message.encoding != null && $Object.hasOwnProperty.call(message, "encoding"))
                 $root.pairing.PairingEncoding.encode(message.encoding, writer.uint32(/* id 1, wireType 2 =*/10).fork(), _depth + 1).ldelim();
-            if (message.clientRole != null && $Object.hasOwnProperty.call(message, "clientRole"))
+            if (message.clientRole != null && $Object.hasOwnProperty.call(message, "clientRole") && message.clientRole !== 0)
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.clientRole);
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -1306,32 +1379,47 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingConfiguration.decode = function PairingConfiguration$decode(reader, length, error, long) {
+        PairingConfiguration.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingConfiguration(), value;
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                case 1: {
-                        message.encoding = $root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, long + 1);
-                        break;
-                    }
-                case 2: {
-                        message.clientRole = reader.int32();
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                var wireType = tag & 7;
+                switch (tag >>>= 3) {
+                case 1: {
+                        if (wireType !== 2)
+                            break;
+                        message.encoding = $root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, _depth + 1, message.encoding);
+                        continue;
+                    }
+                case 2: {
+                        if (wireType !== 0)
+                            break;
+                        if (value = reader.int32())
+                            message.clientRole = value;
+                        else
+                            delete message.clientRole;
+                        continue;
+                    }
+                }
+                reader.skipType(wireType, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -1359,27 +1447,21 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingConfiguration.verify = function PairingConfiguration$verify(message, long) {
+        PairingConfiguration.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             if (message.encoding != null && $Object.hasOwnProperty.call(message, "encoding")) {
-                var error = $root.pairing.PairingEncoding.verify(message.encoding, long + 1);
+                var error = $root.pairing.PairingEncoding.verify(message.encoding, _depth + 1);
                 if (error)
                     return "encoding." + error;
             }
             if (message.clientRole != null && $Object.hasOwnProperty.call(message, "clientRole"))
-                switch (message.clientRole) {
-                default:
+                if (typeof message.clientRole !== "number" || (message.clientRole | 0) !== message.clientRole)
                     return "clientRole: enum value expected";
-                case 0:
-                case 1:
-                case 2:
-                    break;
-                }
             return null;
         };
 
@@ -1391,41 +1473,39 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingConfiguration} PairingConfiguration
          */
-        PairingConfiguration.fromObject = function PairingConfiguration$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingConfiguration.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingConfiguration)
                 return object;
             if (!$util.isObject(object))
                 throw $TypeError(".pairing.PairingConfiguration: object expected");
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            var message = new $root.pairing.PairingConfiguration();
             if (object.encoding != null) {
                 if (!$util.isObject(object.encoding))
                     throw $TypeError(".pairing.PairingConfiguration.encoding: object expected");
-                message.encoding = $root.pairing.PairingEncoding.fromObject(object.encoding, long + 1);
+                message.encoding = $root.pairing.PairingEncoding.fromObject(object.encoding, _depth + 1);
             }
-            switch (object.clientRole) {
-            default:
-                if (typeof object.clientRole === "number") {
-                    message.clientRole = object.clientRole;
+            if (object.clientRole !== 0 && (typeof object.clientRole !== "string" || $root.pairing.RoleType[object.clientRole] !== 0))
+                switch (object.clientRole) {
+                case "ROLE_TYPE_UNKNOWN":
+                case 0:
+                    message.clientRole = 0;
                     break;
+                case "ROLE_TYPE_INPUT":
+                case 1:
+                    message.clientRole = 1;
+                    break;
+                case "ROLE_TYPE_OUTPUT":
+                case 2:
+                    message.clientRole = 2;
+                    break;
+                default:
+                    if (typeof object.clientRole === "number" && (object.clientRole | 0) === object.clientRole)
+                        message.clientRole = object.clientRole;
                 }
-                break;
-            case "ROLE_TYPE_UNKNOWN":
-            case 0:
-                message.clientRole = 0;
-                break;
-            case "ROLE_TYPE_INPUT":
-            case 1:
-                message.clientRole = 1;
-                break;
-            case "ROLE_TYPE_OUTPUT":
-            case 2:
-                message.clientRole = 2;
-                break;
-            }
             return message;
         };
 
@@ -1438,7 +1518,7 @@ $root.pairing = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        PairingConfiguration.toObject = function PairingConfiguration$toObject(message, options, _depth) {
+        PairingConfiguration.toObject = function (message, options, _depth) {
             if (!options)
                 options = {};
             if (_depth === $undefined)
@@ -1514,7 +1594,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingConfigurationAck.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingConfigurationAck = function PairingConfigurationAck(properties) {
+        var PairingConfigurationAck = function (properties) {
             if (properties)
                 for (var keys = $Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -1546,13 +1626,16 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingConfigurationAck.encode = function PairingConfigurationAck$encode(message, writer, _depth) {
+        PairingConfigurationAck.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -1580,24 +1663,29 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingConfigurationAck.decode = function PairingConfigurationAck$decode(reader, length, error, long) {
+        PairingConfigurationAck.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingConfigurationAck();
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                reader.skipType(tag & 7, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -1625,13 +1713,13 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingConfigurationAck.verify = function PairingConfigurationAck$verify(message, long) {
+        PairingConfigurationAck.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             return null;
         };
 
@@ -1643,10 +1731,16 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingConfigurationAck} PairingConfigurationAck
          */
-        PairingConfigurationAck.fromObject = function PairingConfigurationAck$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingConfigurationAck.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingConfigurationAck)
                 return object;
-            return new this.ctor();
+            if (!$util.isObject(object))
+                throw $TypeError(".pairing.PairingConfigurationAck: object expected");
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            return new $root.pairing.PairingConfigurationAck();
         };
 
         /**
@@ -1720,7 +1814,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingSecret.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingSecret = function PairingSecret(properties) {
+        var PairingSecret = function (properties) {
             if (properties)
                 for (var keys = $Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -1760,15 +1854,18 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingSecret.encode = function PairingSecret$encode(message, writer, _depth) {
+        PairingSecret.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
-            if (message.secret != null && $Object.hasOwnProperty.call(message, "secret"))
+            if (message.secret != null && $Object.hasOwnProperty.call(message, "secret") && message.secret.length)
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.secret);
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -1796,28 +1893,41 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingSecret.decode = function PairingSecret$decode(reader, length, error, long) {
+        PairingSecret.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingSecret(), value;
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                case 1: {
-                        message.secret = reader.bytes();
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                var wireType = tag & 7;
+                switch (tag >>>= 3) {
+                case 1: {
+                        if (wireType !== 2)
+                            break;
+                        if ((value = reader.bytes()).length)
+                            message.secret = value;
+                        else
+                            delete message.secret;
+                        continue;
+                    }
+                }
+                reader.skipType(wireType, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -1845,13 +1955,13 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingSecret.verify = function PairingSecret$verify(message, long) {
+        PairingSecret.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             if (message.secret != null && $Object.hasOwnProperty.call(message, "secret"))
                 if (!(message.secret && typeof message.secret.length === "number" || $util.isString(message.secret)))
                     return "secret: buffer expected";
@@ -1866,21 +1976,22 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingSecret} PairingSecret
          */
-        PairingSecret.fromObject = function PairingSecret$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingSecret.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingSecret)
                 return object;
             if (!$util.isObject(object))
                 throw $TypeError(".pairing.PairingSecret: object expected");
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            var message = new $root.pairing.PairingSecret();
             if (object.secret != null)
-                if (typeof object.secret === "string")
-                    $util.base64.decode(object.secret, message.secret = $util.newBuffer($util.base64.length(object.secret)), 0);
-                else if (object.secret.length >= 0)
-                    message.secret = object.secret;
+                if (object.secret.length)
+                    if (typeof object.secret === "string")
+                        $util.base64.decode(object.secret, message.secret = $util.newBuffer($util.base64.length(object.secret)), 0);
+                    else if (object.secret.length >= 0)
+                        message.secret = object.secret;
             return message;
         };
 
@@ -1893,7 +2004,7 @@ $root.pairing = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        PairingSecret.toObject = function PairingSecret$toObject(message, options, _depth) {
+        PairingSecret.toObject = function (message, options, _depth) {
             if (!options)
                 options = {};
             if (_depth === $undefined)
@@ -1972,7 +2083,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingSecretAck.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingSecretAck = function PairingSecretAck(properties) {
+        var PairingSecretAck = function (properties) {
             if (properties)
                 for (var keys = $Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -2012,15 +2123,18 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingSecretAck.encode = function PairingSecretAck$encode(message, writer, _depth) {
+        PairingSecretAck.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
-            if (message.secret != null && $Object.hasOwnProperty.call(message, "secret"))
+            if (message.secret != null && $Object.hasOwnProperty.call(message, "secret") && message.secret.length)
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.secret);
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -2048,28 +2162,41 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingSecretAck.decode = function PairingSecretAck$decode(reader, length, error, long) {
+        PairingSecretAck.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingSecretAck(), value;
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                case 1: {
-                        message.secret = reader.bytes();
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                var wireType = tag & 7;
+                switch (tag >>>= 3) {
+                case 1: {
+                        if (wireType !== 2)
+                            break;
+                        if ((value = reader.bytes()).length)
+                            message.secret = value;
+                        else
+                            delete message.secret;
+                        continue;
+                    }
+                }
+                reader.skipType(wireType, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -2097,13 +2224,13 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingSecretAck.verify = function PairingSecretAck$verify(message, long) {
+        PairingSecretAck.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             if (message.secret != null && $Object.hasOwnProperty.call(message, "secret"))
                 if (!(message.secret && typeof message.secret.length === "number" || $util.isString(message.secret)))
                     return "secret: buffer expected";
@@ -2118,21 +2245,22 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingSecretAck} PairingSecretAck
          */
-        PairingSecretAck.fromObject = function PairingSecretAck$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingSecretAck.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingSecretAck)
                 return object;
             if (!$util.isObject(object))
                 throw $TypeError(".pairing.PairingSecretAck: object expected");
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            var message = new $root.pairing.PairingSecretAck();
             if (object.secret != null)
-                if (typeof object.secret === "string")
-                    $util.base64.decode(object.secret, message.secret = $util.newBuffer($util.base64.length(object.secret)), 0);
-                else if (object.secret.length >= 0)
-                    message.secret = object.secret;
+                if (object.secret.length)
+                    if (typeof object.secret === "string")
+                        $util.base64.decode(object.secret, message.secret = $util.newBuffer($util.base64.length(object.secret)), 0);
+                    else if (object.secret.length >= 0)
+                        message.secret = object.secret;
             return message;
         };
 
@@ -2145,7 +2273,7 @@ $root.pairing = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        PairingSecretAck.toObject = function PairingSecretAck$toObject(message, options, _depth) {
+        PairingSecretAck.toObject = function (message, options, _depth) {
             if (!options)
                 options = {};
             if (_depth === $undefined)
@@ -2232,7 +2360,7 @@ $root.pairing = (function() {
          * @param {pairing.PairingMessage.$Properties=} [properties] Properties to set
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
-        var PairingMessage = function PairingMessage(properties) {
+        var PairingMessage = function (properties) {
             if (properties)
                 for (var keys = $Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -2336,16 +2464,16 @@ $root.pairing = (function() {
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        PairingMessage.encode = function PairingMessage$encode(message, writer, _depth) {
+        PairingMessage.encode = function (message, writer, _depth) {
             if (!writer)
                 writer = $Writer.create();
             if (_depth === $undefined)
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
-            if (message.status != null && $Object.hasOwnProperty.call(message, "status"))
+            if (message.status != null && $Object.hasOwnProperty.call(message, "status") && message.status !== 200)
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.status);
-            if (message.protocolVersion != null && $Object.hasOwnProperty.call(message, "protocolVersion"))
+            if (message.protocolVersion != null && $Object.hasOwnProperty.call(message, "protocolVersion") && message.protocolVersion !== 0)
                 writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.protocolVersion);
             if (message.pairingRequest != null && $Object.hasOwnProperty.call(message, "pairingRequest"))
                 $root.pairing.PairingRequest.encode(message.pairingRequest, writer.uint32(/* id 101, wireType 2 =*/810).fork(), _depth + 1).ldelim();
@@ -2361,6 +2489,9 @@ $root.pairing = (function() {
                 $root.pairing.PairingSecret.encode(message.pairingSecret, writer.uint32(/* id 401, wireType 2 =*/3210).fork(), _depth + 1).ldelim();
             if (message.pairingSecretAck != null && $Object.hasOwnProperty.call(message, "pairingSecretAck"))
                 $root.pairing.PairingSecretAck.encode(message.pairingSecretAck, writer.uint32(/* id 402, wireType 2 =*/3218).fork(), _depth + 1).ldelim();
+            if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
+                for (var i = 0; i < message.$unknowns.length; ++i)
+                    writer.raw(message.$unknowns[i]);
             return writer;
         };
 
@@ -2388,60 +2519,92 @@ $root.pairing = (function() {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        PairingMessage.decode = function PairingMessage$decode(reader, length, error, long) {
+        PairingMessage.decode = function (reader, length, _end, _depth, _target) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            if (long === $undefined)
-                long = 0;
-            if (long > $Reader.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = new this.ctor();
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $Reader.recursionLimit)
+                throw $Error("max depth exceeded");
+            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingMessage(), value;
             while (reader.pos < end) {
-                var tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                case 1: {
-                        message.status = reader.int32();
-                        break;
-                    }
-                case 2: {
-                        message.protocolVersion = reader.uint32();
-                        break;
-                    }
-                case 101: {
-                        message.pairingRequest = $root.pairing.PairingRequest.decode(reader, reader.uint32(), $undefined, long + 1);
-                        break;
-                    }
-                case 102: {
-                        message.pairingRequestAck = $root.pairing.PairingRequestAck.decode(reader, reader.uint32(), $undefined, long + 1);
-                        break;
-                    }
-                case 201: {
-                        message.pairingOption = $root.pairing.PairingOption.decode(reader, reader.uint32(), $undefined, long + 1);
-                        break;
-                    }
-                case 301: {
-                        message.pairingConfiguration = $root.pairing.PairingConfiguration.decode(reader, reader.uint32(), $undefined, long + 1);
-                        break;
-                    }
-                case 302: {
-                        message.pairingConfigurationAck = $root.pairing.PairingConfigurationAck.decode(reader, reader.uint32(), $undefined, long + 1);
-                        break;
-                    }
-                case 401: {
-                        message.pairingSecret = $root.pairing.PairingSecret.decode(reader, reader.uint32(), $undefined, long + 1);
-                        break;
-                    }
-                case 402: {
-                        message.pairingSecretAck = $root.pairing.PairingSecretAck.decode(reader, reader.uint32(), $undefined, long + 1);
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7, long);
+                var start = reader.pos;
+                var tag = reader.tag();
+                if (tag === _end) {
+                    _end = $undefined;
                     break;
                 }
+                var wireType = tag & 7;
+                switch (tag >>>= 3) {
+                case 1: {
+                        if (wireType !== 0)
+                            break;
+                        if ((value = reader.int32()) !== 200)
+                            message.status = value;
+                        else
+                            delete message.status;
+                        continue;
+                    }
+                case 2: {
+                        if (wireType !== 0)
+                            break;
+                        if (value = reader.uint32())
+                            message.protocolVersion = value;
+                        else
+                            delete message.protocolVersion;
+                        continue;
+                    }
+                case 101: {
+                        if (wireType !== 2)
+                            break;
+                        message.pairingRequest = $root.pairing.PairingRequest.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingRequest);
+                        continue;
+                    }
+                case 102: {
+                        if (wireType !== 2)
+                            break;
+                        message.pairingRequestAck = $root.pairing.PairingRequestAck.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingRequestAck);
+                        continue;
+                    }
+                case 201: {
+                        if (wireType !== 2)
+                            break;
+                        message.pairingOption = $root.pairing.PairingOption.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingOption);
+                        continue;
+                    }
+                case 301: {
+                        if (wireType !== 2)
+                            break;
+                        message.pairingConfiguration = $root.pairing.PairingConfiguration.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingConfiguration);
+                        continue;
+                    }
+                case 302: {
+                        if (wireType !== 2)
+                            break;
+                        message.pairingConfigurationAck = $root.pairing.PairingConfigurationAck.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingConfigurationAck);
+                        continue;
+                    }
+                case 401: {
+                        if (wireType !== 2)
+                            break;
+                        message.pairingSecret = $root.pairing.PairingSecret.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingSecret);
+                        continue;
+                    }
+                case 402: {
+                        if (wireType !== 2)
+                            break;
+                        message.pairingSecretAck = $root.pairing.PairingSecretAck.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingSecretAck);
+                        continue;
+                    }
+                }
+                reader.skipType(wireType, _depth, tag);
+                if (!reader.discardUnknown) {
+                    $util.makeProp(message, "$unknowns", false);
+                    (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
+                }
             }
+            if (_end !== $undefined)
+                throw $Error("missing end group");
             return message;
         };
 
@@ -2469,57 +2632,51 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        PairingMessage.verify = function PairingMessage$verify(message, long) {
+        PairingMessage.verify = function (message, _depth) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                return "maximum nesting depth exceeded";
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                return "max depth exceeded";
             if (message.status != null && $Object.hasOwnProperty.call(message, "status"))
-                switch (message.status) {
-                default:
+                if (typeof message.status !== "number" || (message.status | 0) !== message.status)
                     return "status: enum value expected";
-                case 200:
-                case 400:
-                case 401:
-                    break;
-                }
             if (message.protocolVersion != null && $Object.hasOwnProperty.call(message, "protocolVersion"))
                 if (!$util.isInteger(message.protocolVersion))
                     return "protocolVersion: integer expected";
             if (message.pairingRequest != null && $Object.hasOwnProperty.call(message, "pairingRequest")) {
-                var error = $root.pairing.PairingRequest.verify(message.pairingRequest, long + 1);
+                var error = $root.pairing.PairingRequest.verify(message.pairingRequest, _depth + 1);
                 if (error)
                     return "pairingRequest." + error;
             }
             if (message.pairingRequestAck != null && $Object.hasOwnProperty.call(message, "pairingRequestAck")) {
-                var error = $root.pairing.PairingRequestAck.verify(message.pairingRequestAck, long + 1);
+                var error = $root.pairing.PairingRequestAck.verify(message.pairingRequestAck, _depth + 1);
                 if (error)
                     return "pairingRequestAck." + error;
             }
             if (message.pairingOption != null && $Object.hasOwnProperty.call(message, "pairingOption")) {
-                var error = $root.pairing.PairingOption.verify(message.pairingOption, long + 1);
+                var error = $root.pairing.PairingOption.verify(message.pairingOption, _depth + 1);
                 if (error)
                     return "pairingOption." + error;
             }
             if (message.pairingConfiguration != null && $Object.hasOwnProperty.call(message, "pairingConfiguration")) {
-                var error = $root.pairing.PairingConfiguration.verify(message.pairingConfiguration, long + 1);
+                var error = $root.pairing.PairingConfiguration.verify(message.pairingConfiguration, _depth + 1);
                 if (error)
                     return "pairingConfiguration." + error;
             }
             if (message.pairingConfigurationAck != null && $Object.hasOwnProperty.call(message, "pairingConfigurationAck")) {
-                var error = $root.pairing.PairingConfigurationAck.verify(message.pairingConfigurationAck, long + 1);
+                var error = $root.pairing.PairingConfigurationAck.verify(message.pairingConfigurationAck, _depth + 1);
                 if (error)
                     return "pairingConfigurationAck." + error;
             }
             if (message.pairingSecret != null && $Object.hasOwnProperty.call(message, "pairingSecret")) {
-                var error = $root.pairing.PairingSecret.verify(message.pairingSecret, long + 1);
+                var error = $root.pairing.PairingSecret.verify(message.pairingSecret, _depth + 1);
                 if (error)
                     return "pairingSecret." + error;
             }
             if (message.pairingSecretAck != null && $Object.hasOwnProperty.call(message, "pairingSecretAck")) {
-                var error = $root.pairing.PairingSecretAck.verify(message.pairingSecretAck, long + 1);
+                var error = $root.pairing.PairingSecretAck.verify(message.pairingSecretAck, _depth + 1);
                 if (error)
                     return "pairingSecretAck." + error;
             }
@@ -2534,72 +2691,71 @@ $root.pairing = (function() {
          * @param {Object.<string,*>} object Plain object
          * @returns {pairing.PairingMessage} PairingMessage
          */
-        PairingMessage.fromObject = function PairingMessage$fromObject(object, long) {
-            if (object instanceof this.ctor)
+        PairingMessage.fromObject = function (object, _depth) {
+            if (object instanceof $root.pairing.PairingMessage)
                 return object;
             if (!$util.isObject(object))
                 throw $TypeError(".pairing.PairingMessage: object expected");
-            if (long === $undefined)
-                long = 0;
-            if (long > $util.recursionLimit)
-                throw $Error("maximum nesting depth exceeded");
-            var message = new this.ctor();
-            switch (object.status) {
-            default:
-                if (typeof object.status === "number") {
-                    message.status = object.status;
+            if (_depth === $undefined)
+                _depth = 0;
+            if (_depth > $util.recursionLimit)
+                throw $Error("max depth exceeded");
+            var message = new $root.pairing.PairingMessage();
+            if (object.status !== 200 && (typeof object.status !== "string" || $root.pairing.Status[object.status] !== 200))
+                switch (object.status) {
+                case "STATUS_OK":
+                case 200:
+                    message.status = 200;
                     break;
+                case "STATUS_ERROR":
+                case 400:
+                    message.status = 400;
+                    break;
+                case "STATUS_BAD_CONFIGURATION":
+                case 401:
+                    message.status = 401;
+                    break;
+                default:
+                    if (typeof object.status === "number" && (object.status | 0) === object.status)
+                        message.status = object.status;
                 }
-                break;
-            case "STATUS_OK":
-            case 200:
-                message.status = 200;
-                break;
-            case "STATUS_ERROR":
-            case 400:
-                message.status = 400;
-                break;
-            case "STATUS_BAD_CONFIGURATION":
-            case 401:
-                message.status = 401;
-                break;
-            }
             if (object.protocolVersion != null)
-                message.protocolVersion = object.protocolVersion >>> 0;
+                if ($Number(object.protocolVersion) !== 0)
+                    message.protocolVersion = object.protocolVersion >>> 0;
             if (object.pairingRequest != null) {
                 if (!$util.isObject(object.pairingRequest))
                     throw $TypeError(".pairing.PairingMessage.pairingRequest: object expected");
-                message.pairingRequest = $root.pairing.PairingRequest.fromObject(object.pairingRequest, long + 1);
+                message.pairingRequest = $root.pairing.PairingRequest.fromObject(object.pairingRequest, _depth + 1);
             }
             if (object.pairingRequestAck != null) {
                 if (!$util.isObject(object.pairingRequestAck))
                     throw $TypeError(".pairing.PairingMessage.pairingRequestAck: object expected");
-                message.pairingRequestAck = $root.pairing.PairingRequestAck.fromObject(object.pairingRequestAck, long + 1);
+                message.pairingRequestAck = $root.pairing.PairingRequestAck.fromObject(object.pairingRequestAck, _depth + 1);
             }
             if (object.pairingOption != null) {
                 if (!$util.isObject(object.pairingOption))
                     throw $TypeError(".pairing.PairingMessage.pairingOption: object expected");
-                message.pairingOption = $root.pairing.PairingOption.fromObject(object.pairingOption, long + 1);
+                message.pairingOption = $root.pairing.PairingOption.fromObject(object.pairingOption, _depth + 1);
             }
             if (object.pairingConfiguration != null) {
                 if (!$util.isObject(object.pairingConfiguration))
                     throw $TypeError(".pairing.PairingMessage.pairingConfiguration: object expected");
-                message.pairingConfiguration = $root.pairing.PairingConfiguration.fromObject(object.pairingConfiguration, long + 1);
+                message.pairingConfiguration = $root.pairing.PairingConfiguration.fromObject(object.pairingConfiguration, _depth + 1);
             }
             if (object.pairingConfigurationAck != null) {
                 if (!$util.isObject(object.pairingConfigurationAck))
                     throw $TypeError(".pairing.PairingMessage.pairingConfigurationAck: object expected");
-                message.pairingConfigurationAck = $root.pairing.PairingConfigurationAck.fromObject(object.pairingConfigurationAck, long + 1);
+                message.pairingConfigurationAck = $root.pairing.PairingConfigurationAck.fromObject(object.pairingConfigurationAck, _depth + 1);
             }
             if (object.pairingSecret != null) {
                 if (!$util.isObject(object.pairingSecret))
                     throw $TypeError(".pairing.PairingMessage.pairingSecret: object expected");
-                message.pairingSecret = $root.pairing.PairingSecret.fromObject(object.pairingSecret, long + 1);
+                message.pairingSecret = $root.pairing.PairingSecret.fromObject(object.pairingSecret, _depth + 1);
             }
             if (object.pairingSecretAck != null) {
                 if (!$util.isObject(object.pairingSecretAck))
                     throw $TypeError(".pairing.PairingMessage.pairingSecretAck: object expected");
-                message.pairingSecretAck = $root.pairing.PairingSecretAck.fromObject(object.pairingSecretAck, long + 1);
+                message.pairingSecretAck = $root.pairing.PairingSecretAck.fromObject(object.pairingSecretAck, _depth + 1);
             }
             return message;
         };
@@ -2613,7 +2769,7 @@ $root.pairing = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        PairingMessage.toObject = function PairingMessage$toObject(message, options, _depth) {
+        PairingMessage.toObject = function (message, options, _depth) {
             if (!options)
                 options = {};
             if (_depth === $undefined)

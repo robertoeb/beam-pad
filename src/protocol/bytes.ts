@@ -8,25 +8,17 @@ _b64codes['='.charCodeAt(0)] = 0;
 /** base64 string → Uint8Array */
 export function fromB64(b64: string): Uint8Array {
   const inLen = b64.length;
-  const outLen = (3 * inLen) / 4 - (b64.endsWith('==') ? 2 : b64.endsWith('=') ? 1 : 0);
-  const out = new Uint8Array(outLen | 0);
+  const outLen =
+    Math.floor((3 * inLen) / 4) -
+    (b64.endsWith('==') ? 2 : b64.endsWith('=') ? 1 : 0);
+  const out = new Uint8Array(outLen);
+  const vals = new Array(inLen);
+  for (let i = 0; i < inLen; i++) vals[i] = _b64codes[b64.charCodeAt(i)] ?? 0;
   let p = 0;
-  for (let i = 0; i < inLen; i++) {
-    const b = _b64codes[b64.charCodeAt(i)] ?? 0;
-    switch (i % 4) {
-      case 0:
-        out[p] = ((b << 2) | ((_b64codes[b64.charCodeAt(i + 1)] ?? 0) >> 4)) & 0xff;
-        p++;
-        break;
-      case 1:
-        out[p] = (((_b64codes[b64.charCodeAt(i + 1)] ?? 0) & 0x0f) << 4) | ((_b64codes[b64.charCodeAt(i + 2)] ?? 0) >> 2);
-        p++;
-        break;
-      case 2:
-        out[p] = (((_b64codes[b64.charCodeAt(i + 2)] ?? 0) & 0x03) << 6) | (_b64codes[b64.charCodeAt(i + 3)] ?? 0);
-        p++;
-        break;
-    }
+  for (let i = 0; i < inLen; i += 4) {
+    if (p < outLen) out[p++] = (vals[i]! << 2) | (vals[i + 1]! >> 4);
+    if (p < outLen) out[p++] = ((vals[i + 1]! & 0x0f) << 4) | (vals[i + 2]! >> 2);
+    if (p < outLen) out[p++] = ((vals[i + 2]! & 0x03) << 6) | (vals[i + 3] ?? 0);
   }
   return out;
 }
