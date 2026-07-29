@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gates:
+    name: Typecheck · Tests · Coverage gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # The repo is docs-only until TASK_01 lands; skip gracefully pre-bootstrap.
+      - name: Bootstrap guard
+        id: guard
+        run: |
+          if [ -f package.json ]; then echo "bootstrapped=true" >> "$GITHUB_OUTPUT"; \
+          else echo "bootstrapped=false" >> "$GITHUB_OUTPUT"; echo "Pre-bootstrap repo — skipping build gates."; fi
+
+      - name: Install dependencies
+        if: steps.guard.outputs.bootstrapped == 'true'
+        run: npm ci
+
+      - name: Verify protobuf bundle is up to date
+        if: steps.guard.outputs.bootstrapped == 'true'
+        run: |
+          npm run gen:proto
+          if [ -n "$(git status --porcelain src/proto)" ]; then
+            echo "::error::src/proto/bundle.* is stale. Run 'npm run gen:proto' and commit the result."
+            exit 1
+          fi
+
+      - name: Typecheck (strict)
+        if: steps.guard.outputs.bootstrapped == 'true'
+        run: npm run typecheck
+
+      - name: Lint markdown-independent code
+        if: steps.guard.outputs.bootstrapped == 'true'
+        run: npx tsc --noEmit --pretty false
+
+      - name: Unit + component tests with coverage gates
+        if: steps.guard.outputs.bootstrapped == 'true'
+        run: npm test -- --coverage --ci --maxWorkers=2
+
+      - name: Upload coverage report
+        if: steps.guard.outputs.bootstrapped == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.sha }}
+          path: coverage/
+          retention-days: 14
+
+  # ────────────────────────────────────────────────────────────
+  # Native smoke build — activates after TASK_02 (local modules exist).
+  # Runs only on demand or on main pushes to keep PR feedback fast.
+  # ────────────────────────────────────────────────────────────
+  android-build:
+    name: Android debug build (smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bootstrap guard
+        id: guard
+        run: |
+          if [ -f package.json ]; then echo "bootstrapped=true" >> "$GITHUB_OUTPUT"; \
+          else echo "bootstrapped=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Setup Node
+        if: steps.guard.outputs.bootstrapped == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup JDK 17 + Android SDK
+        if: steps.guard.outputs.bootstrapped == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install + prebuild
+        if: steps.guard.outputs.bootstrapped == 'true'
+        run: |
+          npm ci
+          npx expo prebuild --platform android --no-install
+
+      - name: Gradle assembleDebug
+        if: steps.guard.outputs.bootstrapped == 'true'
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
