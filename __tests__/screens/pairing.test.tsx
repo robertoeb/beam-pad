@@ -21,6 +21,17 @@ jest.mock('@/protocol/PairingProtocol', () => {
   };
 });
 
+jest.mock('@/components/TroubleshootSheet', () => ({
+  TroubleshootSheet: ({ open }: any) => {
+    if (!open) return null;
+    const React = require('react');
+    const { View, Text } = require('react-native');
+    return React.createElement(View, { testID: 'troubleshoot-sheet' },
+      React.createElement(Text, null, 'Troubleshoot content'),
+    );
+  },
+}));
+
 describe('PairingScreen', () => {
   it('renders loading step initially and pin input when awaiting code', async () => {
     const { getByText, getByDisplayValue } = await render(<PairingScreen />);
@@ -38,10 +49,15 @@ describe('PairingScreen', () => {
     const { getByText } = await render(<PairingScreen />);
 
     await act(async () => {
-      capturedCb?.onStep('failed', 'Invalid PIN entered');
+      capturedCb?.onStep('failed', {
+        code: 'PAIRING_REJECTED',
+        message: 'The TV rejected the pairing request.',
+        steps: ['Try again'],
+        retryable: true,
+      });
     });
 
     expect(getByText('Pairing Failed')).toBeTruthy();
-    expect(getByText('Invalid PIN entered')).toBeTruthy();
+    expect(getByText('The TV rejected the pairing request.')).toBeTruthy();
   });
 });

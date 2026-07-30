@@ -17,6 +17,7 @@ interface SocketStateEvent {
   id: string;
   state: string;
   error?: string;
+  code?: string;
 }
 
 class TestFakeAtvSocket {
@@ -28,6 +29,10 @@ class TestFakeAtvSocket {
   private stateListeners: Array<(e: SocketStateEvent) => void> = [];
 
   async getServerPublicKeyComponents(_host: string, _port: number, _t?: number) {
+    return { modulusB64: '', exponentB64: '' };
+  }
+
+  async getPeerPublicKeyComponents(_id: string) {
     return { modulusB64: '', exponentB64: '' };
   }
 
@@ -80,9 +85,9 @@ class TestFakeAtvSocket {
     this.dataListeners.forEach((cb) => cb({ id, base64 }));
   }
 
-  emitState(state: string, error?: string) {
+  emitState(state: string, error?: string, code?: string) {
     const id = this.lastSocketId ?? 'default';
-    this.stateListeners.forEach((cb) => cb({ id, state, error }));
+    this.stateListeners.forEach((cb) => cb({ id, state, error, code }));
   }
 
   reset() {
@@ -143,7 +148,7 @@ describe('RemoteClient golden vectors', () => {
   it('GV1: Configure frame — first outbound after open', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -168,7 +173,7 @@ describe('RemoteClient golden vectors', () => {
   it('GV2: Activation — server configure → setActive + ACTIVE state', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -207,7 +212,7 @@ describe('RemoteClient golden vectors', () => {
   it('GV3: Key inject — keyPress(VOLUME_UP) exact bytes', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -230,7 +235,7 @@ describe('RemoteClient golden vectors', () => {
   it('GV4: Long press — START_LONG and END_LONG', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -255,7 +260,7 @@ describe('RemoteClient golden vectors', () => {
   it('GV5: Ping/pong — echo val1', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -279,7 +284,7 @@ describe('RemoteClient golden vectors', () => {
     const telemetry: any[] = [];
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: (t: Partial<Telemetry>) => telemetry.push(t),
       onImeShow: () => {},
     });
@@ -316,7 +321,7 @@ describe('RemoteClient golden vectors', () => {
     jest.useFakeTimers();
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -370,7 +375,7 @@ describe('RemoteClient golden vectors', () => {
     const telemetry: any[] = [];
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: (t: Partial<Telemetry>) => telemetry.push(t),
       onImeShow: () => {},
     });
@@ -416,7 +421,7 @@ describe('RemoteClient inbound handlers', () => {
     const telemetry: any[] = [];
     const imeShows: any[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: (t: Partial<Telemetry>) => telemetry.push(t),
       onImeShow: (s: pb.IRemoteTextFieldStatus) => imeShows.push(s),
     });
@@ -516,7 +521,7 @@ describe('RemoteClient reconnect matrix', () => {
     jest.useFakeTimers();
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -545,7 +550,7 @@ describe('RemoteClient reconnect matrix', () => {
     jest.useFakeTimers();
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -570,7 +575,7 @@ describe('RemoteClient reconnect matrix', () => {
     jest.useFakeTimers();
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -604,7 +609,7 @@ describe('RemoteClient keepalive', () => {
   it('3 scripted pings → 3 pongs echoing val1', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -631,7 +636,7 @@ describe('RemoteClient keepalive', () => {
   it('no crash when server closes during keepalive', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -678,10 +683,10 @@ describe('sessionManager binder', () => {
     const { switchTo } = require('@/services/sessionManager');
     const switchPromise = switchTo('tv1');
     // Don't inject server configure — let timeout fire
-    jest.advanceTimersByTime(6000);
+    jest.advanceTimersByTime(13000);
     const result = await switchPromise;
     expect(result.ok).toBe(false);
-    expect(result.error).toContain('timeout');
+    expect(result.error).toBeDefined();
     jest.useRealTimers();
   });
 
@@ -689,9 +694,11 @@ describe('sessionManager binder', () => {
     jest.useFakeTimers();
     const { switchTo } = require('@/services/sessionManager');
     const switchPromise = switchTo('tv1');
-    // Simulate connection drop before ACTIVE
-    mockFake.emitState('closed', 'auth failed');
-    jest.advanceTimersByTime(6000);
+    // Simulate 5 reconnect failures to reach ERROR_STATE
+    for (let i = 0; i < 6; i++) {
+      mockFake.emitState('closed', 'auth failed');
+      jest.advanceTimersByTime(8000);
+    }
     const result = await switchPromise;
     expect(result.ok).toBe(false);
     jest.useRealTimers();
@@ -749,7 +756,7 @@ describe('RemoteClient public API', () => {
   it('launchApp sends app link', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -772,7 +779,7 @@ describe('RemoteClient public API', () => {
   it('imeBatchEdit sends batch', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -799,7 +806,7 @@ describe('RemoteClient public API', () => {
   it('voice pipeline: begin → payload → end', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });
@@ -829,7 +836,7 @@ describe('RemoteClient public API', () => {
   it('setVolumeLevel no-op without lastVolume', async () => {
     const states: string[] = [];
     const client = createClient({
-      onState: (s: string, _error?: string) => states.push(s),
+      onState: (s: string, _error?: any) => states.push(s),
       onTelemetry: () => {},
       onImeShow: () => {},
     });

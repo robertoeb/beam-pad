@@ -52,7 +52,7 @@ describe('sessionManager', () => {
     const result = await switchTo('tv-2');
 
     expect(result.ok).toBe(false);
-    expect(result.error).toContain('connection refused');
+    expect(result.error?.code).toBe('PORT_CLOSED');
     expect(result.elapsedMs).toBeLessThan(1500);
   });
 });

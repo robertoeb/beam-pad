@@ -2,7 +2,7 @@ import { requireNativeModule, EventEmitter } from 'expo-modules-core';
 
 type AtvSocketEvents = {
   onSocketData: (e: { id: string; base64: string }) => void;
-  onSocketState: (e: { id: string; state: string; error?: string }) => void;
+  onSocketState: (e: { id: string; state: string; error?: string; code?: string }) => void;
   onMicData: (e: { base64: string }) => void;
 } & Record<string, (...args: any[]) => void>;
 
@@ -12,11 +12,7 @@ const emitter = new EventEmitter<AtvSocketEvents>(Native as any);
 interface AtvSocketNative {
   generateClientCertificate(): Promise<ClientCertificate>;
   importClientCertificate(certPem: string, keyPem: string): Promise<RsaComponents>;
-  getServerPublicKeyComponents(
-    host: string,
-    port: number,
-    timeoutMs: number,
-  ): Promise<RsaComponents>;
+  getPeerPublicKeyComponents(id: string): Promise<RsaComponents>;
   connect(id: string, host: string, port: number, certPem: string, keyPem: string): Promise<void>;
   send(id: string, base64: string): void;
   close(id: string): void;
@@ -40,8 +36,8 @@ export const AtvSocket = {
   generateClientCertificate: (): Promise<ClientCertificate> => Native.generateClientCertificate(),
   importClientCertificate: (certPem: string, keyPem: string): Promise<RsaComponents> =>
     Native.importClientCertificate(certPem, keyPem),
-  getServerPublicKeyComponents: (host: string, port: number, timeoutMs = 8000) =>
-    Native.getServerPublicKeyComponents(host, port, timeoutMs),
+  getPeerPublicKeyComponents: (id: string): Promise<RsaComponents> =>
+    Native.getPeerPublicKeyComponents(id),
   connect: (id: string, host: string, port: number, certPem: string, keyPem: string) =>
     Native.connect(id, host, port, certPem, keyPem),
   send: (id: string, base64: string): void => Native.send(id, base64),

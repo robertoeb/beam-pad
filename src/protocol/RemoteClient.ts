@@ -3,6 +3,8 @@ import { FrameCodec } from './framing';
 import { toB64, fromB64 } from './bytes';
 import { remote as pb } from '@/proto/bundle';
 import type { PairedDevice } from '@/stores/devices';
+import { classify, ConnectError } from './errors';
+import { COMMAND_PORT } from './ports';
 
 export type ConnectionState =
   'IDLE' | 'CONNECTING' | 'CONFIGURING' | 'ACTIVE' | 'RECONNECTING' | 'ERROR_STATE';
@@ -14,7 +16,7 @@ export interface Telemetry {
 }
 
 export interface RemoteClientEvents {
-  onState: (s: ConnectionState, error?: string) => void;
+  onState: (s: ConnectionState, error?: ConnectError) => void;
   onTelemetry: (t: Partial<Telemetry>) => void;
   onImeShow: (status: pb.IRemoteTextFieldStatus) => void;
 }
@@ -34,6 +36,7 @@ export class RemoteClient {
   private _promiseSettled = false;
   private lastVolume: Telemetry['volume'] | undefined;
   private destroyed = false;
+  private lastError: ConnectError | undefined;
 
   constructor(
     private device: PairedDevice,
@@ -56,17 +59,17 @@ export class RemoteClient {
       AtvSocket.onSocketData(
         (e: { id: string; base64: string }) => e.id === this.socketId && this.handle(e.base64),
       ),
-      AtvSocket.onSocketState((e: { id: string; state: string; error?: string }) => {
+      AtvSocket.onSocketState((e: { id: string; state: string; error?: string; code?: string }) => {
         if (e.id !== this.socketId) return;
         if (e.state === 'open') this.onOpen();
-        else this.onDrop(e.error);
+        else this.onDrop(e.error, e.code);
       }),
     );
     try {
       await AtvSocket.connect(
         this.socketId,
         this.device.host,
-        6466,
+        this.device.port ?? COMMAND_PORT,
         this.device.certPem,
         this.device.keyPem,
       );
@@ -131,11 +134,12 @@ export class RemoteClient {
       if (msg.remoteImeShowRequest?.remoteTextFieldStatus) {
         this.ev.onImeShow(msg.remoteImeShowRequest.remoteTextFieldStatus);
       }
-      if (msg.remoteError) this.ev.onState('ERROR_STATE', 'TV reported a remote error');
+      if (msg.remoteError) {
+        const err = classify('TV reported a remote error', { phase: 'connect', host: this.device.host, hasCerts: true });
+        this.ev.onState('ERROR_STATE', err);
+      }
     }
   }
-
-  /* ── Public command API ─────────────────────────────────────────── */
 
   keyPress(keyCode: number) {
     this.send({
@@ -193,17 +197,25 @@ export class RemoteClient {
     this.send({ remoteVoiceEnd: { sessionId } });
   }
 
-  /* ── Lifecycle ──────────────────────────────────────────────────── */
-
-  private onDrop(error?: string) {
+  private onDrop(error?: string, code?: string) {
     if (this.destroyed) return;
+    const classified = classify(error, {
+      phase: 'connect',
+      host: this.device.host,
+      hasCerts: true,
+    });
+    this.lastError = classified;
     if (this.reconnectAttempt >= 5) {
-      this.setState('ERROR_STATE', error ?? 'connection lost');
+      this.setState('ERROR_STATE', classified);
       return;
     }
     this.setState('RECONNECTING');
     const delay = Math.min(8000, 500 * 2 ** this.reconnectAttempt++);
     this.reconnectTimer = setTimeout(() => this.connect(), delay);
+  }
+
+  getLastConnectError(): ConnectError | undefined {
+    return this.lastError;
   }
 
   destroy() {
@@ -224,7 +236,7 @@ export class RemoteClient {
     AtvSocket.send(this.socketId, toB64(FrameCodec.encode(payload)));
   }
 
-  private setState(s: ConnectionState, error?: string) {
+  private setState(s: ConnectionState, error?: ConnectError) {
     this.state = s;
     this.ev.onState(s, error);
     if (s === 'ACTIVE' && this._connectResolve) {
@@ -234,7 +246,7 @@ export class RemoteClient {
       this._connectReject = null;
     } else if (s === 'ERROR_STATE' && this._connectReject) {
       this._promiseSettled = true;
-      this._connectReject(new Error(error ?? 'connection failed'));
+      this._connectReject(new Error(error?.detail ?? error?.message ?? 'connection failed'));
       this._connectResolve = null;
       this._connectReject = null;
     }

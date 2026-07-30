@@ -3,6 +3,8 @@ import { FrameCodec } from './framing';
 import { derivePairingSecret } from './secret';
 import { toB64, fromB64 } from './bytes';
 import { pairing as pb } from '@/proto/bundle';
+import { classify, ConnectError } from './errors';
+import { PAIRING_PORT } from './ports';
 
 export type PairingStep =
   | 'probing'
@@ -16,7 +18,7 @@ export type PairingStep =
   | 'failed';
 
 export interface PairingCallbacks {
-  onStep: (step: PairingStep, error?: string) => void;
+  onStep: (step: PairingStep, error?: ConnectError) => void;
 }
 
 const SERVICE_NAME = 'com.beampad.app';
@@ -27,18 +29,6 @@ export interface PairingResult {
   keyPem: string;
 }
 
-/**
- * ATV Remote v2 pairing state machine (port 6467).
- *
- * Wire flow:
- *   1. Probe server key → generate client cert → TLS connect
- *   2. Client → PairingRequest
- *   3. Server → PairingRequestAck  /  Client → PairingOption
- *   4. Server → PairingOption  /  Client → PairingConfiguration
- *   5. Server → PairingConfigurationAck  (TV displays 6-char hex code)
- *   6. User enters code → Client → PairingSecret
- *   7. Server → PairingSecretAck  (verification; optional)
- */
 export class PairingProtocol {
   private codec = new FrameCodec();
   private socketId = `pairing-${Date.now()}`;
@@ -57,12 +47,9 @@ export class PairingProtocol {
     private cb: PairingCallbacks,
   ) {}
 
-  /** Start the pairing flow. Awaits TLS connect then sends PairingRequest. */
   async start() {
     try {
       this.setStep('probing');
-      this.serverKeys = await AtvSocket.getServerPublicKeyComponents(this.host, 6467, 8000);
-
       this.client = await AtvSocket.generateClientCertificate();
 
       this.setStep('connecting');
@@ -70,19 +57,25 @@ export class PairingProtocol {
         AtvSocket.onSocketData(
           (e: { id: string; base64: string }) => e.id === this.socketId && this.handle(e.base64),
         ),
-        AtvSocket.onSocketState((e: { id: string; state: string; error?: string }) => {
+        AtvSocket.onSocketState((e: { id: string; state: string; error?: string; code?: string }) => {
           if (e.id === this.socketId && e.state !== 'open' && this.step !== 'done') {
-            this.fail(e.error ?? 'socket closed');
+            if (e.state === 'error') {
+              this.fail(classify(e.error, { phase: 'pair', host: this.host }));
+            } else {
+              this.fail(classify(e.error ?? 'socket closed', { phase: 'pair', host: this.host }));
+            }
           }
         }),
       );
       await AtvSocket.connect(
         this.socketId,
         this.host,
-        6467,
+        PAIRING_PORT,
         this.client.pem,
         this.client.privateKeyPem,
       );
+
+      this.serverKeys = await AtvSocket.getPeerPublicKeyComponents(this.socketId);
 
       this.setStep('request');
       this.send({
@@ -91,15 +84,14 @@ export class PairingProtocol {
         pairingRequest: { serviceName: SERVICE_NAME, clientName: CLIENT_NAME },
       });
     } catch (e) {
-      this.fail(String(e));
+      this.fail(classify(e, { phase: 'pair', host: this.host }));
     }
   }
 
-  /** Called by the UI when the user enters the 6-char hex code. */
   submitCode(code: string) {
     if (this.step !== 'awaiting_code') return;
     if (!this.client || !this.serverKeys) {
-      this.fail('missing certificate components');
+      this.fail(classify('missing certificate components', { phase: 'pair', host: this.host }));
       return;
     }
     this.setStep('secret');
@@ -117,12 +109,11 @@ export class PairingProtocol {
     });
   }
 
-  /** Ingest a base64 TCP chunk from the socket. */
   handle(base64: string) {
     for (const payload of this.codec.push(fromB64(base64))) {
       const msg = pb.PairingMessage.decode(payload);
       if (msg.status !== pb.Status.STATUS_OK) {
-        return this.fail(`TV status ${msg.status}`);
+        return this.fail(classify(`TV status ${msg.status}`, { phase: 'pair', host: this.host }));
       }
       if (msg.pairingRequestAck) {
         this.setStep('option');
@@ -160,7 +151,6 @@ export class PairingProtocol {
     }
   }
 
-  /** Encode and send a PairingMessage over the TLS socket. */
   private send(fields: pb.IPairingMessage) {
     const payload = pb.PairingMessage.encode(pb.PairingMessage.create(fields)).finish();
     AtvSocket.send(this.socketId, toB64(FrameCodec.encode(payload)));
@@ -171,7 +161,7 @@ export class PairingProtocol {
     this.cb.onStep(s);
   }
 
-  private fail(error: string) {
+  private fail(error: ConnectError) {
     this.setStep('failed');
     this.cb.onStep('failed', error);
     this.destroy();
@@ -187,7 +177,6 @@ export class PairingProtocol {
     AtvSocket.close(this.socketId);
   }
 
-  /** Certificate result consumed by the screen to persist the paired device. */
   getResult(): PairingResult {
     return {
       certPem: this.client?.pem ?? '',
@@ -195,19 +184,16 @@ export class PairingProtocol {
     };
   }
 
-  /** Exposed for testing: inject frames without going through the socket. */
   _injectFrames(frames: Uint8Array[]) {
     for (const frame of frames) {
       this.handle(toB64(frame));
     }
   }
 
-  /** Exposed for testing: current step. */
   get _step(): PairingStep {
     return this.step;
   }
 
-  /** Exposed for testing: captured outbound frames. */
   _getOutboundFrames(): string[] {
     return [];
   }

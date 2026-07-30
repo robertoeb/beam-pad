@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CheckCircle2, XCircle } from 'lucide-react-native';
 import { PairingProtocol } from '@/protocol/PairingProtocol';
 import { PinInput } from '@/components/PinInput';
+import { TroubleshootSheet } from '@/components/TroubleshootSheet';
 import { useDevicesStore } from '@/stores/devices';
+import type { ConnectError } from '@/protocol/errors';
+import { PAIRING_PORT } from '@/protocol/ports';
 
 const STEP_COPY: Record<string, string> = {
   probing: 'Contacting TV…',
@@ -20,9 +23,8 @@ const STEP_COPY: Record<string, string> = {
 };
 
 export default function PairingScreen() {
-  const { host, port, name } = useLocalSearchParams();
+  const { host, name } = useLocalSearchParams();
   const h = (host as string) ?? '';
-  const p = parseInt((port as string) ?? '6467', 10);
   const n = (name as string) ?? 'ATV';
   const [step, setStep] = useState<
     | 'probing'
@@ -35,17 +37,19 @@ export default function PairingScreen() {
     | 'done'
     | 'failed'
   >('probing');
-  const [error, setError] = useState<string | undefined>();
+  const [connectError, setConnectError] = useState<ConnectError | undefined>();
   const [proto, setProto] = useState<PairingProtocol | null>(null);
+  const [showTroubleshoot, setShowTroubleshoot] = useState(false);
 
   const addPaired = useDevicesStore((s) => s.addPaired);
   const setActive = useDevicesStore((s) => s.setActive);
 
   useEffect(() => {
     const cb = {
-      onStep: (s: string, err?: string) => {
+      onStep: (s: string, err?: ConnectError) => {
         setStep(s as any);
-        if (err) setError(err);
+        if (err) setConnectError(err);
+        if (s === 'failed') setShowTroubleshoot(true);
       },
     };
     const p = new PairingProtocol(h, cb);
@@ -67,7 +71,7 @@ export default function PairingScreen() {
         id: h,
         name: n,
         host: h,
-        port: p,
+        port: PAIRING_PORT,
         certPem: result?.certPem ?? '',
         keyPem: result?.keyPem ?? '',
       };
@@ -75,21 +79,27 @@ export default function PairingScreen() {
       setActive(h);
       router.back();
     }
-  }, [step, proto, h, n, p, addPaired, setActive]);
+  }, [step, proto, h, n, addPaired, setActive]);
 
   const handleRetry = useCallback(() => {
-    setError(undefined);
+    setConnectError(undefined);
+    setShowTroubleshoot(false);
     setStep('probing');
     const cb = {
-      onStep: (s: string, err?: string) => {
+      onStep: (s: string, err?: ConnectError) => {
         setStep(s as any);
-        if (err) setError(err);
+        if (err) setConnectError(err);
+        if (s === 'failed') setShowTroubleshoot(true);
       },
     };
     const p = new PairingProtocol(h, cb);
     setProto(p);
     p.start();
   }, [h]);
+
+  const handleRepair = useCallback(() => {
+    handleRetry();
+  }, [handleRetry]);
 
   const isWorking = [
     'probing',
@@ -134,17 +144,31 @@ export default function PairingScreen() {
             <XCircle size={56} color="#FF3B30" strokeWidth={1.5} />
             <Text className="font-semibold text-xl text-text-primary">Pairing Failed</Text>
             <Text className="px-4 text-center font-medium text-sm text-text-secondary">
-              {error || 'The TV rejected pairing. Try again from its remote settings.'}
+              {connectError?.message ?? 'The TV rejected pairing. Try again from its remote settings.'}
             </Text>
             <Pressable
-              onPress={handleRetry}
+              onPress={() => setShowTroubleshoot(true)}
               className="mt-4 rounded-lg bg-accent-cyan/10 px-6 py-3"
             >
-              <Text className="font-medium text-sm text-accent-cyan">Try Again</Text>
+              <Text className="font-medium text-sm text-accent-cyan">Troubleshoot</Text>
             </Pressable>
           </View>
         )}
       </View>
+
+      <TroubleshootSheet
+        open={showTroubleshoot}
+        onClose={() => setShowTroubleshoot(false)}
+        error={connectError}
+        host={h}
+        port={PAIRING_PORT}
+        onRetry={connectError?.retryable ? handleRetry : undefined}
+        onRepair={
+          connectError?.code === 'CERT_REVOKED' || connectError?.code === 'PAIRING_REJECTED'
+            ? handleRepair
+            : undefined
+        }
+      />
     </SafeAreaView>
   );
 }

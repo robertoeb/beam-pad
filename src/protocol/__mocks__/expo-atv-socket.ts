@@ -1,6 +1,3 @@
-// In-memory fake AtvSocket for both pairing and command channel tests.
-// Supports the full connect(id, host, port, certPem, keyPem) signature.
-
 interface SocketDataEvent {
   id: string;
   base64: string;
@@ -10,22 +7,30 @@ interface SocketStateEvent {
   id: string;
   state: string;
   error?: string;
+  code?: string;
 }
 
 export class FakeAtvSocket {
   public sentFrames: string[] = [];
   public lastSocketId: string | null = null;
+  public connectCallCount = 0;
 
   private dataListeners: Array<(e: SocketDataEvent) => void> = [];
   private stateListeners: Array<(e: SocketStateEvent) => void> = [];
 
-  // Configurable RSA components for pairing tests
   public serverModulusB64 = 'AQIDBA==';
-  public serverExponentB64 = 'AQID';
+  public serverExponentB64 = 'AQAB';
   public clientModulusB64 = 'BQRFBA==';
   public clientExponentB64 = 'AgM=';
 
   async getServerPublicKeyComponents(_host: string, _port: number, _timeoutMs?: number) {
+    return {
+      modulusB64: this.serverModulusB64,
+      exponentB64: this.serverExponentB64,
+    };
+  }
+
+  async getPeerPublicKeyComponents(_id: string) {
     return {
       modulusB64: this.serverModulusB64,
       exponentB64: this.serverExponentB64,
@@ -43,6 +48,7 @@ export class FakeAtvSocket {
 
   async connect(id: string, _host: string, _port: number, _certPem: string, _keyPem: string) {
     this.lastSocketId = id;
+    this.connectCallCount++;
     this.stateListeners.forEach((cb) => cb({ id, state: 'open' }));
   }
 
@@ -71,32 +77,30 @@ export class FakeAtvSocket {
   }
   stopMicStream() {}
 
-  /** Inject a raw base64 frame (already framed) to trigger handle(). */
   injectData(base64: string) {
     if (!this.lastSocketId) throw new Error('socket not connected');
     this.dataListeners.forEach((cb) => cb({ id: this.lastSocketId!, base64 }));
   }
 
-  /** Emit a socket state change (open/closed/error). */
-  emitState(state: string, error?: string) {
+  emitState(state: string, error?: string, code?: string) {
     if (!this.lastSocketId) throw new Error('socket not connected');
-    this.stateListeners.forEach((cb) => cb({ id: this.lastSocketId!, state, error }));
+    this.stateListeners.forEach((cb) => cb({ id: this.lastSocketId!, state, error, code }));
   }
 
-  /** Reset all state for a fresh test. */
   reset() {
     this.sentFrames = [];
     this.lastSocketId = null;
     this.dataListeners = [];
     this.stateListeners = [];
+    this.connectCallCount = 0;
   }
 }
 
-// Export as the shape that @/modules/expo-atv-socket expects
 const fake = new FakeAtvSocket();
 
 export const AtvSocket = {
   getServerPublicKeyComponents: fake.getServerPublicKeyComponents.bind(fake),
+  getPeerPublicKeyComponents: fake.getPeerPublicKeyComponents.bind(fake),
   generateClientCertificate: fake.generateClientCertificate.bind(fake),
   connect: fake.connect.bind(fake),
   send: fake.send.bind(fake),
@@ -108,5 +112,4 @@ export const AtvSocket = {
   onMicData: fake.onMicData.bind(fake),
 } as any;
 
-// Expose the fake instance for test assertions
 (AtvSocket as any)._fake = fake;

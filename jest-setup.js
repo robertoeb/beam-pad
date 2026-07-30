@@ -49,6 +49,26 @@ jest.mock('@/modules/expo-atv-socket', () => ({
     connect: jest.fn(() => Promise.resolve()),
     disconnect: jest.fn(),
     send: jest.fn(),
+    close: jest.fn(),
+    generateClientCertificate: jest.fn(() =>
+      Promise.resolve({
+        pem: 'FAKE_CERT',
+        privateKeyPem: 'FAKE_KEY',
+        modulusB64: 'BQRFBA==',
+        exponentB64: 'AgM=',
+      }),
+    ),
+    getServerPublicKeyComponents: jest.fn(() =>
+      Promise.resolve({ modulusB64: 'AQIDBA==', exponentB64: 'AQAB' }),
+    ),
+    getPeerPublicKeyComponents: jest.fn(() =>
+      Promise.resolve({ modulusB64: 'AQIDBA==', exponentB64: 'AQAB' }),
+    ),
+    onSocketData: jest.fn(() => ({ remove: jest.fn() })),
+    onSocketState: jest.fn(() => ({ remove: jest.fn() })),
+    onMicData: jest.fn(() => ({ remove: jest.fn() })),
+    startMicStream: jest.fn(() => Promise.resolve()),
+    stopMicStream: jest.fn(),
   },
 }));
 

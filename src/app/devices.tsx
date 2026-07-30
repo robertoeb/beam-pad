@@ -5,13 +5,13 @@ import { WifiOff } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { startDiscovery, stopDiscovery } from '@/services/discovery';
 import { useDevicesStore } from '@/stores/devices';
+import { COMMAND_PORT } from '@/protocol/ports';
 
 export default function DevicesScreen() {
   const foundRaw = useDevicesStore((s) => s.found);
   const found = useMemo(() => Object.values(foundRaw), [foundRaw]);
   const removeFound = useDevicesStore((s) => s.removeFound);
   const [manualHost, setManualHost] = useState('');
-  const [manualPort, setManualPort] = useState('6466');
 
   useEffect(() => {
     startDiscovery();
@@ -31,9 +31,9 @@ export default function DevicesScreen() {
   const handleManualEntry = useCallback(() => {
     if (manualHost.trim()) {
       Keyboard.dismiss();
-      handlePair('Manual Entry', manualHost.trim(), parseInt(manualPort, 10) || 6466);
+      handlePair('Manual Entry', manualHost.trim(), COMMAND_PORT);
     }
-  }, [manualHost, manualPort, handlePair]);
+  }, [manualHost, handlePair]);
 
   const renderItem = useCallback(
     ({ item }: { item: (typeof found)[0] }) => (
@@ -82,14 +82,6 @@ export default function DevicesScreen() {
           keyboardType="url"
           autoCapitalize="none"
           className="flex-1 rounded-lg border border-surface-border bg-surface px-3 py-2 text-[15px] text-text-primary"
-        />
-        <TextInput
-          placeholder="Port"
-          placeholderTextColor="#52525B"
-          value={manualPort}
-          onChangeText={setManualPort}
-          keyboardType="numeric"
-          className="w-20 rounded-lg border border-surface-border bg-surface px-3 py-2 text-center text-[15px] text-text-primary"
         />
         <Pressable onPress={handleManualEntry} className="rounded-lg bg-accent-cyan/10 px-4 py-2">
           <Text className="font-medium text-sm text-accent-cyan">Pair</Text>

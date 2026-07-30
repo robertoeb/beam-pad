@@ -32,6 +32,10 @@ class MockFakeAtvSocket {
     return { modulusB64: this.serverModulusB64, exponentB64: this.serverExponentB64 };
   }
 
+  async getPeerPublicKeyComponents(_id: string) {
+    return { modulusB64: this.serverModulusB64, exponentB64: this.serverExponentB64 };
+  }
+
   async generateClientCertificate() {
     return {
       pem: 'FAKE_CERT',
@@ -196,9 +200,9 @@ describe('PairingProtocol', () => {
 
   it('error path: BAD_CONFIGURATION → failed step', () => {
     const steps: string[] = [];
-    const errors: string[] = [];
+    const errors: any[] = [];
     const proto = new PairingProtocol('192.168.1.100', {
-      onStep: (s: string, err?: string) => {
+      onStep: (s: string, err?: any) => {
         steps.push(s);
         if (err) errors.push(err);
       },
@@ -216,5 +220,6 @@ describe('PairingProtocol', () => {
 
     expect(steps).toContain('failed');
     expect(errors.length).toBeGreaterThan(0);
+    expect(errors[0].code).toBe('PROTOCOL');
   });
 });

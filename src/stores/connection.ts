@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import type { ConnectionState, Telemetry } from '@/protocol/RemoteClient';
+import type { ConnectError } from '@/protocol/errors';
 
 interface ConnectionStoreState extends Telemetry {
   state: ConnectionState;
-  error?: string;
-  setState: (s: ConnectionState, error?: string) => void;
+  error?: ConnectError;
+  setState: (s: ConnectionState, error?: ConnectError) => void;
   mergeTelemetry: (t: Partial<Telemetry>) => void;
 }
 
