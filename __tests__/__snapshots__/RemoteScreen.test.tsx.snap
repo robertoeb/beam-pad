@@ -742,232 +742,312 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
       }
     >
       <View
-        accessibilityLabel="Open Nfx"
-        accessibilityRole="button"
-        accessibilityState={
-          {
-            "busy": undefined,
-            "checked": undefined,
-            "disabled": undefined,
-            "expanded": undefined,
-            "selected": undefined,
-          }
-        }
-        accessibilityValue={
-          {
-            "max": undefined,
-            "min": undefined,
-            "now": undefined,
-            "text": undefined,
-          }
-        }
-        accessible={true}
-        collapsable={false}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
         style={
           {
             "alignItems": "center",
-            "backgroundColor": "#0C0C0E",
-            "borderColor": "rgba(255,255,255,0.08)",
-            "borderRadius": 16,
-            "borderWidth": 1,
-            "height": 56,
-            "justifyContent": "center",
-            "width": 56,
           }
         }
       >
-        <Text
+        <View
           style={
             {
-              "color": "#FFFFFF",
-              "fontSize": 15,
-              "fontWeight": "600",
+              "transform": [
+                {
+                  "rotate": "0deg",
+                },
+              ],
             }
           }
         >
-          Nfx
-        </Text>
+          <View
+            accessibilityLabel="Open Netflix"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#E5091424",
+                "borderColor": "rgba(255,255,255,0.08)",
+                "borderRadius": 16,
+                "borderWidth": 1,
+                "height": 64,
+                "justifyContent": "center",
+                "width": 64,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#FFFFFF",
+                  "fontSize": 15,
+                  "fontWeight": "600",
+                }
+              }
+            >
+              Nf
+            </Text>
+          </View>
+        </View>
       </View>
       <View
-        accessibilityLabel="Open YT"
-        accessibilityRole="button"
-        accessibilityState={
-          {
-            "busy": undefined,
-            "checked": undefined,
-            "disabled": undefined,
-            "expanded": undefined,
-            "selected": undefined,
-          }
-        }
-        accessibilityValue={
-          {
-            "max": undefined,
-            "min": undefined,
-            "now": undefined,
-            "text": undefined,
-          }
-        }
-        accessible={true}
-        collapsable={false}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
         style={
           {
             "alignItems": "center",
-            "backgroundColor": "#0C0C0E",
-            "borderColor": "rgba(255,255,255,0.08)",
-            "borderRadius": 16,
-            "borderWidth": 1,
-            "height": 56,
-            "justifyContent": "center",
-            "width": 56,
           }
         }
       >
-        <Text
+        <View
           style={
             {
-              "color": "#FFFFFF",
-              "fontSize": 15,
-              "fontWeight": "600",
+              "transform": [
+                {
+                  "rotate": "0deg",
+                },
+              ],
             }
           }
         >
-          YT
-        </Text>
+          <View
+            accessibilityLabel="Open YouTube"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#FF000024",
+                "borderColor": "rgba(255,255,255,0.08)",
+                "borderRadius": 16,
+                "borderWidth": 1,
+                "height": 64,
+                "justifyContent": "center",
+                "width": 64,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#FFFFFF",
+                  "fontSize": 15,
+                  "fontWeight": "600",
+                }
+              }
+            >
+              YT
+            </Text>
+          </View>
+        </View>
       </View>
       <View
-        accessibilityLabel="Open Pri"
-        accessibilityRole="button"
-        accessibilityState={
-          {
-            "busy": undefined,
-            "checked": undefined,
-            "disabled": undefined,
-            "expanded": undefined,
-            "selected": undefined,
-          }
-        }
-        accessibilityValue={
-          {
-            "max": undefined,
-            "min": undefined,
-            "now": undefined,
-            "text": undefined,
-          }
-        }
-        accessible={true}
-        collapsable={false}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
         style={
           {
             "alignItems": "center",
-            "backgroundColor": "#0C0C0E",
-            "borderColor": "rgba(255,255,255,0.08)",
-            "borderRadius": 16,
-            "borderWidth": 1,
-            "height": 56,
-            "justifyContent": "center",
-            "width": 56,
           }
         }
       >
-        <Text
+        <View
           style={
             {
-              "color": "#FFFFFF",
-              "fontSize": 15,
-              "fontWeight": "600",
+              "transform": [
+                {
+                  "rotate": "0deg",
+                },
+              ],
             }
           }
         >
-          Pri
-        </Text>
+          <View
+            accessibilityLabel="Open Prime Video"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#00A8E124",
+                "borderColor": "rgba(255,255,255,0.08)",
+                "borderRadius": 16,
+                "borderWidth": 1,
+                "height": 64,
+                "justifyContent": "center",
+                "width": 64,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#FFFFFF",
+                  "fontSize": 15,
+                  "fontWeight": "600",
+                }
+              }
+            >
+              Pv
+            </Text>
+          </View>
+        </View>
       </View>
       <View
-        accessibilityLabel="Open Dis"
-        accessibilityRole="button"
-        accessibilityState={
-          {
-            "busy": undefined,
-            "checked": undefined,
-            "disabled": undefined,
-            "expanded": undefined,
-            "selected": undefined,
-          }
-        }
-        accessibilityValue={
-          {
-            "max": undefined,
-            "min": undefined,
-            "now": undefined,
-            "text": undefined,
-          }
-        }
-        accessible={true}
-        collapsable={false}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
         style={
           {
             "alignItems": "center",
-            "backgroundColor": "#0C0C0E",
-            "borderColor": "rgba(255,255,255,0.08)",
-            "borderRadius": 16,
-            "borderWidth": 1,
-            "height": 56,
-            "justifyContent": "center",
-            "width": 56,
           }
         }
       >
-        <Text
+        <View
           style={
             {
-              "color": "#FFFFFF",
-              "fontSize": 15,
-              "fontWeight": "600",
+              "transform": [
+                {
+                  "rotate": "0deg",
+                },
+              ],
             }
           }
         >
-          Dis
-        </Text>
+          <View
+            accessibilityLabel="Open Disney+"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#113CCF24",
+                "borderColor": "rgba(255,255,255,0.08)",
+                "borderRadius": 16,
+                "borderWidth": 1,
+                "height": 64,
+                "justifyContent": "center",
+                "width": 64,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#FFFFFF",
+                  "fontSize": 15,
+                  "fontWeight": "600",
+                }
+              }
+            >
+              D+
+            </Text>
+          </View>
+        </View>
       </View>
       <View
         accessibilityLabel="Add app"
@@ -1009,9 +1089,9 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             "borderRadius": 16,
             "borderStyle": "dashed",
             "borderWidth": 1,
-            "height": 56,
+            "height": 64,
             "justifyContent": "center",
-            "width": 56,
+            "width": 64,
           }
         }
       >

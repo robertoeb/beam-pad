@@ -1,20 +1,16 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, FlatList, Pressable } from 'react-native';
 import { Plus } from 'lucide-react-native';
-import { useLayoutStore } from '@/stores/layout';
+import { router } from 'expo-router';
 
-const APP_LABELS: Record<string, string> = {
-  netflix: 'Nfx',
-  youtube: 'YT',
-  prime: 'Pri',
-  disney: 'Dis',
-  hulu: 'Hul',
-  hbo: 'HBO',
-  spotify: 'Spo',
-  apple: 'TV+',
-};
+import { AppTile } from './AppTile';
+import { useLayoutStore } from '@/stores/layout';
+import { launchApp } from '@/services/apps';
+
+const MAX_VISIBLE = 5;
 
 export function PinnedAppsRow() {
   const pinned = useLayoutStore((s) => s.pinned);
+  const visible = pinned.slice(0, MAX_VISIBLE);
 
   return (
     <View
@@ -26,39 +22,21 @@ export function PinnedAppsRow() {
         alignSelf: 'center',
       }}
     >
-      {pinned.map((id) => (
-        <Pressable
+      {visible.map((id) => (
+        <AppTile
           key={id}
-          accessibilityRole="button"
-          accessibilityLabel={`Open ${APP_LABELS[id] ?? id}`}
-          style={{
-            width: 56,
-            height: 56,
-            borderRadius: 16,
-            borderWidth: 1,
-            borderColor: 'rgba(255,255,255,0.08)',
-            backgroundColor: '#0C0C0E',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text
-            style={{
-              fontWeight: '600',
-              fontSize: 15,
-              color: '#FFFFFF',
-            }}
-          >
-            {APP_LABELS[id] ?? id.slice(0, 3).charAt(0).toUpperCase() + id.slice(1, 3)}
-          </Text>
-        </Pressable>
+          appId={id}
+          onPress={() => launchApp(id)}
+          onLongPress={() => router.push('/apps?edit=1' as any)}
+        />
       ))}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Add app"
+        onPress={() => router.push('/apps' as any)}
         style={{
-          width: 56,
-          height: 56,
+          width: 64,
+          height: 64,
           borderRadius: 16,
           borderWidth: 1,
           borderColor: 'rgba(255,255,255,0.08)',
