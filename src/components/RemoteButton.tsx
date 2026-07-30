@@ -17,7 +17,7 @@ export interface RemoteButtonProps {
   onLongPress?: () => void;
   repeat?: boolean;
   accent?: 'cyan' | 'red';
-  size?: 44 | 56 | 72;
+  size?: number;
   round?: boolean;
   accessibilityLabel: string;
   testID?: string;

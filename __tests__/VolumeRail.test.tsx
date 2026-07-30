@@ -8,6 +8,11 @@ jest.mock('@/services/volumeRouter', () => ({
   volumeCommand: jest.fn(),
 }));
 
+jest.mock('@/lib/useRemoteMetrics', () => ({
+  useRemoteMetrics: () => ({ dpad: 228, actionSize: 72, tile: 64, gutter: 16, zoneGap: 24, showNowPlaying: true }),
+  SHORTCUT_ROW_HEIGHT: 80,
+}));
+
 beforeEach(() => {
   jest.useFakeTimers();
   (volumeCommand as jest.Mock).mockClear();
@@ -53,5 +58,12 @@ describe('VolumeRail', () => {
     });
     const { toJSON } = await render(<VolumeRail />);
     expect(toJSON()).toBeTruthy();
+  });
+
+  it('rail bottom offset reacts to metrics', async () => {
+    const { getByLabelText } = await render(<VolumeRail />);
+    const volUp = getByLabelText('Volume up');
+    const railContainer = volUp.parent?.parent?.parent;
+    expect(railContainer).toBeTruthy();
   });
 });

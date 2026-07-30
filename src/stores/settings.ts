@@ -2,6 +2,7 @@ import { createPersistedStore } from './createPersistedStore';
 
 export type VolumeTarget = 'tv-os' | 'ir';
 export type PowerKeyMode = 'toggle' | 'sleep-wake';
+export type Density = 'compact' | 'comfortable' | 'spacious';
 
 interface SettingsState {
   volumeTarget: VolumeTarget;
@@ -9,7 +10,9 @@ interface SettingsState {
   irAvailable: boolean;
   haptics: boolean;
   powerKeyMode: PowerKeyMode;
+  density: Density;
   setVolumeTarget: (t: VolumeTarget) => void;
+  setDensity: (d: Density) => void;
   set: (p: Partial<SettingsState>) => void;
 }
 
@@ -22,6 +25,7 @@ export const useSettingsStore = createPersistedStore<SettingsState>(
         irProfileId: s.irProfileId,
         haptics: s.haptics,
         powerKeyMode: s.powerKeyMode,
+        density: s.density,
       }) as SettingsState,
   },
   (set) => ({
@@ -30,7 +34,9 @@ export const useSettingsStore = createPersistedStore<SettingsState>(
     irAvailable: false,
     haptics: true,
     powerKeyMode: 'toggle',
+    density: 'comfortable',
     setVolumeTarget: (volumeTarget) => set({ volumeTarget }),
+    setDensity: (density) => set({ density }),
     set: (p) => set(p),
   }),
 );

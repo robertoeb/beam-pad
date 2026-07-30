@@ -4,28 +4,35 @@ import { RemoteButton } from './RemoteButton';
 import { KEYS } from '@/protocol/keycodes';
 import { key } from '@/lib/key';
 
-export function DPad() {
+interface DPadProps {
+  diameter?: number;
+}
+
+export function DPad({ diameter = 228 }: DPadProps) {
+  const btnSize = diameter >= 240 ? 72 : 56;
+  const offset = (diameter - btnSize) / 2;
+
   return (
     <View
-      style={{ width: 228, height: 228, alignSelf: 'center' }}
+      style={{ width: diameter, height: diameter, alignSelf: 'center' }}
       className="items-center justify-center"
     >
-      <View style={{ position: 'absolute', top: 0 }}>
+      <View style={{ position: 'absolute', top: 0, left: offset }}>
         <RemoteButton
           round
           repeat
-          size={72}
+          size={btnSize}
           icon={ChevronUp}
           accessibilityLabel="Up"
           testID="dpad-up"
           onPress={() => key(KEYS.up)}
         />
       </View>
-      <View style={{ position: 'absolute', left: 0, top: 78 }}>
+      <View style={{ position: 'absolute', left: 0, top: offset }}>
         <RemoteButton
           round
           repeat
-          size={72}
+          size={btnSize}
           icon={ChevronLeft}
           accessibilityLabel="Left"
           testID="dpad-left"
@@ -34,28 +41,28 @@ export function DPad() {
       </View>
       <RemoteButton
         round
-        size={72}
+        size={btnSize}
         icon={CircleDot}
         accessibilityLabel="OK"
         testID="dpad-ok"
         onPress={() => key(KEYS.ok)}
       />
-      <View style={{ position: 'absolute', right: 0, top: 78 }}>
+      <View style={{ position: 'absolute', right: 0, top: offset }}>
         <RemoteButton
           round
           repeat
-          size={72}
+          size={btnSize}
           icon={ChevronRight}
           accessibilityLabel="Right"
           testID="dpad-right"
           onPress={() => key(KEYS.right)}
         />
       </View>
-      <View style={{ position: 'absolute', bottom: 0 }}>
+      <View style={{ position: 'absolute', bottom: 0, left: offset }}>
         <RemoteButton
           round
           repeat
-          size={72}
+          size={btnSize}
           icon={ChevronDown}
           accessibilityLabel="Down"
           testID="dpad-down"

@@ -1,16 +1,19 @@
-import { View, FlatList, Pressable } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { router } from 'expo-router';
 
 import { AppTile } from './AppTile';
 import { useLayoutStore } from '@/stores/layout';
+import { useRemoteMetrics } from '@/lib/useRemoteMetrics';
 import { launchApp } from '@/services/apps';
+import { space, radius } from '@/theme/tokens';
 
 const MAX_VISIBLE = 5;
 
 export function PinnedAppsRow() {
   const pinned = useLayoutStore((s) => s.pinned);
   const visible = pinned.slice(0, MAX_VISIBLE);
+  const metrics = useRemoteMetrics();
 
   return (
     <View
@@ -18,7 +21,7 @@ export function PinnedAppsRow() {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 8,
+        gap: space[2],
         alignSelf: 'center',
       }}
     >
@@ -35,9 +38,9 @@ export function PinnedAppsRow() {
         accessibilityLabel="Add app"
         onPress={() => router.push('/apps' as any)}
         style={{
-          width: 64,
-          height: 64,
-          borderRadius: 16,
+          width: metrics.tile,
+          height: metrics.tile,
+          borderRadius: radius.lg,
           borderWidth: 1,
           borderColor: 'rgba(255,255,255,0.08)',
           backgroundColor: 'transparent',

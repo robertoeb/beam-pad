@@ -6,10 +6,23 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
   testID="safe-area"
 >
   <View
-    className="flex-1 px-5 pt-4"
+    style={
+      {
+        "flex": 1,
+        "paddingHorizontal": 16,
+        "paddingTop": 16,
+      }
+    }
   >
     <View
-      className="flex-row items-center justify-between"
+      style={
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "height": 44,
+          "justifyContent": "space-between",
+        }
+      }
     >
       <View
         accessibilityLabel="Switch device"
@@ -124,21 +137,28 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
       </View>
     </View>
     <View
-      className="flex-1 justify-center"
+      style={
+        {
+          "alignItems": "center",
+          "flex": 1,
+          "justifyContent": "center",
+        }
+      }
     >
       <View
         className="items-center justify-center"
         style={
           {
             "alignSelf": "center",
-            "height": 228,
-            "width": 228,
+            "height": 288,
+            "width": 288,
           }
         }
       >
         <View
           style={
             {
+              "left": 108,
               "position": "absolute",
               "top": 0,
             }
@@ -213,7 +233,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             {
               "left": 0,
               "position": "absolute",
-              "top": 78,
+              "top": 108,
             }
           }
         >
@@ -349,7 +369,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             {
               "position": "absolute",
               "right": 0,
-              "top": 78,
+              "top": 108,
             }
           }
         >
@@ -421,6 +441,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
           style={
             {
               "bottom": 0,
+              "left": 108,
               "position": "absolute",
             }
           }
@@ -497,7 +518,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             "flexDirection": "row",
             "gap": 24,
             "justifyContent": "center",
-            "marginTop": 32,
+            "marginTop": 24,
           }
         }
       >
@@ -1108,7 +1129,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
     className="items-center"
     style={
       {
-        "bottom": 120,
+        "bottom": 104,
         "position": "absolute",
         "right": 16,
       }

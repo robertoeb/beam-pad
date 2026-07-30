@@ -1,9 +1,9 @@
 import { Pressable, Text, View } from 'react-native';
 import { Plus, Minus, VolumeX, Wifi, Rss } from 'lucide-react-native';
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { RemoteButton } from './RemoteButton';
 import { useConnectionStore } from '@/stores/connection';
 import { useSettingsStore } from '@/stores/settings';
+import { useRemoteMetrics, SHORTCUT_ROW_HEIGHT } from '@/lib/useRemoteMetrics';
 import { volumeCommand } from '@/services/volumeRouter';
 
 export function VolumeRail() {
@@ -11,14 +11,11 @@ export function VolumeRail() {
   const volumeTarget = useSettingsStore((s) => s.volumeTarget);
   const setVolumeTarget = useSettingsStore((s) => s.setVolumeTarget);
   const irAvailable = useSettingsStore((s) => s.irAvailable);
+  const metrics = useRemoteMetrics();
 
   const level = volume ? volume.level : 0;
   const max = volume ? volume.max : 100;
   const fillRatio = max > 0 ? Math.min(level / max, 1) : 0;
-
-  const fillStyle = useAnimatedStyle(() => ({
-    height: withTiming(`${fillRatio * 100}%` as any, { duration: 200 }),
-  }));
 
   const isTvOS = volumeTarget === 'tv-os';
 
@@ -29,7 +26,10 @@ export function VolumeRail() {
   };
 
   return (
-    <View style={{ position: 'absolute', right: 16, bottom: 120 }} className="items-center">
+    <View
+      style={{ position: 'absolute', right: metrics.gutter, bottom: SHORTCUT_ROW_HEIGHT + metrics.zoneGap }}
+      className="items-center"
+    >
       <Pressable
         onPress={toggleTarget}
         className="mb-2 flex-row items-center gap-1 rounded-full border border-surface-border bg-surface px-2 py-1"
