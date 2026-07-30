@@ -52,36 +52,29 @@ export class PairingProtocol {
   private serverKeys: { modulusB64: string; exponentB64: string } | null = null;
   private subs: { remove(): void }[] = [];
 
-  constructor(private host: string, private cb: PairingCallbacks) {}
+  constructor(
+    private host: string,
+    private cb: PairingCallbacks,
+  ) {}
 
   /** Start the pairing flow. Awaits TLS connect then sends PairingRequest. */
   async start() {
     try {
       this.setStep('probing');
-      this.serverKeys = await AtvSocket.getServerPublicKeyComponents(
-        this.host,
-        6467,
-        8000,
-      );
+      this.serverKeys = await AtvSocket.getServerPublicKeyComponents(this.host, 6467, 8000);
 
       this.client = await AtvSocket.generateClientCertificate();
 
       this.setStep('connecting');
       this.subs.push(
-        AtvSocket.onSocketData((e: { id: string; base64: string }) =>
-          e.id === this.socketId && this.handle(e.base64),
+        AtvSocket.onSocketData(
+          (e: { id: string; base64: string }) => e.id === this.socketId && this.handle(e.base64),
         ),
-        AtvSocket.onSocketState(
-          (e: { id: string; state: string; error?: string }) => {
-            if (
-              e.id === this.socketId &&
-              e.state !== 'open' &&
-              this.step !== 'done'
-            ) {
-              this.fail(e.error ?? 'socket closed');
-            }
-          },
-        ),
+        AtvSocket.onSocketState((e: { id: string; state: string; error?: string }) => {
+          if (e.id === this.socketId && e.state !== 'open' && this.step !== 'done') {
+            this.fail(e.error ?? 'socket closed');
+          }
+        }),
       );
       await AtvSocket.connect(
         this.socketId,
@@ -169,9 +162,7 @@ export class PairingProtocol {
 
   /** Encode and send a PairingMessage over the TLS socket. */
   private send(fields: pb.IPairingMessage) {
-    const payload = pb.PairingMessage.encode(
-      pb.PairingMessage.create(fields),
-    ).finish();
+    const payload = pb.PairingMessage.encode(pb.PairingMessage.create(fields)).finish();
     AtvSocket.send(this.socketId, toB64(FrameCodec.encode(payload)));
   }
 

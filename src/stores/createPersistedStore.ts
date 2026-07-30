@@ -8,8 +8,10 @@ export const createPersistedStore = <T>(
   config: PersistConfig<T>,
   creator: StateCreator<T, [['zustand/persist', Omit<PersistOptions<T>, 'name'>]], []>,
 ) =>
-  create<T>()(persist(creator as any, {
-    name: config.name,
-    storage: createJSONStorage(() => mmkvStorage),
-    partialize: config.partialize,
-  }));
+  create<T>()(
+    persist(creator as any, {
+      name: config.name,
+      storage: createJSONStorage(() => mmkvStorage),
+      partialize: config.partialize,
+    }),
+  );

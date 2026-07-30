@@ -1,5 +1,5 @@
-// In-memory fake AtvSocket for pairing tests.
-// Place in src/modules/__mocks__/expo-atv-socket.ts OR use jest.mock factory.
+// In-memory fake AtvSocket for both pairing and command channel tests.
+// Supports the full connect(id, host, port, certPem, keyPem) signature.
 
 interface SocketDataEvent {
   id: string;
@@ -19,17 +19,13 @@ export class FakeAtvSocket {
   private dataListeners: Array<(e: SocketDataEvent) => void> = [];
   private stateListeners: Array<(e: SocketStateEvent) => void> = [];
 
-  // Configurable RSA components
-  public serverModulusB64 = 'AQIDBA=='; // [1, 2, 3, 4]
-  public serverExponentB64 = 'AQID';     // [1, 2, 3]
-  public clientModulusB64 = 'BQRFBA==';  // [2, 17, 5, 1]
-  public clientExponentB64 = 'AgM=';     // [1, 3]
+  // Configurable RSA components for pairing tests
+  public serverModulusB64 = 'AQIDBA==';
+  public serverExponentB64 = 'AQID';
+  public clientModulusB64 = 'BQRFBA==';
+  public clientExponentB64 = 'AgM=';
 
-  async getServerPublicKeyComponents(
-    _host: string,
-    _port: number,
-    _timeoutMs?: number,
-  ) {
+  async getServerPublicKeyComponents(_host: string, _port: number, _timeoutMs?: number) {
     return {
       modulusB64: this.serverModulusB64,
       exponentB64: this.serverExponentB64,
@@ -47,7 +43,6 @@ export class FakeAtvSocket {
 
   async connect(id: string, _host: string, _port: number, _certPem: string, _keyPem: string) {
     this.lastSocketId = id;
-    // Immediately emit 'open' to unblock start()
     this.stateListeners.forEach((cb) => cb({ id, state: 'open' }));
   }
 
@@ -67,10 +62,33 @@ export class FakeAtvSocket {
     return { remove: () => this.stateListeners.splice(this.stateListeners.indexOf(cb), 1) };
   }
 
+  onMicData(_cb: (e: { base64: string }) => void) {
+    return { remove: () => {} };
+  }
+
+  startMicStream(): Promise<void> {
+    return Promise.resolve();
+  }
+  stopMicStream() {}
+
   /** Inject a raw base64 frame (already framed) to trigger handle(). */
   injectData(base64: string) {
     if (!this.lastSocketId) throw new Error('socket not connected');
     this.dataListeners.forEach((cb) => cb({ id: this.lastSocketId!, base64 }));
+  }
+
+  /** Emit a socket state change (open/closed/error). */
+  emitState(state: string, error?: string) {
+    if (!this.lastSocketId) throw new Error('socket not connected');
+    this.stateListeners.forEach((cb) => cb({ id: this.lastSocketId!, state, error }));
+  }
+
+  /** Reset all state for a fresh test. */
+  reset() {
+    this.sentFrames = [];
+    this.lastSocketId = null;
+    this.dataListeners = [];
+    this.stateListeners = [];
   }
 }
 
@@ -85,9 +103,9 @@ export const AtvSocket = {
   close: fake.close.bind(fake),
   onSocketData: fake.onSocketData.bind(fake),
   onSocketState: fake.onSocketState.bind(fake),
-  startMicStream: async () => {},
-  stopMicStream: () => {},
-  onMicData: () => ({ remove: () => {} }),
+  startMicStream: fake.startMicStream.bind(fake),
+  stopMicStream: fake.stopMicStream.bind(fake),
+  onMicData: fake.onMicData.bind(fake),
 } as any;
 
 // Expose the fake instance for test assertions

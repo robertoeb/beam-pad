@@ -24,7 +24,17 @@ export default function PairingScreen() {
   const h = (host as string) ?? '';
   const p = parseInt((port as string) ?? '6467', 10);
   const n = (name as string) ?? 'ATV';
-  const [step, setStep] = useState<'probing' | 'connecting' | 'request' | 'option' | 'configuration' | 'awaiting_code' | 'secret' | 'done' | 'failed'>('probing');
+  const [step, setStep] = useState<
+    | 'probing'
+    | 'connecting'
+    | 'request'
+    | 'option'
+    | 'configuration'
+    | 'awaiting_code'
+    | 'secret'
+    | 'done'
+    | 'failed'
+  >('probing');
   const [error, setError] = useState<string | undefined>();
   const [proto, setProto] = useState<PairingProtocol | null>(null);
 
@@ -81,7 +91,14 @@ export default function PairingScreen() {
     p.start();
   }, [h]);
 
-  const isWorking = ['probing', 'connecting', 'request', 'option', 'configuration', 'secret'].includes(step);
+  const isWorking = [
+    'probing',
+    'connecting',
+    'request',
+    'option',
+    'configuration',
+    'secret',
+  ].includes(step);
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -89,7 +106,7 @@ export default function PairingScreen() {
         {isWorking && (
           <View className="items-center gap-4">
             <ActivityIndicator size="large" color="#00E5FF" />
-            <Text className="font-medium text-[15px] text-text-secondary text-center">
+            <Text className="text-center font-medium text-[15px] text-text-secondary">
               {STEP_COPY[step]}
             </Text>
           </View>
@@ -97,7 +114,7 @@ export default function PairingScreen() {
 
         {step === 'awaiting_code' && (
           <View className="items-center gap-6">
-            <Text className="font-medium text-[15px] text-text-secondary text-center">
+            <Text className="text-center font-medium text-[15px] text-text-secondary">
               {STEP_COPY.awaiting_code}
             </Text>
             <PinInput length={6} onComplete={handleCodeSubmit} />
@@ -107,27 +124,21 @@ export default function PairingScreen() {
         {step === 'done' && (
           <View className="items-center gap-4">
             <CheckCircle2 size={56} color="#00E5FF" strokeWidth={1.5} />
-            <Text className="font-semibold text-xl text-text-primary">
-              Paired Successfully
-            </Text>
-            <Text className="font-medium text-sm text-text-secondary">
-              {n} is ready to use
-            </Text>
+            <Text className="font-semibold text-xl text-text-primary">Paired Successfully</Text>
+            <Text className="font-medium text-sm text-text-secondary">{n} is ready to use</Text>
           </View>
         )}
 
         {step === 'failed' && (
           <View className="items-center gap-4">
             <XCircle size={56} color="#FF3B30" strokeWidth={1.5} />
-            <Text className="font-semibold text-xl text-text-primary">
-              Pairing Failed
-            </Text>
-            <Text className="font-medium text-sm text-text-secondary text-center px-4">
+            <Text className="font-semibold text-xl text-text-primary">Pairing Failed</Text>
+            <Text className="px-4 text-center font-medium text-sm text-text-secondary">
               {error || 'The TV rejected pairing. Try again from its remote settings.'}
             </Text>
             <Pressable
               onPress={handleRetry}
-              className="mt-4 px-6 py-3 rounded-lg bg-accent-cyan/10"
+              className="mt-4 rounded-lg bg-accent-cyan/10 px-6 py-3"
             >
               <Text className="font-medium text-sm text-accent-cyan">Try Again</Text>
             </Pressable>

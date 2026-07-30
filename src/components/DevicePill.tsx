@@ -4,7 +4,7 @@ import { useDevicesStore } from '@/stores/devices';
 import { useConnectionStore } from '@/stores/connection';
 
 export function DevicePill({ onPress }: { onPress: () => void }) {
-  const active = useDevicesStore((s) => s.activeDeviceId ? s.paired[s.activeDeviceId] : null);
+  const active = useDevicesStore((s) => (s.activeDeviceId ? s.paired[s.activeDeviceId] : null));
   const fsm = useConnectionStore((s) => s.state);
   const dot =
     fsm === 'ACTIVE'

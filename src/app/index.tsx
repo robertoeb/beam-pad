@@ -40,16 +40,14 @@ export default function Index() {
       </View>
 
       <View className="flex-1 items-center justify-center gap-4">
-        <Text className="font-semibold text-2xl text-text-primary tracking-tight">
-          BeamPad
-        </Text>
+        <Text className="font-semibold text-2xl tracking-tight text-text-primary">BeamPad</Text>
         <Animated.View
           style={[
             { transform: [{ scale }] },
             { width: 12, height: 12, borderRadius: 6, backgroundColor: '#00E5FF' },
           ]}
         />
-        <Text className="font-medium text-xs text-text-muted mt-8">
+        <Text className="mt-8 font-medium text-xs text-text-muted">
           Foundation OK — {JSON.stringify(SPRING)}
         </Text>
       </View>

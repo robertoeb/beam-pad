@@ -28,12 +28,12 @@ export function PinInput({ length = 6, onComplete }: PinInputProps) {
         <View
           key={i}
           className={`h-14 w-12 items-center justify-center rounded-lg border ${
-            i < digits.length ? 'border-accent-cyan bg-surface-elevated' : 'border-surface-border bg-surface'
+            i < digits.length
+              ? 'border-accent-cyan bg-surface-elevated'
+              : 'border-surface-border bg-surface'
           }`}
         >
-          <Text className="text-[40px] font-semibold text-text-primary">
-            {digits[i] ?? ''}
-          </Text>
+          <Text className="font-semibold text-[40px] text-text-primary">{digits[i] ?? ''}</Text>
         </View>
       )),
     [digits, length],
@@ -55,7 +55,7 @@ export function PinInput({ length = 6, onComplete }: PinInputProps) {
         autoComplete="off"
         autoCorrect={false}
         textContentType="none"
-        className="absolute opacity-0 w-1 h-1"
+        className="absolute h-1 w-1 opacity-0"
         autoFocus
         returnKeyType="done"
         blurOnSubmit

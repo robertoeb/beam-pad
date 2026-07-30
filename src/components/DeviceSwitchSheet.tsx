@@ -59,7 +59,9 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
           onPress={() => handleSwitch(item.id)}
           className="flex-row items-center gap-3 px-4 py-3"
         >
-          <View className={`h-2.5 w-2.5 rounded-full ${isActive ? 'bg-accent-cyan' : 'bg-text-muted'}`} />
+          <View
+            className={`h-2.5 w-2.5 rounded-full ${isActive ? 'bg-accent-cyan' : 'bg-text-muted'}`}
+          />
           <Tv size={20} color={isActive ? '#00E5FF' : '#A1A1AA'} />
           <View className="flex-1">
             <Text className="font-medium text-[15px] text-text-primary">{item.name}</Text>
@@ -77,14 +79,14 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
         <SafeAreaView style={{ flex: 1 }}>
           <Animated.View
             style={{ transform: [{ translateY }] }}
-            className="mx-4 rounded-[24px] bg-surface border border-surface-border"
+            className="mx-4 rounded-[24px] border border-surface-border bg-surface"
           >
-            <Text className="font-semibold text-lg text-text-primary px-4 pt-4 pb-2">
+            <Text className="px-4 pb-2 pt-4 font-semibold text-lg text-text-primary">
               Switch Device
             </Text>
             {paired.length === 0 ? (
               <View className="px-4 py-8">
-                <Text className="text-text-muted text-center">No paired devices</Text>
+                <Text className="text-center text-text-muted">No paired devices</Text>
               </View>
             ) : (
               <FlatList
@@ -99,7 +101,7 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
                 onClose();
                 router.push({ pathname: '/devices' as any });
               }}
-              className="flex-row items-center gap-2 px-4 py-3 border-t border-surface-border"
+              className="flex-row items-center gap-2 border-t border-surface-border px-4 py-3"
             >
               <Plus size={18} color="#00E5FF" />
               <Text className="font-medium text-[15px] text-accent-cyan">Add Device</Text>

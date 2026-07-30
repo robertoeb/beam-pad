@@ -15,7 +15,9 @@ export default function RootLayout() {
     'Inter-Medium': require('../../assets/fonts/Inter-Medium.ttf'),
     'Inter-SemiBold': require('../../assets/fonts/Inter-SemiBold.ttf'),
   });
-  useEffect(() => { if (loaded) SplashScreen.hideAsync(); }, [loaded]);
+  useEffect(() => {
+    if (loaded) SplashScreen.hideAsync();
+  }, [loaded]);
   if (!loaded) return null;
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#000' }}>

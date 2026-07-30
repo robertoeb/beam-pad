@@ -1,1 +1,4 @@
-{ "platforms": ["android"], "android": { "modules": ["expo.modules.atvdiscovery.AtvDiscoveryModule"] } }
+{
+  "platforms": ["android"],
+  "android": { "modules": ["expo.modules.atvdiscovery.AtvDiscoveryModule"] }
+}

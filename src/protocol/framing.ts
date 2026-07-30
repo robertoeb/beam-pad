@@ -53,7 +53,7 @@ export class FrameCodec {
         if (shift > 28) throw new Error('varint too long');
       }
       // incomplete varint (continuation byte expected but EOF)
-      if (i > offset && i < this.buf.length && (this.buf[i - 1]! & 0x80)) break;
+      if (i > offset && i < this.buf.length && this.buf[i - 1]! & 0x80) break;
       if (i === offset) break; // no progress
       // incomplete payload
       if (i + len > this.buf.length) break;

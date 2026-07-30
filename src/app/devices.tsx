@@ -15,7 +15,9 @@ export default function DevicesScreen() {
 
   useEffect(() => {
     startDiscovery();
-    return () => { stopDiscovery(); };
+    return () => {
+      stopDiscovery();
+    };
   }, []);
 
   const handlePair = useCallback(
@@ -44,7 +46,7 @@ export default function DevicesScreen() {
         </View>
         <Pressable
           onPress={() => item && handlePair(item.name, item.host, item.port)}
-          className="ml-3 px-4 py-2 rounded-lg bg-accent-cyan/10"
+          className="ml-3 rounded-lg bg-accent-cyan/10 px-4 py-2"
         >
           <Text className="font-medium text-sm text-accent-cyan">Pair</Text>
         </Pressable>
@@ -55,16 +57,12 @@ export default function DevicesScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <Text className="font-semibold text-xl text-text-primary px-4 py-4">
-        Devices
-      </Text>
+      <Text className="px-4 py-4 font-semibold text-xl text-text-primary">Devices</Text>
 
       {found.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3">
           <WifiOff size={40} color="#52525B" />
-          <Text className="text-text-muted text-center px-8">
-            Looking for TVs on your Wi-Fi…
-          </Text>
+          <Text className="px-8 text-center text-text-muted">Looking for TVs on your Wi-Fi…</Text>
         </View>
       ) : (
         <FlatList
@@ -83,7 +81,7 @@ export default function DevicesScreen() {
           onChangeText={setManualHost}
           keyboardType="url"
           autoCapitalize="none"
-          className="flex-1 px-3 py-2 rounded-lg bg-surface border border-surface-border text-text-primary text-[15px]"
+          className="flex-1 rounded-lg border border-surface-border bg-surface px-3 py-2 text-[15px] text-text-primary"
         />
         <TextInput
           placeholder="Port"
@@ -91,9 +89,9 @@ export default function DevicesScreen() {
           value={manualPort}
           onChangeText={setManualPort}
           keyboardType="numeric"
-          className="w-20 px-3 py-2 rounded-lg bg-surface border border-surface-border text-text-primary text-[15px] text-center"
+          className="w-20 rounded-lg border border-surface-border bg-surface px-3 py-2 text-center text-[15px] text-text-primary"
         />
-        <Pressable onPress={handleManualEntry} className="px-4 py-2 rounded-lg bg-accent-cyan/10">
+        <Pressable onPress={handleManualEntry} className="rounded-lg bg-accent-cyan/10 px-4 py-2">
           <Text className="font-medium text-sm text-accent-cyan">Pair</Text>
         </Pressable>
       </View>

@@ -22,11 +22,7 @@ const config: any = {
       ],
       blockedPermissions: [],
     },
-    plugins: [
-      'expo-router',
-      'expo-font',
-      'expo-splash-screen',
-    ],
+    plugins: ['expo-router', 'expo-font', 'expo-splash-screen'],
   },
 };
 

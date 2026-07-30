@@ -12,11 +12,13 @@ export function derivePairingSecret(opts: {
 }): Uint8Array {
   // Last 4 hex characters → 2-byte nonce
   const nonce = hexToBytes(opts.code.slice(-4));
-  return sha256(concatBytes([
-    fromB64(opts.clientModulusB64),
-    fromB64(opts.clientExponentB64),
-    fromB64(opts.serverModulusB64),
-    fromB64(opts.serverExponentB64),
-    nonce,
-  ]));
+  return sha256(
+    concatBytes([
+      fromB64(opts.clientModulusB64),
+      fromB64(opts.clientExponentB64),
+      fromB64(opts.serverModulusB64),
+      fromB64(opts.serverExponentB64),
+      nonce,
+    ]),
+  );
 }

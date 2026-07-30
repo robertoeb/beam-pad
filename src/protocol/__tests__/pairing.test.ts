@@ -145,9 +145,7 @@ describe('PairingProtocol', () => {
           protocolVersion: 2,
           pairingOption: {
             preferredRole: pb.RoleType.ROLE_TYPE_OUTPUT,
-            outputEncodings: [
-              { type: pb.EncodingType.ENCODING_TYPE_HEXADECIMAL, symbolLength: 6 },
-            ],
+            outputEncodings: [{ type: pb.EncodingType.ENCODING_TYPE_HEXADECIMAL, symbolLength: 6 }],
           },
         }),
       ),
@@ -192,8 +190,7 @@ describe('PairingProtocol', () => {
       code: 'A1B2C3',
     });
     // SHA-256 of: [2,17,5,1, 1,3, 1,2,3,4, 1,2,3, 0xB2,0xC3]
-    const expected =
-      '15c7ccdea44707780846069b527968d5a1eb732f3aaa764e65e5587c9fdaae9f';
+    const expected = '15c7ccdea44707780846069b527968d5a1eb732f3aaa764e65e5587c9fdaae9f';
     expect(bytesToHex(secret)).toBe(expected);
   });
 

@@ -1,0 +1,15 @@
+# Dependencies & Build outputs
+node_modules/
+.expo/
+dist/
+web-build/
+coverage/
+android/
+ios/
+
+# Generated Proto files
+src/proto/
+
+# Package lock & OS files
+package-lock.json
+.DS_Store

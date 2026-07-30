@@ -18,27 +18,27 @@ True-black OLED design. One-handed. Instant.
 
 BeamPad turns your Android phone into a fast, beautiful remote for every Android TV / Google TV in your home — over Wi-Fi, using the same **Android TV Remote Protocol v2** as Google's own remote.
 
-| | |
-|---|---|
-| 🎛️ **Minimal remote UI** | True-black interface with a D-pad, pinned apps, and a volume rail — nothing you don't need in a dark room |
-| 🏠 **Multi-device** | Auto-discovers TVs over mDNS, switches rooms in under 1.5 s — no re-pairing |
-| ⏻ **Real power button** | Tap = sleep/wake. Hold = the TV's native power menu (in-protocol long press, no ADB hacks) |
-| 🔊 **Hybrid volume** | Route volume to the TV's OS over Wi-Fi **or** blast IR straight to your TV/AVR hardware (NEC/RC5/RC6/SIRC, 20-brand profile DB) |
-| 🚀 **App launcher** | Pin Netflix, YouTube, Prime… launch with one tap via deep links; drag to reorder |
-| ⌨️ **Live keyboard** | TV focuses a search box → your phone's keyboard pops up automatically |
-| 🎤 **Voice search** | Hold to talk — 16 kHz PCM streams straight to the TV's Assistant |
+|                          |                                                                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| 🎛️ **Minimal remote UI** | True-black interface with a D-pad, pinned apps, and a volume rail — nothing you don't need in a dark room                       |
+| 🏠 **Multi-device**      | Auto-discovers TVs over mDNS, switches rooms in under 1.5 s — no re-pairing                                                     |
+| ⏻ **Real power button**  | Tap = sleep/wake. Hold = the TV's native power menu (in-protocol long press, no ADB hacks)                                      |
+| 🔊 **Hybrid volume**     | Route volume to the TV's OS over Wi-Fi **or** blast IR straight to your TV/AVR hardware (NEC/RC5/RC6/SIRC, 20-brand profile DB) |
+| 🚀 **App launcher**      | Pin Netflix, YouTube, Prime… launch with one tap via deep links; drag to reorder                                                |
+| ⌨️ **Live keyboard**     | TV focuses a search box → your phone's keyboard pops up automatically                                                           |
+| 🎤 **Voice search**      | Hold to talk — 16 kHz PCM streams straight to the TV's Assistant                                                                |
 
 ## 🧱 Tech stack
 
-| Layer | Choice |
-|---|---|
-| Framework | React Native + **Expo** (Prebuild / CNG, latest SDK) — Android only |
-| Styling | **NativeWind v4** (Tailwind), custom OLED token set |
-| State | **Zustand** + **react-native-mmkv** persistence |
-| Protocol | TypeScript + **protobufjs** (static bundle) — pairing, keys, IME, voice, telemetry |
-| Native modules | 3 thin Kotlin **Expo Modules**: TLS socket/certs/mic · NSD discovery · IR blaster |
-| Motion | Reanimated v4 · expo-haptics |
-| Testing | Jest (jest-expo) · @testing-library/react-native · fake-socket harness · golden vectors |
+| Layer          | Choice                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------- |
+| Framework      | React Native + **Expo** (Prebuild / CNG, latest SDK) — Android only                     |
+| Styling        | **NativeWind v4** (Tailwind), custom OLED token set                                     |
+| State          | **Zustand** + **react-native-mmkv** persistence                                         |
+| Protocol       | TypeScript + **protobufjs** (static bundle) — pairing, keys, IME, voice, telemetry      |
+| Native modules | 3 thin Kotlin **Expo Modules**: TLS socket/certs/mic · NSD discovery · IR blaster       |
+| Motion         | Reanimated v4 · expo-haptics                                                            |
+| Testing        | Jest (jest-expo) · @testing-library/react-native · fake-socket harness · golden vectors |
 
 ## 🚀 Getting started
 
@@ -54,13 +54,13 @@ npm run android            # builds & installs the dev client
 
 ### Everyday commands
 
-| Command | Purpose |
-|---|---|
-| `npm run android` | Build & launch on device |
-| `npm test` | Unit + component tests |
-| `npm test -- --coverage` | Tests with coverage gates (CI mode) |
-| `npm run typecheck` | Strict TypeScript check |
-| `npm run gen:proto` | Regenerate the protobuf bundle from `src/proto/*.proto` |
+| Command                  | Purpose                                                  |
+| ------------------------ | -------------------------------------------------------- |
+| `npm run android`        | Build & launch on device                                 |
+| `npm test`               | Unit + component tests                                   |
+| `npm test -- --coverage` | Tests with coverage gates (CI mode)                      |
+| `npm run typecheck`      | Strict TypeScript check                                  |
+| `npm run gen:proto`      | Regenerate the protobuf bundle from `src/proto/*.proto`  |
 | `scripts/verify-task.sh` | Full local gate: typecheck → tests → coverage thresholds |
 
 ## 🗂️ Project structure

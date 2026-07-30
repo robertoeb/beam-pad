@@ -12,7 +12,11 @@ const emitter = new EventEmitter<AtvSocketEvents>(Native as any);
 interface AtvSocketNative {
   generateClientCertificate(): Promise<ClientCertificate>;
   importClientCertificate(certPem: string, keyPem: string): Promise<RsaComponents>;
-  getServerPublicKeyComponents(host: string, port: number, timeoutMs: number): Promise<RsaComponents>;
+  getServerPublicKeyComponents(
+    host: string,
+    port: number,
+    timeoutMs: number,
+  ): Promise<RsaComponents>;
   connect(id: string, host: string, port: number, certPem: string, keyPem: string): Promise<void>;
   send(id: string, base64: string): void;
   close(id: string): void;
@@ -21,9 +25,15 @@ interface AtvSocketNative {
 }
 
 export interface ClientCertificate {
-  pem: string; privateKeyPem: string; modulusB64: string; exponentB64: string;
+  pem: string;
+  privateKeyPem: string;
+  modulusB64: string;
+  exponentB64: string;
 }
-export interface RsaComponents { modulusB64: string; exponentB64: string }
+export interface RsaComponents {
+  modulusB64: string;
+  exponentB64: string;
+}
 export type SocketState = 'open' | 'closed' | 'error';
 
 export const AtvSocket = {
@@ -39,9 +49,7 @@ export const AtvSocket = {
   startMicStream: (): Promise<void> => Native.startMicStream(),
   stopMicStream: (): void => Native.stopMicStream(),
 
-  onSocketData: (cb: AtvSocketEvents['onSocketData']) =>
-    emitter.addListener('onSocketData', cb),
-  onSocketState: (cb: AtvSocketEvents['onSocketState']) =>
-    emitter.addListener('onSocketState', cb),
+  onSocketData: (cb: AtvSocketEvents['onSocketData']) => emitter.addListener('onSocketData', cb),
+  onSocketState: (cb: AtvSocketEvents['onSocketState']) => emitter.addListener('onSocketState', cb),
   onMicData: (cb: AtvSocketEvents['onMicData']) => emitter.addListener('onMicData', cb),
 };

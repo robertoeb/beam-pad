@@ -8,9 +8,7 @@ _b64codes['='.charCodeAt(0)] = 0;
 /** base64 string → Uint8Array */
 export function fromB64(b64: string): Uint8Array {
   const inLen = b64.length;
-  const outLen =
-    Math.floor((3 * inLen) / 4) -
-    (b64.endsWith('==') ? 2 : b64.endsWith('=') ? 1 : 0);
+  const outLen = Math.floor((3 * inLen) / 4) - (b64.endsWith('==') ? 2 : b64.endsWith('=') ? 1 : 0);
   const out = new Uint8Array(outLen);
   const vals = new Array(inLen);
   for (let i = 0; i < inLen; i++) vals[i] = _b64codes[b64.charCodeAt(i)] ?? 0;

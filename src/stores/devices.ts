@@ -42,10 +42,20 @@ export const useDevicesStore = createPersistedStore<DevicesState>(
     paired: {},
     activeDeviceId: null,
     upsertFound: (d) => set((s) => ({ ...s, found: { ...s.found, [d.host]: d } })),
-    removeFound: (host) => set((s) => { const f = { ...s.found }; delete f[host]; return { ...s, found: f }; }),
+    removeFound: (host) =>
+      set((s) => {
+        const f = { ...s.found };
+        delete f[host];
+        return { ...s, found: f };
+      }),
     clearFound: () => set((s) => ({ ...s, found: {} })),
     addPaired: (d) => set((s) => ({ ...s, paired: { ...s.paired, [d.id]: d } })),
-    removePaired: (id) => set((s) => { const p = { ...s.paired }; delete p[id]; return { ...s, paired: p }; }),
+    removePaired: (id) =>
+      set((s) => {
+        const p = { ...s.paired };
+        delete p[id];
+        return { ...s, paired: p };
+      }),
     setActive: (id) => set((s) => ({ ...s, activeDeviceId: id })),
   }),
 );

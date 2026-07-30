@@ -1,3 +1,14 @@
+jest.mock('@/modules/expo-atv-socket', () => ({
+  AtvSocket: {
+    getServerPublicKeyComponents: jest.fn(),
+    connect: jest.fn(),
+    send: jest.fn(),
+    close: jest.fn(),
+    onSocketData: jest.fn(() => () => {}),
+    onSocketState: jest.fn(() => () => {}),
+  },
+}));
+
 import { switchTo, registerConnector, registerDisconnect } from '@/services/sessionManager';
 import { useDevicesStore } from '@/stores/devices';
 
