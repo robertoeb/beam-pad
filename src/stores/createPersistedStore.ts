@@ -2,7 +2,13 @@ import { create, StateCreator } from 'zustand';
 import { persist, createJSONStorage, PersistOptions } from 'zustand/middleware';
 import { mmkvStorage } from './mmkv';
 
-type PersistConfig<T> = Partial<PersistOptions<T>> & { name: string };
+type MigrateFn<T> = (persisted: any, version: number) => T;
+
+type PersistConfig<T> = Partial<PersistOptions<T>> & {
+  name: string;
+  version?: number;
+  migrate?: MigrateFn<T>;
+};
 
 export const createPersistedStore = <T>(
   config: PersistConfig<T>,
@@ -13,5 +19,7 @@ export const createPersistedStore = <T>(
       name: config.name,
       storage: createJSONStorage(() => mmkvStorage),
       partialize: config.partialize,
+      version: config.version ?? 0,
+      migrate: config.migrate as any,
     }),
   );

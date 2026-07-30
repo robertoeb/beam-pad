@@ -9,6 +9,7 @@ export const tokens = {
     accent: {
       cyan: '#00E5FF',
       red: '#FF3B30',
+      green: '#34C759',
     },
     text: {
       primary: '#FFFFFF',

@@ -22,6 +22,8 @@ beforeEach(() => {
   (getActiveClient as jest.Mock).mockReturnValue({ keyPress: mockKeyPress });
   mockKeyPress.mockClear();
   (IrBlaster.transmit as jest.Mock).mockClear();
+  (IrBlaster.transmit as jest.Mock).mockResolvedValue(undefined);
+  (IrBlaster.hasIrEmitter as jest.Mock).mockResolvedValue(true);
   (IrBlaster.getCarrierFrequencyRanges as jest.Mock).mockResolvedValue([
     { min: 30000, max: 60000 },
   ]);
@@ -29,6 +31,7 @@ beforeEach(() => {
     volumeTarget: 'tv-os',
     irProfileId: null,
     irAvailable: false,
+    irPerDevice: {},
   });
 });
 
@@ -87,27 +90,57 @@ describe('volumeRouter', () => {
   });
 
   describe('irSend', () => {
-    it('returns false when no profile selected', async () => {
+    it('returns no-profile when no profile selected', async () => {
       useSettingsStore.setState({ irProfileId: null });
       const result = await irSend('power');
-      expect(result).toBe(false);
+      expect(result).toEqual({ ok: false, reason: 'no-profile' });
     });
 
-    it('returns false when carrier frequency not supported', async () => {
+    it('returns freq-unsupported when carrier frequency not supported', async () => {
       useSettingsStore.setState({ irProfileId: 'sony-tv-sirc12' });
       (IrBlaster.getCarrierFrequencyRanges as jest.Mock).mockResolvedValue([
         { min: 30000, max: 38000 },
       ]);
       const result = await irSend('power');
-      expect(result).toBe(false);
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.reason).toBe('freq-unsupported');
+      }
       expect(IrBlaster.transmit).not.toHaveBeenCalled();
+    });
+
+    it('returns no-emitter when phone has no IR blaster', async () => {
+      useSettingsStore.setState({ irProfileId: 'samsung-tv-nec' });
+      (IrBlaster.hasIrEmitter as jest.Mock).mockResolvedValue(false);
+      const result = await irSend('power');
+      expect(result).toEqual({ ok: false, reason: 'no-emitter' });
+    });
+
+    it('returns transmit-failed when transmit throws', async () => {
+      useSettingsStore.setState({ irProfileId: 'samsung-tv-nec' });
+      (IrBlaster.transmit as jest.Mock).mockRejectedValue(new Error('HW fault'));
+      const result = await irSend('power');
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.reason).toBe('transmit-failed');
+        expect(result.detail).toBe('HW fault');
+      }
     });
 
     it('transmits when profile and carrier range match', async () => {
       useSettingsStore.setState({ irProfileId: 'samsung-tv-nec' });
       const result = await irSend('power');
-      expect(result).toBe(true);
+      expect(result).toEqual({ ok: true });
       expect(IrBlaster.transmit).toHaveBeenCalledWith(38028, expect.any(Array));
+    });
+
+    it('resolves per-device profile over global', async () => {
+      useSettingsStore.setState({
+        irProfileId: 'samsung-tv-nec',
+        irPerDevice: { 'dev-1': 'lg-tv-nec' },
+      });
+      const result = await irSend('power', { deviceId: 'dev-1' });
+      expect(result).toEqual({ ok: true });
     });
   });
 });

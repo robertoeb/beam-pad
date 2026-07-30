@@ -11956,8 +11956,8 @@ $root.pairing = (function() {
         /**
          * Properties of a PairingMessage.
          * @typedef {Object} pairing.PairingMessage.$Properties
-         * @property {pairing.Status|null} [status] PairingMessage status
          * @property {number|null} [protocolVersion] PairingMessage protocolVersion
+         * @property {pairing.Status|null} [status] PairingMessage status
          * @property {pairing.PairingRequest.$Properties|null} [pairingRequest] PairingMessage pairingRequest
          * @property {pairing.PairingRequestAck.$Properties|null} [pairingRequestAck] PairingMessage pairingRequestAck
          * @property {pairing.PairingOption.$Properties|null} [pairingOption] PairingMessage pairingOption
@@ -11997,20 +11997,20 @@ $root.pairing = (function() {
         };
 
         /**
-         * PairingMessage status.
-         * @member {pairing.Status} status
-         * @memberof pairing.PairingMessage
-         * @instance
-         */
-        PairingMessage.prototype.status = 200;
-
-        /**
          * PairingMessage protocolVersion.
          * @member {number} protocolVersion
          * @memberof pairing.PairingMessage
          * @instance
          */
         PairingMessage.prototype.protocolVersion = 0;
+
+        /**
+         * PairingMessage status.
+         * @member {pairing.Status} status
+         * @memberof pairing.PairingMessage
+         * @instance
+         */
+        PairingMessage.prototype.status = 200;
 
         /**
          * PairingMessage pairingRequest.
@@ -12100,10 +12100,10 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
-            if (message.status != null && $Object.hasOwnProperty.call(message, "status") && message.status !== 200)
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.status);
             if (message.protocolVersion != null && $Object.hasOwnProperty.call(message, "protocolVersion") && message.protocolVersion !== 0)
-                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.protocolVersion);
+                writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.protocolVersion);
+            if (message.status != null && $Object.hasOwnProperty.call(message, "status") && message.status !== 200)
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.status);
             if (message.pairingRequest != null && $Object.hasOwnProperty.call(message, "pairingRequest"))
                 $root.pairing.PairingRequest.encode(message.pairingRequest, writer.uint32(/* id 101, wireType 2 =*/810).fork(), _depth + 1).ldelim();
             if (message.pairingRequestAck != null && $Object.hasOwnProperty.call(message, "pairingRequestAck"))
@@ -12168,19 +12168,19 @@ $root.pairing = (function() {
                 case 1: {
                         if (wireType !== 0)
                             break;
-                        if ((value = reader.int32()) !== 200)
-                            message.status = value;
+                        if (value = reader.uint32())
+                            message.protocolVersion = value;
                         else
-                            delete message.status;
+                            delete message.protocolVersion;
                         continue;
                     }
                 case 2: {
                         if (wireType !== 0)
                             break;
-                        if (value = reader.uint32())
-                            message.protocolVersion = value;
+                        if ((value = reader.int32()) !== 200)
+                            message.status = value;
                         else
-                            delete message.protocolVersion;
+                            delete message.status;
                         continue;
                     }
                 case 101: {
@@ -12268,12 +12268,12 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 return "max depth exceeded";
-            if (message.status != null && $Object.hasOwnProperty.call(message, "status"))
-                if (typeof message.status !== "number" || (message.status | 0) !== message.status)
-                    return "status: enum value expected";
             if (message.protocolVersion != null && $Object.hasOwnProperty.call(message, "protocolVersion"))
                 if (!$util.isInteger(message.protocolVersion))
                     return "protocolVersion: integer expected";
+            if (message.status != null && $Object.hasOwnProperty.call(message, "status"))
+                if (typeof message.status !== "number" || (message.status | 0) !== message.status)
+                    return "status: enum value expected";
             if (message.pairingRequest != null && $Object.hasOwnProperty.call(message, "pairingRequest")) {
                 var error = $root.pairing.PairingRequest.verify(message.pairingRequest, _depth + 1);
                 if (error)
@@ -12330,6 +12330,9 @@ $root.pairing = (function() {
             if (_depth > $util.recursionLimit)
                 throw $Error("max depth exceeded");
             var message = new $root.pairing.PairingMessage();
+            if (object.protocolVersion != null)
+                if ($Number(object.protocolVersion) !== 0)
+                    message.protocolVersion = object.protocolVersion >>> 0;
             if (object.status !== 200 && (typeof object.status !== "string" || $root.pairing.Status[object.status] !== 200))
                 switch (object.status) {
                 case "STATUS_OK":
@@ -12348,9 +12351,6 @@ $root.pairing = (function() {
                     if (typeof object.status === "number" && (object.status | 0) === object.status)
                         message.status = object.status;
                 }
-            if (object.protocolVersion != null)
-                if ($Number(object.protocolVersion) !== 0)
-                    message.protocolVersion = object.protocolVersion >>> 0;
             if (object.pairingRequest != null) {
                 if (!$util.isObject(object.pairingRequest))
                     throw $TypeError(".pairing.PairingMessage.pairingRequest: object expected");
@@ -12407,8 +12407,8 @@ $root.pairing = (function() {
                 throw $Error("max depth exceeded");
             var object = {};
             if (options.defaults) {
-                object.status = options.enums === $String ? "STATUS_OK" : 200;
                 object.protocolVersion = 0;
+                object.status = options.enums === $String ? "STATUS_OK" : 200;
                 object.pairingRequest = null;
                 object.pairingRequestAck = null;
                 object.pairingOption = null;
@@ -12417,10 +12417,10 @@ $root.pairing = (function() {
                 object.pairingSecret = null;
                 object.pairingSecretAck = null;
             }
-            if (message.status != null && $Object.hasOwnProperty.call(message, "status"))
-                object.status = options.enums === $String ? $root.pairing.Status[message.status] === $undefined ? message.status : $root.pairing.Status[message.status] : message.status;
             if (message.protocolVersion != null && $Object.hasOwnProperty.call(message, "protocolVersion"))
                 object.protocolVersion = message.protocolVersion;
+            if (message.status != null && $Object.hasOwnProperty.call(message, "status"))
+                object.status = options.enums === $String ? $root.pairing.Status[message.status] === $undefined ? message.status : $root.pairing.Status[message.status] : message.status;
             if (message.pairingRequest != null && $Object.hasOwnProperty.call(message, "pairingRequest"))
                 object.pairingRequest = $root.pairing.PairingRequest.toObject(message.pairingRequest, options, _depth + 1);
             if (message.pairingRequestAck != null && $Object.hasOwnProperty.call(message, "pairingRequestAck"))

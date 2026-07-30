@@ -114,9 +114,8 @@ describe('PairingProtocol', () => {
     expect(payloads.length).toBe(1);
     const msg = pb.PairingMessage.decode(payloads[0]!);
     expect(msg.protocolVersion).toBe(2);
-    expect(msg.status).toBe(pb.Status.STATUS_OK);
-    expect(msg.pairingRequest?.serviceName).toBe('com.beampad.app');
-    expect(msg.pairingRequest?.clientName).toBe('BeamPad');
+    expect(msg.pairingRequest?.serviceName).toBe('atvremote');
+    expect(msg.pairingRequest?.clientName).toBe('Android TV Remote');
     expect(steps).toContain('request');
   });
 

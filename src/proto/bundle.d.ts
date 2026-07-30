@@ -5075,11 +5075,11 @@ export namespace pairing {
         /** Unknown fields preserved while decoding when enabled */
         $unknowns?: Uint8Array[];
 
-        /** PairingMessage status. */
-        status: pairing.Status;
-
         /** PairingMessage protocolVersion. */
         protocolVersion: number;
+
+        /** PairingMessage status. */
+        status: pairing.Status;
 
         /** PairingMessage pairingRequest. */
         pairingRequest?: (pairing.PairingRequest.$Properties|null);
@@ -5186,11 +5186,11 @@ export namespace pairing {
         /** Properties of a PairingMessage. */
         interface $Properties {
 
-            /** PairingMessage status */
-            status?: (pairing.Status|null);
-
             /** PairingMessage protocolVersion */
             protocolVersion?: (number|null);
+
+            /** PairingMessage status */
+            status?: (pairing.Status|null);
 
             /** PairingMessage pairingRequest */
             pairingRequest?: (pairing.PairingRequest.$Properties|null);

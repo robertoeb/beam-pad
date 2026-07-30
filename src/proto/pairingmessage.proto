@@ -26,8 +26,8 @@ message PairingSecret { bytes secret = 1; }
 message PairingSecretAck { bytes secret = 1; }
 
 message PairingMessage {
-  Status status = 1;
-  uint32 protocol_version = 2;
+  uint32 protocol_version = 1;
+  Status status = 2;
   PairingRequest pairing_request = 101;
   PairingRequestAck pairing_request_ack = 102;
   PairingOption pairing_option = 201;

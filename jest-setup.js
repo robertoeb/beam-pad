@@ -119,6 +119,12 @@ jest.mock('expo-router', () => ({
   router: { push: jest.fn(), back: jest.fn() },
   Stack: () => null,
   Link: require('react-native').Text,
+  useLocalSearchParams: () => ({}),
+}));
+
+jest.mock('expo-constants', () => ({
+  __esModule: true,
+  default: { expoConfig: { version: '1.0.0' } },
 }));
 
 jest.mock('react-native-safe-area-context', () => {
