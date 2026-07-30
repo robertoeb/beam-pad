@@ -1,58 +1,82 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, View } from 'react-native';
-import { Text } from 'react-native';
+import { useCallback, useState } from 'react';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SPRING } from '@/lib/spring';
+import { Settings, ArrowLeft, House } from 'lucide-react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { router } from 'expo-router';
+
 import { DevicePill } from '@/components/DevicePill';
 import { DeviceSwitchSheet } from '@/components/DeviceSwitchSheet';
+import { RemoteButton } from '@/components/RemoteButton';
+import { DPad } from '@/components/DPad';
+import { PowerButton } from '@/components/PowerButton';
+import { VolumeRail } from '@/components/VolumeRail';
+import { PinnedAppsRow } from '@/components/PinnedAppsRow';
+import { MoreSheet } from '@/components/MoreSheet';
+import { ToastHost } from '@/components/Toast';
+import { useLayoutStore } from '@/stores/layout';
+import { KEYS } from '@/protocol/keycodes';
+import { key } from '@/lib/key';
 
 export default function Index() {
-  const scale = useRef(new Animated.Value(1)).current;
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [switchOpen, setSwitchOpen] = useState(false);
+  const moreSheetOpen = useLayoutStore((s) => s.moreSheetOpen);
+  const setMoreSheet = useLayoutStore((s) => s.setMoreSheet);
 
-  useEffect(() => {
-    const loop = () => {
-      scale.setValue(1);
-      Animated.timing(scale, {
-        toValue: 1.2,
-        duration: 800,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }).start(() => {
-        Animated.timing(scale, {
-          toValue: 1,
-          duration: 800,
-          easing: Easing.in(Easing.quad),
-          useNativeDriver: true,
-        }).start(loop);
-      });
-    };
-    loop();
-  }, [scale]);
+  const handleSheetOpen = useCallback(() => setSwitchOpen(true), []);
+  const handleSheetClose = useCallback(() => setSwitchOpen(false), []);
 
-  const handleSheetOpen = useCallback(() => setSheetOpen(true), []);
-  const handleSheetClose = useCallback(() => setSheetOpen(false), []);
+  const panGesture = Gesture.Pan()
+    .minDistance(50)
+    .onEnd((event) => {
+      if (event.translationY < -80) {
+        setMoreSheet(true);
+      }
+    });
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-row justify-start px-4 pt-2">
-        <DevicePill onPress={handleSheetOpen} />
-      </View>
+    <GestureDetector gesture={panGesture}>
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="flex-1 px-5 pt-4">
+          <View className="flex-row items-center justify-between">
+            <DevicePill onPress={handleSheetOpen} />
+            <RemoteButton
+              icon={Settings}
+              size={44}
+              accessibilityLabel="Settings"
+              onPress={() => router.push('/settings' as any)}
+            />
+          </View>
 
-      <View className="flex-1 items-center justify-center gap-4">
-        <Text className="font-semibold text-2xl tracking-tight text-text-primary">BeamPad</Text>
-        <Animated.View
-          style={[
-            { transform: [{ scale }] },
-            { width: 12, height: 12, borderRadius: 6, backgroundColor: '#00E5FF' },
-          ]}
-        />
-        <Text className="mt-8 font-medium text-xs text-text-muted">
-          Foundation OK — {JSON.stringify(SPRING)}
-        </Text>
-      </View>
+          <View className="flex-1 justify-center">
+            <DPad />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 24,
+                marginTop: 32,
+              }}
+            >
+              <PowerButton />
+              <RemoteButton
+                icon={ArrowLeft}
+                accessibilityLabel="Back"
+                onPress={() => key(KEYS.back)}
+              />
+              <RemoteButton icon={House} accessibilityLabel="Home" onPress={() => key(KEYS.home)} />
+            </View>
+          </View>
 
-      <DeviceSwitchSheet visible={sheetOpen} onClose={handleSheetClose} />
-    </SafeAreaView>
+          <PinnedAppsRow />
+        </View>
+
+        <VolumeRail />
+        <ToastHost />
+        <DeviceSwitchSheet visible={switchOpen} onClose={handleSheetClose} />
+        <MoreSheet />
+      </SafeAreaView>
+    </GestureDetector>
   );
 }

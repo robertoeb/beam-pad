@@ -1,0 +1,202 @@
+[
+  {
+    "id": "samsung-tv-nec",
+    "brand": "Samsung",
+    "deviceType": "tv",
+    "protocol": "necx",
+    "device": 7,
+    "commands": { "power": 2, "volUp": 7, "volDown": 11, "mute": 15, "input": 10 },
+    "verified": true,
+    "source": "lirc:samsung/AA59-00600A"
+  },
+  {
+    "id": "lg-tv-nec",
+    "brand": "LG",
+    "deviceType": "tv",
+    "protocol": "nec",
+    "device": 4,
+    "commands": { "power": 8, "volUp": 2, "volDown": 3, "mute": 9, "input": 11 },
+    "verified": true,
+    "source": "lirc:lg/6711A20076V"
+  },
+  {
+    "id": "sony-tv-sirc12",
+    "brand": "Sony",
+    "deviceType": "tv",
+    "protocol": "sirc12",
+    "device": 1,
+    "commands": { "power": 21, "volUp": 18, "volDown": 19, "mute": 20, "input": 25 },
+    "verified": true,
+    "source": "lirc:sony/RM-ED006"
+  },
+  {
+    "id": "philips-tv-rc5",
+    "brand": "Philips",
+    "deviceType": "tv",
+    "protocol": "rc5",
+    "device": 0,
+    "commands": { "power": 12, "volUp": 16, "volDown": 17, "mute": 13, "input": 34 },
+    "verified": true,
+    "source": "lirc:philips/RC-5"
+  },
+  {
+    "id": "panasonic-tv-nec128",
+    "brand": "Panasonic",
+    "deviceType": "tv",
+    "protocol": "nec",
+    "device": 128,
+    "commands": { "power": 61, "volUp": 32, "volDown": 33, "mute": 43, "input": 5 },
+    "verified": false,
+    "source": "lirc:panasonic/EUR642586"
+  },
+  {
+    "id": "toshiba-tv-nec",
+    "brand": "Toshiba",
+    "deviceType": "tv",
+    "protocol": "nec",
+    "device": 2,
+    "commands": { "power": 72, "volUp": 26, "volDown": 30, "mute": 16, "input": 8 },
+    "verified": false,
+    "source": "lirc:toshiba/CT-8515"
+  },
+  {
+    "id": "sharp-tv-sirc15",
+    "brand": "Sharp",
+    "deviceType": "tv",
+    "protocol": "sirc15",
+    "device": 1,
+    "commands": { "power": 21, "volUp": 18, "volDown": 19, "mute": 20, "input": 25 },
+    "verified": false,
+    "source": "lirc:sharp/GA538WJSA"
+  },
+  {
+    "id": "hisense-tv-nec",
+    "brand": "Hisense",
+    "deviceType": "tv",
+    "protocol": "nec",
+    "device": 8,
+    "commands": { "power": 173, "volUp": 170, "volDown": 171, "mute": 172, "input": 19 },
+    "verified": false,
+    "source": "lirc:hisense/RSG1099"
+  },
+  {
+    "id": "tcl-tv-nec",
+    "brand": "TCL",
+    "deviceType": "tv",
+    "protocol": "nec",
+    "device": 87,
+    "commands": { "power": 12, "volUp": 16, "volDown": 17, "mute": 13, "input": 34 },
+    "verified": false,
+    "source": "lirc:tcl/TCL-RC"
+  },
+  {
+    "id": "vizio-tv-nec",
+    "brand": "Vizio",
+    "deviceType": "tv",
+    "protocol": "nec",
+    "device": 32,
+    "commands": { "power": 8, "volUp": 22, "volDown": 23, "mute": 90, "input": 13 },
+    "verified": false,
+    "source": "lirc:vizio/Vizio-RC"
+  },
+  {
+    "id": "grundig-tv-rc5",
+    "brand": "Grundig",
+    "deviceType": "tv",
+    "protocol": "rc5",
+    "device": 0,
+    "commands": { "power": 12, "volUp": 16, "volDown": 17, "mute": 13, "input": 34 },
+    "verified": false,
+    "source": "lirc:grundig/RC-5"
+  },
+  {
+    "id": "jvc-tv-nec",
+    "brand": "JVC",
+    "deviceType": "tv",
+    "protocol": "nec",
+    "device": 3,
+    "commands": { "power": 23, "volUp": 7, "volDown": 11, "mute": 13, "input": 19 },
+    "verified": false,
+    "source": "lirc:jvc/RM-C0188"
+  },
+  {
+    "id": "denon-avr-necx",
+    "brand": "Denon",
+    "deviceType": "avr",
+    "protocol": "necx",
+    "device": 2,
+    "commands": { "power": 42, "volUp": 40, "volDown": 41, "mute": 44, "input": 10 },
+    "verified": false,
+    "source": "lirc:denon/RC-825"
+  },
+  {
+    "id": "onkyo-avr-nec",
+    "brand": "Onkyo",
+    "deviceType": "avr",
+    "protocol": "nec",
+    "device": 12,
+    "commands": { "power": 84, "volUp": 2, "volDown": 3, "mute": 12, "input": 10 },
+    "verified": false,
+    "source": "lirc:onkyo/RC-262M"
+  },
+  {
+    "id": "yamaha-avr-nec",
+    "brand": "Yamaha",
+    "deviceType": "avr",
+    "protocol": "nec",
+    "device": 122,
+    "commands": { "power": 29, "volUp": 30, "volDown": 31, "mute": 28, "input": 24 },
+    "verified": false,
+    "source": "lirc:yamaha/RAV331"
+  },
+  {
+    "id": "pioneer-avr-nec",
+    "brand": "Pioneer",
+    "deviceType": "avr",
+    "protocol": "nec",
+    "device": 175,
+    "commands": { "power": 173, "volUp": 5, "volDown": 6, "mute": 3, "input": 10 },
+    "verified": false,
+    "source": "lirc:pioneer/AX700"
+  },
+  {
+    "id": "marantz-avr-rc5",
+    "brand": "Marantz",
+    "deviceType": "avr",
+    "protocol": "rc5",
+    "device": 16,
+    "commands": { "power": 12, "volUp": 16, "volDown": 17, "mute": 13, "input": 34 },
+    "verified": false,
+    "source": "lirc:marantz/RC001PM"
+  },
+  {
+    "id": "bose-soundbar-nec",
+    "brand": "Bose",
+    "deviceType": "soundbar",
+    "protocol": "nec",
+    "device": 191,
+    "commands": { "power": 3, "volUp": 1, "volDown": 2, "mute": 4, "input": 5 },
+    "verified": false,
+    "source": "lirc:bose/SoundTouch"
+  },
+  {
+    "id": "jbl-soundbar-nec",
+    "brand": "JBL",
+    "deviceType": "soundbar",
+    "protocol": "nec",
+    "device": 103,
+    "commands": { "power": 21, "volUp": 22, "volDown": 23, "mute": 24, "input": 25 },
+    "verified": false,
+    "source": "lirc:jbl/SB200"
+  },
+  {
+    "id": "harmon-kardon-avr-nec",
+    "brand": "Harman Kardon",
+    "deviceType": "avr",
+    "protocol": "nec",
+    "device": 128,
+    "commands": { "power": 192, "volUp": 193, "volDown": 194, "mute": 195, "input": 196 },
+    "verified": false,
+    "source": "lirc:harmon-kardon/AVR-370"
+  }
+]
