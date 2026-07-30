@@ -752,6 +752,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
       </View>
     </View>
     <View
+      onLayout={[Function]}
       style={
         {
           "alignItems": "center",
@@ -759,6 +760,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
           "flexDirection": "row",
           "gap": 8,
           "justifyContent": "center",
+          "paddingHorizontal": 16,
         }
       }
     >
@@ -769,17 +771,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
           }
         }
       >
-        <View
-          style={
-            {
-              "transform": [
-                {
-                  "rotate": "0deg",
-                },
-              ],
-            }
-          }
-        >
+        <View>
           <View
             accessibilityLabel="Open Netflix"
             accessibilityRole="button"
@@ -803,6 +795,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             accessible={true}
             collapsable={false}
             focusable={true}
+            hitSlop={8}
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -813,29 +806,43 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             onResponderTerminationRequest={[Function]}
             onStartShouldSetResponder={[Function]}
             style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "#E5091424",
-                "borderColor": "rgba(255,255,255,0.08)",
-                "borderRadius": 16,
-                "borderWidth": 1,
-                "height": 64,
-                "justifyContent": "center",
-                "width": 64,
-              }
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "height": 56,
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                    {
+                      "rotate": "0deg",
+                    },
+                  ],
+                  "width": 56,
+                },
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#E5091424",
+                  "borderColor": "rgba(255,255,255,0.08)",
+                  "borderRadius": 16,
+                  "borderWidth": 1,
+                  "justifyContent": "center",
+                  "padding": 12,
+                },
+              ]
             }
           >
-            <Text
-              style={
-                {
-                  "color": "#FFFFFF",
-                  "fontSize": 15,
-                  "fontWeight": "600",
-                }
-              }
+            <View
+              fill="none"
+              height={24}
+              viewBox="0 0 24 24"
+              width={24}
             >
-              Nf
-            </Text>
+              <View
+                d="M5 2h2v20H5V2zm12 0h2v20h-2V2zM5 2l14 20h-2L5 2z"
+                fill="#FFFFFF"
+              />
+            </View>
           </View>
         </View>
       </View>
@@ -846,17 +853,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
           }
         }
       >
-        <View
-          style={
-            {
-              "transform": [
-                {
-                  "rotate": "0deg",
-                },
-              ],
-            }
-          }
-        >
+        <View>
           <View
             accessibilityLabel="Open YouTube"
             accessibilityRole="button"
@@ -880,6 +877,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             accessible={true}
             collapsable={false}
             focusable={true}
+            hitSlop={8}
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -890,29 +888,47 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             onResponderTerminationRequest={[Function]}
             onStartShouldSetResponder={[Function]}
             style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "#FF000024",
-                "borderColor": "rgba(255,255,255,0.08)",
-                "borderRadius": 16,
-                "borderWidth": 1,
-                "height": 64,
-                "justifyContent": "center",
-                "width": 64,
-              }
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "height": 56,
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                    {
+                      "rotate": "0deg",
+                    },
+                  ],
+                  "width": 56,
+                },
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#FF000024",
+                  "borderColor": "rgba(255,255,255,0.08)",
+                  "borderRadius": 16,
+                  "borderWidth": 1,
+                  "justifyContent": "center",
+                  "padding": 12,
+                },
+              ]
             }
           >
-            <Text
-              style={
-                {
-                  "color": "#FFFFFF",
-                  "fontSize": 15,
-                  "fontWeight": "600",
-                }
-              }
+            <View
+              fill="none"
+              height={24}
+              viewBox="0 0 24 24"
+              width={24}
             >
-              YT
-            </Text>
+              <View
+                d="M21.58 7.19a2.51 2.51 0 0 0-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42a2.51 2.51 0 0 0-1.77 1.77A26.15 26.15 0 0 0 2 12a26.15 26.15 0 0 0 .42 4.81 2.51 2.51 0 0 0 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42a2.51 2.51 0 0 0 1.77-1.77A26.15 26.15 0 0 0 22 12a26.15 26.15 0 0 0-.42-4.81z"
+                fill="#FFFFFF"
+              />
+              <View
+                d="M10 15l5-3-5-3v6z"
+                fill="#000"
+              />
+            </View>
           </View>
         </View>
       </View>
@@ -923,17 +939,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
           }
         }
       >
-        <View
-          style={
-            {
-              "transform": [
-                {
-                  "rotate": "0deg",
-                },
-              ],
-            }
-          }
-        >
+        <View>
           <View
             accessibilityLabel="Open Prime Video"
             accessibilityRole="button"
@@ -957,6 +963,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             accessible={true}
             collapsable={false}
             focusable={true}
+            hitSlop={8}
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -967,29 +974,46 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             onResponderTerminationRequest={[Function]}
             onStartShouldSetResponder={[Function]}
             style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "#00A8E124",
-                "borderColor": "rgba(255,255,255,0.08)",
-                "borderRadius": 16,
-                "borderWidth": 1,
-                "height": 64,
-                "justifyContent": "center",
-                "width": 64,
-              }
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "height": 56,
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                    {
+                      "rotate": "0deg",
+                    },
+                  ],
+                  "width": 56,
+                },
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#00A8E124",
+                  "borderColor": "rgba(255,255,255,0.08)",
+                  "borderRadius": 16,
+                  "borderWidth": 1,
+                  "justifyContent": "center",
+                  "padding": 12,
+                },
+              ]
             }
           >
-            <Text
-              style={
-                {
-                  "color": "#FFFFFF",
-                  "fontSize": 15,
-                  "fontWeight": "600",
-                }
-              }
+            <View
+              fill="none"
+              height={24}
+              viewBox="0 0 24 24"
+              width={24}
             >
-              Pv
-            </Text>
+              <View
+                d="M3 12h4l2-6 4 12 2-6h6"
+                stroke="#FFFFFF"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+              />
+            </View>
           </View>
         </View>
       </View>
@@ -1000,17 +1024,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
           }
         }
       >
-        <View
-          style={
-            {
-              "transform": [
-                {
-                  "rotate": "0deg",
-                },
-              ],
-            }
-          }
-        >
+        <View>
           <View
             accessibilityLabel="Open Disney+"
             accessibilityRole="button"
@@ -1034,6 +1048,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             accessible={true}
             collapsable={false}
             focusable={true}
+            hitSlop={8}
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -1044,34 +1059,52 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             onResponderTerminationRequest={[Function]}
             onStartShouldSetResponder={[Function]}
             style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "#113CCF24",
-                "borderColor": "rgba(255,255,255,0.08)",
-                "borderRadius": 16,
-                "borderWidth": 1,
-                "height": 64,
-                "justifyContent": "center",
-                "width": 64,
-              }
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "height": 56,
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                    {
+                      "rotate": "0deg",
+                    },
+                  ],
+                  "width": 56,
+                },
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#113CCF24",
+                  "borderColor": "rgba(255,255,255,0.08)",
+                  "borderRadius": 16,
+                  "borderWidth": 1,
+                  "justifyContent": "center",
+                  "padding": 12,
+                },
+              ]
             }
           >
-            <Text
-              style={
-                {
-                  "color": "#FFFFFF",
-                  "fontSize": 15,
-                  "fontWeight": "600",
-                }
-              }
+            <View
+              fill="none"
+              height={24}
+              viewBox="0 0 24 24"
+              width={24}
             >
-              D+
-            </Text>
+              <View
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
+                fill="#FFFFFF"
+              />
+              <View
+                d="M8 10c0-2 1.5-3 4-3s4 1 4 3-1.5 3-4 3-4-1-4-3z"
+                fill="#fff"
+              />
+            </View>
           </View>
         </View>
       </View>
       <View
-        accessibilityLabel="Add app"
+        accessibilityLabel="Add shortcut"
         accessibilityRole="button"
         accessibilityState={
           {
@@ -1110,9 +1143,9 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             "borderRadius": 16,
             "borderStyle": "dashed",
             "borderWidth": 1,
-            "height": 64,
+            "height": 56,
             "justifyContent": "center",
-            "width": 64,
+            "width": 56,
           }
         }
       >

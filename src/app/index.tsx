@@ -11,7 +11,7 @@ import { RemoteButton } from '@/components/RemoteButton';
 import { DPad } from '@/components/DPad';
 import { PowerButton } from '@/components/PowerButton';
 import { VolumeRail } from '@/components/VolumeRail';
-import { PinnedAppsRow } from '@/components/PinnedAppsRow';
+import { ShortcutRow } from '@/components/ShortcutRow';
 import { NowPlayingStrip } from '@/components/NowPlayingStrip';
 import { MoreSheet } from '@/components/MoreSheet';
 import { ImeSheet } from '@/components/ImeSheet';
@@ -76,7 +76,7 @@ export default function Index() {
             </View>
           </View>
 
-          <PinnedAppsRow />
+          <ShortcutRow />
         </View>
 
         <VolumeRail />

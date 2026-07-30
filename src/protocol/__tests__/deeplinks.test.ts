@@ -110,9 +110,12 @@ describe('deeplinks catalog integrity', () => {
 
   it('seed pinned ids resolve to catalog entries', () => {
     const { useLayoutStore } = require('@/stores/layout');
-    const pinned = useLayoutStore.getState().pinned;
-    for (const id of pinned) {
-      expect(getApp(id)).toBeDefined();
+    const shortcuts = useLayoutStore.getState().shortcuts;
+    for (const id of shortcuts) {
+      if (id.startsWith('app:')) {
+        const appId = id.split(':')[1];
+        expect(getApp(appId)).toBeDefined();
+      }
     }
   });
 
@@ -192,49 +195,49 @@ describe('deeplinks launch frame', () => {
 
 // ─── Layout Store Extensions ───────────────────────────────────────────────
 
-describe('layoutStore pin/unpin/move', () => {
+describe('layoutStore add/remove/moveShortcut', () => {
   beforeEach(() => {
     const { useLayoutStore } = require('@/stores/layout');
     useLayoutStore.setState({
-      pinned: ['netflix', 'youtube', 'prime', 'disney'],
+      shortcuts: ['app:netflix', 'app:youtube', 'app:prime', 'app:disney'],
       hidden: [],
     });
   });
 
-  it('pin adds app without duplicating', () => {
+  it('addShortcut adds without duplicating', () => {
     const { useLayoutStore } = require('@/stores/layout');
-    useLayoutStore.getState().pin('hulu');
-    expect(useLayoutStore.getState().pinned).toContain('hulu');
+    useLayoutStore.getState().addShortcut('app:hulu');
+    expect(useLayoutStore.getState().shortcuts).toContain('app:hulu');
 
-    useLayoutStore.getState().pin('hulu');
-    const count = useLayoutStore.getState().pinned.filter((id: string) => id === 'hulu').length;
+    useLayoutStore.getState().addShortcut('app:hulu');
+    const count = useLayoutStore.getState().shortcuts.filter((id: string) => id === 'app:hulu').length;
     expect(count).toBe(1);
   });
 
-  it('unpin removes app', () => {
+  it('removeShortcut removes shortcut', () => {
     const { useLayoutStore } = require('@/stores/layout');
-    useLayoutStore.getState().unpin('netflix');
-    expect(useLayoutStore.getState().pinned).not.toContain('netflix');
+    useLayoutStore.getState().removeShortcut('app:netflix');
+    expect(useLayoutStore.getState().shortcuts).not.toContain('app:netflix');
   });
 
-  it('move reorders correctly', () => {
+  it('moveShortcut reorders correctly', () => {
     const { useLayoutStore } = require('@/stores/layout');
-    const before = useLayoutStore.getState().pinned;
-    expect(before[0]).toBe('netflix');
+    const before = useLayoutStore.getState().shortcuts;
+    expect(before[0]).toBe('app:netflix');
 
-    useLayoutStore.getState().move(0, 3);
-    const after = useLayoutStore.getState().pinned;
-    expect(after[0]).toBe('youtube');
-    expect(after[3]).toBe('netflix');
+    useLayoutStore.getState().moveShortcut(0, 3);
+    const after = useLayoutStore.getState().shortcuts;
+    expect(after[0]).toBe('app:youtube');
+    expect(after[3]).toBe('app:netflix');
     expect(after.length).toBe(before.length);
   });
 
-  it('move preserves all items', () => {
+  it('moveShortcut preserves all items', () => {
     const { useLayoutStore } = require('@/stores/layout');
-    const before = [...useLayoutStore.getState().pinned];
+    const before = [...useLayoutStore.getState().shortcuts];
 
-    useLayoutStore.getState().move(2, 0);
-    const after = useLayoutStore.getState().pinned;
+    useLayoutStore.getState().moveShortcut(2, 0);
+    const after = useLayoutStore.getState().shortcuts;
 
     expect([...after].sort()).toEqual([...before].sort());
   });

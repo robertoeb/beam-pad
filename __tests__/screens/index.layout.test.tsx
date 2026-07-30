@@ -41,11 +41,11 @@ describe('IndexScreen layout', () => {
     expect(smallWidth).not.toBe(tallWidth);
   });
 
-  it('renders D-pad, action row, and pinned apps row', async () => {
+  it('renders D-pad, action row, and shortcut row', async () => {
     const { getByTestId, getByLabelText } = await render(<Index />);
     expect(getByTestId('dpad-ok')).toBeTruthy();
     expect(getByLabelText('Back')).toBeTruthy();
     expect(getByLabelText('Home')).toBeTruthy();
-    expect(getByLabelText('Add app')).toBeTruthy();
+    expect(getByLabelText('Add shortcut')).toBeTruthy();
   });
 });

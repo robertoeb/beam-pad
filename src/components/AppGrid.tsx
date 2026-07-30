@@ -1,29 +1,38 @@
 import { useState } from 'react';
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { Plus, Check } from 'lucide-react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
 
-import { AppTile } from './AppTile';
+import { ShortcutTile } from './ShortcutTile';
 import { useLayoutStore } from '@/stores/layout';
+import { shortcutRegistry } from '@/shortcuts/registry';
+import { fireShortcut } from '@/services/shortcuts';
 import { TV_APPS } from '@/protocol/deeplinks';
-import { launchApp } from '@/services/apps';
+import { space, radius } from '@/theme/tokens';
+import type { ShortcutId } from '@/shortcuts/types';
+import { appShortcutId } from '@/shortcuts/types';
 
 interface AppGridProps {
   edit?: boolean;
 }
 
 export function AppGrid({ edit: editProp }: AppGridProps) {
-  const pinned = useLayoutStore((s) => s.pinned);
-  const setPinned = useLayoutStore((s) => s.setPinned);
-  const pin = useLayoutStore((s) => s.pin);
-  const unpin = useLayoutStore((s) => s.unpin);
+  const shortcuts = useLayoutStore((s) => s.shortcuts);
+  const setShortcuts = useLayoutStore((s) => s.setShortcuts);
+  const addShortcut = useLayoutStore((s) => s.addShortcut);
+  const removeShortcut = useLayoutStore((s) => s.removeShortcut);
   const [editLocal, setEditLocal] = useState(false);
 
   const edit = editProp ?? editLocal;
 
-  const catalogApps = TV_APPS.filter((a) => !pinned.includes(a.id));
+  const pinnedAppIds = new Set(
+    shortcuts
+      .filter((id) => id.startsWith('app:'))
+      .map((id) => id.split(':')[1]),
+  );
+
+  const catalogApps = TV_APPS.filter((a) => !pinnedAppIds.has(a.id));
 
   const exitEdit = () => setEditLocal(false);
 
@@ -49,29 +58,34 @@ export function AppGrid({ edit: editProp }: AppGridProps) {
       )}
 
       <DraggableFlatList
-        data={pinned}
+        data={shortcuts}
         keyExtractor={(id) => id}
         numColumns={4}
         activationDistance={edit ? 0 : 9999}
-        onDragEnd={({ data }) => setPinned(data)}
-        renderItem={({ item, drag, isActive }: RenderItemParams<string>) => (
-          <View style={{ flex: 1, alignItems: 'center', paddingVertical: 8 }}>
-            <AppTile
-              appId={item}
-              editMode={edit}
-              showLabel
-              onUnpin={() => unpin(item)}
-              onPress={() => {
-                if (!edit) launchApp(item);
-              }}
-              onLongPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                if (!edit) setEditLocal(true);
-                drag();
-              }}
-            />
-          </View>
-        )}
+        onDragEnd={({ data }) => setShortcuts(data)}
+        renderItem={({ item, drag }: RenderItemParams<ShortcutId>) => {
+          const shortcut = shortcutRegistry.resolve(item);
+          return (
+            <View style={{ flex: 1, alignItems: 'center', paddingVertical: 8 }}>
+              <ShortcutTile
+                shortcut={shortcut}
+                size={64}
+                missing={!shortcut}
+                editMode={edit}
+                showLabel
+                onRemove={() => removeShortcut(item)}
+                onPress={() => {
+                  if (!edit) fireShortcut(item);
+                }}
+                onLongPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  if (!edit) setEditLocal(true);
+                  drag();
+                }}
+              />
+            </View>
+          );
+        }}
         ListFooterComponent={
           <View style={{ paddingTop: 24, paddingHorizontal: 16 }}>
             {catalogApps.length > 0 && (
@@ -98,7 +112,7 @@ export function AppGrid({ edit: editProp }: AppGridProps) {
                       <Pressable
                         accessibilityRole="button"
                         accessibilityLabel={`Pin ${app.name}`}
-                        onPress={() => pin(app.id)}
+                        onPress={() => addShortcut(appShortcutId(app.id))}
                         style={{
                           width: 64,
                           height: 64,
@@ -110,30 +124,7 @@ export function AppGrid({ edit: editProp }: AppGridProps) {
                           justifyContent: 'center',
                         }}
                       >
-                        <Text
-                          style={{
-                            fontWeight: '600',
-                            fontSize: 15,
-                            color: '#FFFFFF',
-                          }}
-                        >
-                          {app.initials}
-                        </Text>
-                        <View
-                          style={{
-                            position: 'absolute',
-                            top: -4,
-                            right: -4,
-                            width: 20,
-                            height: 20,
-                            borderRadius: 10,
-                            backgroundColor: '#00E5FF',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <Plus size={12} color="#000000" />
-                        </View>
+                        <Plus size={20} color="#00E5FF" />
                       </Pressable>
                       <Text
                         style={{

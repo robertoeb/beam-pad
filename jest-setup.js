@@ -95,6 +95,7 @@ jest.mock('react-native-reanimated', () => {
     useAnimatedStyle: (fn) => fn(),
     withSpring: (val) => val,
     withTiming: (val) => val,
+    withRepeat: (val) => val,
     runOnJS: (fn) => fn,
     useAnimatedProps: (fn) => fn(),
   };
@@ -162,8 +163,10 @@ jest.mock('react-native-svg', () => {
   const { View } = require('react-native');
   const MockSvg = (props) => React.createElement(View, props);
   const MockCircle = (props) => React.createElement(View, props);
+  const MockPath = (props) => React.createElement(View, props);
   MockSvg.Circle = MockCircle;
-  return { __esModule: true, default: MockSvg, Circle: MockCircle };
+  MockSvg.Path = MockPath;
+  return { __esModule: true, default: MockSvg, Circle: MockCircle, Path: MockPath };
 });
 
 jest.mock('lucide-react-native', () => {

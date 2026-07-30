@@ -38,9 +38,9 @@ describe('imeStore & layoutStore', () => {
     expect(useImeStore.getState().end).toBe(3);
   });
 
-  it('updates layout store pinned apps and sheet state', () => {
-    useLayoutStore.getState().setPinned(['youtube']);
-    expect(useLayoutStore.getState().pinned).toEqual(['youtube']);
+  it('updates layout store shortcuts and sheet state', () => {
+    useLayoutStore.getState().setShortcuts(['app:youtube']);
+    expect(useLayoutStore.getState().shortcuts).toEqual(['app:youtube']);
 
     useLayoutStore.getState().setMoreSheet(true);
     expect(useLayoutStore.getState().moreSheetOpen).toBe(true);
