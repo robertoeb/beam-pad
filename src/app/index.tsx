@@ -13,6 +13,7 @@ import { PowerButton } from '@/components/PowerButton';
 import { VolumeRail } from '@/components/VolumeRail';
 import { PinnedAppsRow } from '@/components/PinnedAppsRow';
 import { MoreSheet } from '@/components/MoreSheet';
+import { ImeSheet } from '@/components/ImeSheet';
 import { ToastHost } from '@/components/Toast';
 import { useLayoutStore } from '@/stores/layout';
 import { KEYS } from '@/protocol/keycodes';
@@ -76,6 +77,7 @@ export default function Index() {
         <ToastHost />
         <DeviceSwitchSheet visible={switchOpen} onClose={handleSheetClose} />
         <MoreSheet />
+        <ImeSheet />
       </SafeAreaView>
     </GestureDetector>
   );

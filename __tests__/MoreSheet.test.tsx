@@ -7,6 +7,12 @@ jest.mock('@/services/sessionManager', () => ({
   getActiveClient: jest.fn(),
 }));
 
+jest.mock('@/services/voice', () => ({
+  voiceStart: jest.fn(),
+  voiceStop: jest.fn(),
+  voiceSearchUi: jest.fn(),
+}));
+
 beforeEach(() => {
   (getActiveClient as jest.Mock).mockReturnValue(null);
   useLayoutStore.setState({ moreSheetOpen: false });

@@ -112,6 +112,23 @@ jest.mock('react-native-safe-area-context', () => {
   };
 });
 
+jest.mock('react-native/Libraries/AppState/AppState', () => {
+  const listeners = [];
+  return {
+    __esModule: true,
+    default: {
+      addEventListener: jest.fn((_, cb) => {
+        listeners.push(cb);
+        return {
+          remove: () => listeners.splice(listeners.indexOf(cb), 1),
+        };
+      }),
+      currentState: 'active',
+      _listeners: listeners,
+    },
+  };
+});
+
 jest.mock('react-native-svg', () => {
   const React = require('react');
   const { View } = require('react-native');
@@ -136,4 +153,88 @@ jest.mock('lucide-react-native', () => {
       },
     },
   );
+});
+
+const castStateListeners = [];
+const sessionStartedListeners = [];
+const sessionEndedListeners = [];
+const mediaStatusListeners = [];
+
+const mockRemoteMediaClient = {
+  loadMedia: jest.fn(() => Promise.resolve()),
+  play: jest.fn(() => Promise.resolve()),
+  pause: jest.fn(() => Promise.resolve()),
+  stop: jest.fn(() => Promise.resolve()),
+  getMediaStatus: jest.fn(() => Promise.resolve(null)),
+  onMediaStatusUpdated: jest.fn((handler) => {
+    mediaStatusListeners.push(handler);
+    return { remove: () => mediaStatusListeners.splice(mediaStatusListeners.indexOf(handler), 1) };
+  }),
+};
+
+const mockSession = {
+  client: mockRemoteMediaClient,
+  id: 'test-session',
+  getCastDevice: jest.fn(() => Promise.resolve({ friendlyName: 'Test TV', deviceId: 'dev-1' })),
+  getVolume: jest.fn(() => Promise.resolve(0.5)),
+  setVolume: jest.fn(),
+  isMute: jest.fn(() => Promise.resolve(false)),
+  setMute: jest.fn(),
+};
+
+const mockSessionManager = {
+  getCurrentCastSession: jest.fn(() => Promise.resolve(null)),
+  endCurrentSession: jest.fn(() => Promise.resolve()),
+  onSessionStarted: jest.fn((handler) => {
+    sessionStartedListeners.push(handler);
+    return {
+      remove: () => sessionStartedListeners.splice(sessionStartedListeners.indexOf(handler), 1),
+    };
+  }),
+  onSessionEnded: jest.fn((handler) => {
+    sessionEndedListeners.push(handler);
+    return {
+      remove: () => sessionEndedListeners.splice(sessionEndedListeners.indexOf(handler), 1),
+    };
+  }),
+};
+
+const mockCastContext = {
+  onCastStateChanged: jest.fn((handler) => {
+    castStateListeners.push(handler);
+    return { remove: () => castStateListeners.splice(castStateListeners.indexOf(handler), 1) };
+  }),
+  getSessionManager: jest.fn(() => mockSessionManager),
+  showCastDialog: jest.fn(() => Promise.resolve(true)),
+  getCastState: jest.fn(() => Promise.resolve(null)),
+};
+
+jest.mock('react-native-google-cast', () => {
+  const CastState = {
+    NO_DEVICES_AVAILABLE: 'noDevicesAvailable',
+    NOT_CONNECTED: 'notConnected',
+    CONNECTING: 'connecting',
+    CONNECTED: 'connected',
+  };
+  const MediaPlayerState = {
+    BUFFERING: 'buffering',
+    IDLE: 'idle',
+    LOADING: 'loading',
+    PAUSED: 'paused',
+    PLAYING: 'playing',
+  };
+  return {
+    __esModule: true,
+    default: mockCastContext,
+    CastContext: mockCastContext,
+    CastState,
+    MediaPlayerState,
+    _mockSession: mockSession,
+    _mockRemoteMediaClient: mockRemoteMediaClient,
+    _mockSessionManager: mockSessionManager,
+    _castStateListeners: castStateListeners,
+    _sessionStartedListeners: sessionStartedListeners,
+    _sessionEndedListeners: sessionEndedListeners,
+    _mediaStatusListeners: mediaStatusListeners,
+  };
 });

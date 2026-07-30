@@ -1,7 +1,6 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import {
   Mic,
-  Cast,
   SkipBack,
   Rewind,
   Play,
@@ -17,18 +16,45 @@ import {
 } from 'lucide-react-native';
 import { Sheet } from './Sheet';
 import { RemoteButton } from './RemoteButton';
+import { CastTile } from './CastTile';
+import { CastSheet } from './CastSheet';
 import { KEYS } from '@/protocol/keycodes';
 import { key } from '@/lib/key';
 import { useLayoutStore } from '@/stores/layout';
-import { showToast } from './Toast';
-import { useState } from 'react';
+import { VoiceOverlay } from './VoiceOverlay';
+import { voiceStart, voiceStop, voiceSearchUi } from '@/services/voice';
+import { useState, useRef } from 'react';
 
 export function MoreSheet() {
   const open = useLayoutStore((s) => s.moreSheetOpen);
   const setMoreSheet = useLayoutStore((s) => s.setMoreSheet);
   const [playing, setPlaying] = useState(false);
+  const [voiceHolding, setVoiceHolding] = useState(false);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isHolding = useRef(false);
 
   const close = () => setMoreSheet(false);
+
+  const onMicPressIn = () => {
+    isHolding.current = false;
+    holdTimer.current = setTimeout(() => {
+      isHolding.current = true;
+      setVoiceHolding(true);
+      voiceStart();
+    }, 300);
+  };
+
+  const onMicPressOut = () => {
+    if (holdTimer.current) clearTimeout(holdTimer.current);
+    if (isHolding.current) {
+      voiceStop();
+      setVoiceHolding(false);
+    }
+  };
+
+  const onMicPress = () => {
+    if (!isHolding.current) voiceSearchUi();
+  };
 
   return (
     <Sheet open={open} onClose={close} testID="more-sheet">
@@ -36,21 +62,16 @@ export function MoreSheet() {
         <View className="px-5">
           <View className="mb-4 flex-row gap-3">
             <Pressable
-              onPress={() => showToast('Voice coming soon')}
+              onPressIn={onMicPressIn}
+              onPressOut={onMicPressOut}
+              onPress={onMicPress}
               className="h-16 w-16 items-center justify-center rounded-2xl border border-surface-border bg-surface"
               accessibilityLabel="Voice"
               accessibilityRole="button"
             >
-              <Mic size={22} strokeWidth={1.5} color="#FFFFFF" />
+              <Mic size={22} strokeWidth={1.5} color={voiceHolding ? '#00E5FF' : '#FFFFFF'} />
             </Pressable>
-            <Pressable
-              onPress={() => showToast('Cast coming soon')}
-              className="h-16 w-16 items-center justify-center rounded-2xl border border-surface-border bg-surface"
-              accessibilityLabel="Cast"
-              accessibilityRole="button"
-            >
-              <Cast size={22} strokeWidth={1.5} color="#FFFFFF" />
-            </Pressable>
+            <CastTile />
           </View>
 
           <Text className="mb-3 font-medium text-[11px] uppercase tracking-[1.2px] text-text-muted">
@@ -194,6 +215,8 @@ export function MoreSheet() {
           </View>
         </View>
       </ScrollView>
+      <VoiceOverlay active={voiceHolding} />
+      <CastSheet />
     </Sheet>
   );
 }

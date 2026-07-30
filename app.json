@@ -24,7 +24,8 @@
       "expo-font",
       "expo-splash-screen",
       "./modules/expo-atv-socket",
-      "./modules/expo-atv-discovery"
+      "./modules/expo-atv-discovery",
+      ["react-native-google-cast", { "receiverAppId": "CC1AD845" }]
     ]
   }
 }

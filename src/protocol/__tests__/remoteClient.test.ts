@@ -134,7 +134,7 @@ afterEach(() => {
     volume: undefined,
     currentApp: undefined,
   });
-  useImeStore.setState({ visible: false, field: null });
+  useImeStore.setState(useImeStore.getInitialState());
 });
 
 // ─── Golden Vectors ────────────────────────────────────────────────────────
