@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CheckCircle2, XCircle } from 'lucide-react-native';
 import { PairingProtocol } from '@/protocol/PairingProtocol';
 import { PinInput } from '@/components/PinInput';
 import { TroubleshootSheet } from '@/components/TroubleshootSheet';
 import { useDevicesStore } from '@/stores/devices';
+import { Screen } from '@/components/ui/Screen';
+import { ScreenHeader } from '@/components/ui/ScreenHeader';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { Button } from '@/components/ui/Button';
+import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
+import { Label, Title } from '@/theme/typography';
+import { space, radius } from '@/theme/tokens';
 import type { ConnectError } from '@/protocol/errors';
 import { PAIRING_PORT } from '@/protocol/ports';
 
@@ -111,50 +117,109 @@ export default function PairingScreen() {
   ].includes(step);
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-1 items-center justify-center gap-6 px-8">
+    <Screen>
+      <ScreenHeader title="Pairing" back />
+
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: space[6],
+          paddingHorizontal: space[8],
+        }}
+      >
         {isWorking && (
-          <View className="items-center gap-4">
-            <ActivityIndicator size="large" color="#00E5FF" />
-            <Text className="text-center font-medium text-[15px] text-text-secondary">
-              {STEP_COPY[step]}
-            </Text>
+          <View style={{ alignItems: 'center', gap: space[4] }}>
+            <View
+              style={{
+                width: 84,
+                height: 84,
+                borderRadius: 42,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(139,140,248,0.1)',
+                borderWidth: 1,
+                borderColor: 'rgba(139,140,248,0.25)',
+              }}
+            >
+              <ActivityIndicator size="large" color="#8B8CF8" />
+            </View>
+            <Label style={{ textAlign: 'center', color: '#B7BDCB' }}>{STEP_COPY[step]}</Label>
           </View>
         )}
 
         {step === 'awaiting_code' && (
-          <View className="items-center gap-6">
-            <Text className="text-center font-medium text-[15px] text-text-secondary">
+          <View
+            style={{
+              alignItems: 'center',
+              gap: space[6],
+              width: '100%',
+              borderRadius: radius.xl,
+              borderWidth: 1,
+              borderColor: 'rgba(255,255,255,0.07)',
+              backgroundColor: 'rgba(19,19,30,0.8)',
+              paddingVertical: space[8],
+              paddingHorizontal: space[6],
+            }}
+          >
+            <View
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 28,
+                backgroundColor: 'rgba(34,211,238,0.1)',
+                borderWidth: 1,
+                borderColor: 'rgba(34,211,238,0.3)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+              }}
+            >
+              <Gradient
+                colors={BRAND_GRADIENT}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                opacity={0.25}
+              />
+              <Title style={{ fontSize: 20, color: '#22D3EE' }}>{n[0]?.toUpperCase() ?? 'T'}</Title>
+            </View>
+            <Label style={{ textAlign: 'center', color: '#B7BDCB' }}>
               {STEP_COPY.awaiting_code}
-            </Text>
+            </Label>
             <PinInput length={6} onComplete={handleCodeSubmit} />
           </View>
         )}
 
         {step === 'done' && (
-          <View className="items-center gap-4">
-            <CheckCircle2 size={56} color="#00E5FF" strokeWidth={1.5} />
-            <Text className="font-semibold text-xl text-text-primary">Paired Successfully</Text>
-            <Text className="font-medium text-sm text-text-secondary">{n} is ready to use</Text>
+          <View style={{ alignItems: 'center', gap: space[4] }}>
+            <CheckCircle2 size={56} color="#22D3EE" strokeWidth={1.5} />
+            <Title>Paired Successfully</Title>
+            <Label style={{ color: '#B7BDCB' }}>{n} is ready to use</Label>
           </View>
         )}
 
         {step === 'failed' && (
-          <View className="items-center gap-4">
-            <XCircle size={56} color="#FF3B30" strokeWidth={1.5} />
-            <Text className="font-semibold text-xl text-text-primary">Pairing Failed</Text>
-            <Text className="px-4 text-center font-medium text-sm text-text-secondary">
-              {connectError?.message ?? 'The TV rejected pairing. Try again from its remote settings.'}
-            </Text>
-            <Pressable
-              onPress={() => setShowTroubleshoot(true)}
-              className="mt-4 rounded-lg bg-accent-cyan/10 px-6 py-3"
-            >
-              <Text className="font-medium text-sm text-accent-cyan">Troubleshoot</Text>
-            </Pressable>
-          </View>
+          <ErrorState
+            icon={<XCircle size={56} color="#FF453A" strokeWidth={1.5} />}
+            title="Pairing Failed"
+            body={
+              connectError?.message ??
+              'The TV rejected pairing. Try again from its remote settings.'
+            }
+            secondaryLabel="Troubleshoot"
+            onSecondary={() => setShowTroubleshoot(true)}
+            retryLabel={connectError?.retryable ? 'Retry' : undefined}
+            onRetry={connectError?.retryable ? handleRetry : undefined}
+          />
         )}
       </View>
+
+      {step === 'failed' && !connectError?.retryable && (
+        <View style={{ paddingHorizontal: space[5], paddingBottom: space[6] }}>
+          <Button label="Try again" onPress={handleRetry} fullWidth variant="secondary" />
+        </View>
+      )}
 
       <TroubleshootSheet
         open={showTroubleshoot}
@@ -169,6 +234,6 @@ export default function PairingScreen() {
             : undefined
         }
       />
-    </SafeAreaView>
+    </Screen>
   );
 }

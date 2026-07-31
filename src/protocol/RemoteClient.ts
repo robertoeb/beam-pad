@@ -135,7 +135,11 @@ export class RemoteClient {
         this.ev.onImeShow(msg.remoteImeShowRequest.remoteTextFieldStatus);
       }
       if (msg.remoteError) {
-        const err = classify('TV reported a remote error', { phase: 'connect', host: this.device.host, hasCerts: true });
+        const err = classify('TV reported a remote error', {
+          phase: 'connect',
+          host: this.device.host,
+          hasCerts: true,
+        });
         this.ev.onState('ERROR_STATE', err);
       }
     }

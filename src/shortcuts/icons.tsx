@@ -55,7 +55,13 @@ const YouTubeIcon = ({ size, color }: BrandIconProps) => (
 
 const PrimeIcon = ({ size, color }: BrandIconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path d="M3 12h4l2-6 4 12 2-6h6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <Path
+      d="M3 12h4l2-6 4 12 2-6h6"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </Svg>
 );
 
@@ -94,8 +100,15 @@ const ParamountIcon = ({ size, color }: BrandIconProps) => (
 
 const AppleTvIcon = ({ size, color }: BrandIconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path d="M16.5 9.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" fill={color} />
-    <Path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8z" stroke={color} strokeWidth="1.5" />
+    <Path
+      d="M16.5 9.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"
+      fill={color}
+    />
+    <Path
+      d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8z"
+      stroke={color}
+      strokeWidth="1.5"
+    />
   </Svg>
 );
 
@@ -109,7 +122,12 @@ const TwitchIcon = ({ size, color }: BrandIconProps) => (
 const SpotifyIcon = ({ size, color }: BrandIconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Circle cx="12" cy="12" r="10" fill={color} />
-    <Path d="M7 10c3-1 7-1 10 1M7 13c2.5-.8 5.5-.8 8 .5M7 16c2-.5 4.5-.5 6.5.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+    <Path
+      d="M7 10c3-1 7-1 10 1M7 13c2.5-.8 5.5-.8 8 .5M7 16c2-.5 4.5-.5 6.5.5"
+      stroke="#fff"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
   </Svg>
 );
 
@@ -236,11 +254,7 @@ export const KEY_ICONS: Record<string, LucideIcon> = {
   blue: Palette,
 };
 
-export function iconFor(
-  brandKey: string,
-  size: number,
-  color: string,
-): React.ReactElement | null {
+export function iconFor(brandKey: string, size: number, color: string): React.ReactElement | null {
   const Brand = BRAND_ICONS[brandKey];
   if (Brand) return <Brand size={size} color={color} />;
   return null;

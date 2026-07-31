@@ -210,7 +210,9 @@ describe('layoutStore add/remove/moveShortcut', () => {
     expect(useLayoutStore.getState().shortcuts).toContain('app:hulu');
 
     useLayoutStore.getState().addShortcut('app:hulu');
-    const count = useLayoutStore.getState().shortcuts.filter((id: string) => id === 'app:hulu').length;
+    const count = useLayoutStore
+      .getState()
+      .shortcuts.filter((id: string) => id === 'app:hulu').length;
     expect(count).toBe(1);
   });
 

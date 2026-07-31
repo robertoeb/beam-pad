@@ -96,6 +96,7 @@ jest.mock('react-native-reanimated', () => {
     withSpring: (val) => val,
     withTiming: (val) => val,
     withRepeat: (val) => val,
+    withSequence: (val) => val,
     runOnJS: (fn) => fn,
     useAnimatedProps: (fn) => fn(),
   };
@@ -164,9 +165,29 @@ jest.mock('react-native-svg', () => {
   const MockSvg = (props) => React.createElement(View, props);
   const MockCircle = (props) => React.createElement(View, props);
   const MockPath = (props) => React.createElement(View, props);
+  const MockRect = (props) => React.createElement(View, props);
+  const MockDefs = (props) => React.createElement(View, props);
+  const MockStop = (props) => React.createElement(View, props);
+  const MockLinearGradient = (props) => React.createElement(View, props);
+  const MockRadialGradient = (props) => React.createElement(View, props);
   MockSvg.Circle = MockCircle;
   MockSvg.Path = MockPath;
-  return { __esModule: true, default: MockSvg, Circle: MockCircle, Path: MockPath };
+  MockSvg.Rect = MockRect;
+  MockSvg.Defs = MockDefs;
+  MockSvg.Stop = MockStop;
+  MockSvg.LinearGradient = MockLinearGradient;
+  MockSvg.RadialGradient = MockRadialGradient;
+  return {
+    __esModule: true,
+    default: MockSvg,
+    Circle: MockCircle,
+    Path: MockPath,
+    Rect: MockRect,
+    Defs: MockDefs,
+    Stop: MockStop,
+    LinearGradient: MockLinearGradient,
+    RadialGradient: MockRadialGradient,
+  };
 });
 
 jest.mock('lucide-react-native', () => {

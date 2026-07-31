@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Power } from 'lucide-react-native';
 import Svg, { Circle } from 'react-native-svg';
 import Animated, {
@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { SPRING } from '@/lib/spring';
+import { Glow } from '@/theme/gradient';
 import { powerShortPress, powerHoldStart, powerHoldEnd } from '@/services/power';
 import { useSettingsStore } from '@/stores/settings';
 
@@ -76,13 +77,14 @@ export function PowerButton() {
         justifyContent: 'center',
       }}
     >
+      <Glow color="#FF453A" size={120} x={-32} y={-32} opacity={0.16} />
       <Svg width={SIZE} height={SIZE} style={{ position: 'absolute', top: 0, left: 0 }}>
         <Circle
           cx={SIZE / 2}
           cy={SIZE / 2}
           r={R}
           fill="none"
-          stroke="rgba(255,255,255,0.08)"
+          stroke="rgba(255,255,255,0.09)"
           strokeWidth={2}
         />
         <AnimatedCircle
@@ -90,7 +92,7 @@ export function PowerButton() {
           cy={SIZE / 2}
           r={R}
           fill="none"
-          stroke="#FF3B30"
+          stroke="#FF453A"
           strokeWidth={2}
           strokeDasharray={CIRCUMFERENCE}
           strokeLinecap="round"
@@ -98,17 +100,18 @@ export function PowerButton() {
           transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
         />
       </Svg>
-      <Animated.View
+      <View
         style={{
-          transform: [{ scale }],
           width: SIZE,
           height: SIZE,
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <Power size={22} strokeWidth={1.5} color="#FF3B30" />
-      </Animated.View>
+        <Animated.View style={{ transform: [{ scale }] }}>
+          <Power size={22} strokeWidth={1.6} color="#FF453A" />
+        </Animated.View>
+      </View>
     </Pressable>
   );
 }

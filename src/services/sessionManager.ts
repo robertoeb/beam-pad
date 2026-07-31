@@ -43,10 +43,7 @@ registerConnector(async (deviceId) => {
   const conn = useConnectionStore.getState();
 
   await new Promise<void>((resolve, reject) => {
-    const timeout = setTimeout(
-      () => reject(new Error('timeout')),
-      CONNECT_BUDGET_MS,
-    );
+    const timeout = setTimeout(() => reject(new Error('timeout')), CONNECT_BUDGET_MS);
     current = new RemoteClient(device, {
       onState: (s, error) => {
         conn.setState(s, error);

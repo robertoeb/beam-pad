@@ -1,16 +1,18 @@
 import { useState, useMemo } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft } from 'lucide-react-native';
+import { View, Pressable, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { useSettingsStore } from '@/stores/settings';
 import { useDevicesStore } from '@/stores/devices';
-import { IR_PROFILES, encodeCommand, type IrProfile } from '@/ir/profiles';
-import { irSend, resolveProfile, type IrResult, type CommandName } from '@/services/volumeRouter';
+import { IR_PROFILES, type IrProfile } from '@/ir/profiles';
+import { irSend, resolveProfile, type IrResult } from '@/services/volumeRouter';
 import { IrBlaster } from '@/modules/expo-ir-blaster';
 import { SettingsSection } from '@/components/settings/SettingsSection';
 import { SettingRow } from '@/components/settings/SettingRow';
-import { tokens } from '@/theme/tokens';
+import { Screen } from '@/components/ui/Screen';
+import { ScreenHeader } from '@/components/ui/ScreenHeader';
+import { Label } from '@/theme/typography';
+import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
+import { space, radius } from '@/theme/tokens';
 
 type RowStatus = 'idle' | 'sent' | 'unsupported' | 'failed';
 
@@ -66,41 +68,36 @@ export default function IrStudioScreen() {
   };
 
   const statusColor = (s: RowStatus) => {
-    if (s === 'sent') return tokens.colors.accent.cyan;
-    if (s === 'unsupported') return tokens.colors.text.muted;
-    if (s === 'failed') return tokens.colors.accent.red;
-    return tokens.colors.text.secondary;
+    if (s === 'sent') return '#22D3EE';
+    if (s === 'unsupported') return '#747B8A';
+    if (s === 'failed') return '#FF453A';
+    return '#B7BDCB';
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-      <View className="flex-row items-center gap-3 px-5 py-3">
-        <Pressable
-          onPress={() => router.back()}
-          accessibilityLabel="Back"
-          accessibilityRole="button"
-        >
-          <ArrowLeft size={22} color={tokens.colors.text.primary} />
-        </Pressable>
-        <Text className="font-semibold text-lg text-text-primary">IR Studio</Text>
-      </View>
+    <Screen>
+      <ScreenHeader title="IR Studio" subtitle="Blast IR to your hardware" back />
 
-      <ScrollView className="flex-1 px-5">
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <SettingsSection title="Capability">
-          <SettingRow
-            label="IR Blaster"
-            value={irAvailable ? 'Available' : 'Not available'}
-          />
+          <SettingRow label="IR Blaster" value={irAvailable ? 'Available' : 'Not available'} />
           {ranges.length > 0 && (
-            <View className="mt-2 flex-row flex-wrap gap-2">
+            <View style={{ marginTop: 8, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {ranges.map((r, i) => (
                 <View
                   key={i}
-                  className="rounded-full border border-surface-border bg-surface px-3 py-1"
+                  style={{
+                    borderRadius: 999,
+                    borderWidth: 1,
+                    borderColor: 'rgba(255,255,255,0.07)',
+                    backgroundColor: '#13131E',
+                    paddingHorizontal: 12,
+                    paddingVertical: 5,
+                  }}
                 >
-                  <Text className="text-xs text-text-secondary">
-                    {Math.round(r.min / 1000)}–{Math.round(r.max / 1000)} kHz
-                  </Text>
+                  <Label style={{ color: '#B7BDCB', fontSize: 11 }}>
+                    {Math.round(r.min / 1000)}-{Math.round(r.max / 1000)} kHz
+                  </Label>
                 </View>
               ))}
             </View>
@@ -114,43 +111,72 @@ export default function IrStudioScreen() {
             onPress={() => router.push('/settings/ir-profile' as any)}
           />
           {profile?.verified && (
-            <View className="mt-1 flex-row items-center gap-1">
+            <View style={{ marginTop: 4, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <View
                 style={{
                   width: 8,
                   height: 8,
                   borderRadius: 4,
-                  backgroundColor: tokens.colors.accent.green,
+                  backgroundColor: '#34D399',
                 }}
               />
-              <Text className="text-xs text-text-secondary">Verified</Text>
+              <Label style={{ color: '#B7BDCB', fontSize: 11 }}>Verified</Label>
             </View>
           )}
         </SettingsSection>
 
         <SettingsSection title="Command Matrix">
           {commands.length === 0 && (
-            <Text className="text-sm text-text-muted">Select a profile to test commands.</Text>
+            <Label style={{ color: '#747B8A' }}>Select a profile to test commands.</Label>
           )}
           {commands.map((name) => {
             const status = rowStatuses[name] ?? 'idle';
             const detail = rowDetails[name];
             return (
-              <View key={name} className="mb-2">
+              <View key={name} style={{ marginBottom: 8 }}>
                 <Pressable
                   onPress={() => handleSend(name)}
                   onLongPress={() => handleSend(name, 5)}
-                  className="flex-row items-center justify-between rounded-xl border border-surface-border bg-surface px-4 py-3"
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    borderRadius: radius.xl,
+                    borderWidth: 1,
+                    borderColor: 'rgba(255,255,255,0.07)',
+                    backgroundColor: 'rgba(19,19,30,0.8)',
+                    paddingHorizontal: 16,
+                    paddingVertical: 13,
+                    overflow: 'hidden',
+                  }}
                   accessibilityRole="button"
                   accessibilityLabel={`Test ${name}`}
                 >
-                  <Text className="text-sm text-text-primary capitalize">{name}</Text>
-                  <Text className="text-xs capitalize" style={{ color: statusColor(status) }}>
+                  {status === 'sent' && (
+                    <Gradient
+                      colors={BRAND_GRADIENT}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      opacity={0.1}
+                    />
+                  )}
+                  <Label style={{ color: '#F5F6FA', textTransform: 'capitalize' }}>{name}</Label>
+                  <Label
+                    style={{
+                      color: statusColor(status),
+                      fontSize: 11,
+                      textTransform: 'capitalize',
+                    }}
+                  >
                     {status === 'idle' ? 'Tap to send' : status}
-                  </Text>
+                  </Label>
                 </Pressable>
                 {detail ? (
-                  <Text className="mt-1 px-4 text-xs text-text-muted">{detail}</Text>
+                  <Label
+                    style={{ marginTop: 4, paddingHorizontal: 16, color: '#747B8A', fontSize: 11 }}
+                  >
+                    {detail}
+                  </Label>
                 ) : null}
               </View>
             );
@@ -158,54 +184,56 @@ export default function IrStudioScreen() {
         </SettingsSection>
 
         <SettingsSection title="Tuning">
-          <SettingRow label={`Repeat count: ${irRepeatCount}`}>
-            <View className="flex-row gap-2">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <Pressable
-                  key={n}
-                  onPress={() => set({ irRepeatCount: n })}
-                  className={`rounded-lg border px-3 py-1 ${
-                    irRepeatCount === n
-                      ? 'border-accent-cyan bg-accent-cyan/10'
-                      : 'border-surface-border bg-surface'
-                  }`}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Repeat ${n}`}
-                >
-                  <Text
-                    className={`text-sm ${
-                      irRepeatCount === n ? 'text-accent-cyan' : 'text-text-primary'
-                    }`}
+          <SettingRow label={`Repeat count: ${irRepeatCount}`} stack>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {[1, 2, 3, 4, 5].map((n) => {
+                const selected = irRepeatCount === n;
+                return (
+                  <Pressable
+                    key={n}
+                    onPress={() => set({ irRepeatCount: n })}
+                    style={{
+                      flex: 1,
+                      borderRadius: radius.lg,
+                      borderWidth: 1,
+                      borderColor: selected ? 'rgba(34,211,238,0.4)' : 'rgba(255,255,255,0.07)',
+                      backgroundColor: selected ? 'rgba(34,211,238,0.12)' : '#13131E',
+                      paddingVertical: 8,
+                      alignItems: 'center',
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Repeat ${n}`}
                   >
-                    {n}
-                  </Text>
-                </Pressable>
-              ))}
+                    <Label style={{ color: selected ? '#22D3EE' : '#F5F6FA' }}>{n}</Label>
+                  </Pressable>
+                );
+              })}
             </View>
           </SettingRow>
-          <SettingRow label={`Gap: ${irGapMs} ms`}>
-            <View className="flex-row gap-2">
-              {[20, 40, 60, 80, 120].map((ms) => (
-                <Pressable
-                  key={ms}
-                  onPress={() => set({ irGapMs: ms })}
-                  className={`rounded-lg border px-3 py-1 ${
-                    irGapMs === ms
-                      ? 'border-accent-cyan bg-accent-cyan/10'
-                      : 'border-surface-border bg-surface'
-                  }`}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Gap ${ms} ms`}
-                >
-                  <Text
-                    className={`text-sm ${
-                      irGapMs === ms ? 'text-accent-cyan' : 'text-text-primary'
-                    }`}
+          <SettingRow label={`Gap: ${irGapMs} ms`} stack>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {[20, 40, 60, 80, 120].map((ms) => {
+                const selected = irGapMs === ms;
+                return (
+                  <Pressable
+                    key={ms}
+                    onPress={() => set({ irGapMs: ms })}
+                    style={{
+                      flex: 1,
+                      borderRadius: radius.lg,
+                      borderWidth: 1,
+                      borderColor: selected ? 'rgba(34,211,238,0.4)' : 'rgba(255,255,255,0.07)',
+                      backgroundColor: selected ? 'rgba(34,211,238,0.12)' : '#13131E',
+                      paddingVertical: 8,
+                      alignItems: 'center',
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Gap ${ms} ms`}
                   >
-                    {ms}
-                  </Text>
-                </Pressable>
-              ))}
+                    <Label style={{ color: selected ? '#22D3EE' : '#F5F6FA' }}>{ms}</Label>
+                  </Pressable>
+                );
+              })}
             </View>
           </SettingRow>
         </SettingsSection>
@@ -217,6 +245,6 @@ export default function IrStudioScreen() {
           />
         </SettingsSection>
       </ScrollView>
-    </SafeAreaView>
+    </Screen>
   );
 }

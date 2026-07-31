@@ -10,7 +10,11 @@ export type CommandName = keyof IrProfile['commands'];
 
 export type IrResult =
   | { ok: true }
-  | { ok: false; reason: 'no-profile' | 'no-command' | 'freq-unsupported' | 'no-emitter' | 'transmit-failed'; detail?: string };
+  | {
+      ok: false;
+      reason: 'no-profile' | 'no-command' | 'freq-unsupported' | 'no-emitter' | 'transmit-failed';
+      detail?: string;
+    };
 
 export function resolveProfile(deviceId?: string | null): IrProfile | null {
   const { irProfileId, irPerDevice } = useSettingsStore.getState();

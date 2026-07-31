@@ -42,7 +42,7 @@ export async function executeMacro(steps: MacroStep[]): Promise<boolean> {
   for (const step of steps) {
     const client = getActiveClient();
     if (!client) {
-      showToast('Macro aborted — TV disconnected');
+      showToast('Macro aborted - TV disconnected');
       return false;
     }
     const ok = await executeStep(step);
@@ -60,7 +60,7 @@ export function fireShortcut(id: ShortcutId): boolean {
 
   const client = getActiveClient();
   if (!client) {
-    showToast('No TV connected — pick a device');
+    showToast('No TV connected - pick a device');
     return false;
   }
 

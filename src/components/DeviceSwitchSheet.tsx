@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Animated, FlatList, Modal, Pressable, Text, View } from 'react-native';
+import { Animated, FlatList, Modal, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Plus, Tv } from 'lucide-react-native';
+import { Plus, Tv, Check } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useDevicesStore } from '@/stores/devices';
 import { useConnectionStore } from '@/stores/connection';
 import { switchTo } from '@/services/sessionManager';
+import { Label, Title } from '@/theme/typography';
 
 interface DeviceSwitchSheetProps {
   visible: boolean;
@@ -57,16 +58,37 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
       return (
         <Pressable
           onPress={() => handleSwitch(item.id)}
-          className="flex-row items-center gap-3 px-4 py-3"
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+            paddingHorizontal: 16,
+            paddingVertical: 14,
+            marginHorizontal: 16,
+            marginBottom: 8,
+            borderRadius: 18,
+            borderWidth: 1,
+            borderColor: isActive ? 'rgba(34,211,238,0.4)' : 'rgba(255,255,255,0.07)',
+            backgroundColor: isActive ? 'rgba(34,211,238,0.08)' : '#13131E',
+          }}
         >
           <View
-            className={`h-2.5 w-2.5 rounded-full ${isActive ? 'bg-accent-cyan' : 'bg-text-muted'}`}
-          />
-          <Tv size={20} color={isActive ? '#00E5FF' : '#A1A1AA'} />
-          <View className="flex-1">
-            <Text className="font-medium text-[15px] text-text-primary">{item.name}</Text>
-            <Text className="text-xs text-text-muted">{item.host}</Text>
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 12,
+              backgroundColor: isActive ? 'rgba(34,211,238,0.14)' : 'rgba(255,255,255,0.06)',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Tv size={18} color={isActive ? '#22D3EE' : '#B7BDCB'} />
           </View>
+          <View style={{ flex: 1 }}>
+            <Label style={{ color: '#F5F6FA' }}>{item.name}</Label>
+            <Label style={{ color: '#747B8A', fontSize: 11 }}>{item.host}</Label>
+          </View>
+          {isActive ? <Check size={18} color="#22D3EE" /> : null}
         </Pressable>
       );
     },
@@ -75,37 +97,74 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-black/60" onPress={onClose}>
+      <Pressable style={{ flex: 1, backgroundColor: 'rgba(5,5,10,0.7)' }} onPress={onClose}>
         <SafeAreaView style={{ flex: 1 }}>
-          <Animated.View
-            style={{ transform: [{ translateY }] }}
-            className="mx-4 rounded-[24px] border border-surface-border bg-surface"
-          >
-            <Text className="px-4 pb-2 pt-4 font-semibold text-lg text-text-primary">
-              Switch Device
-            </Text>
-            {paired.length === 0 ? (
-              <View className="px-4 py-8">
-                <Text className="text-center text-text-muted">No paired devices</Text>
-              </View>
-            ) : (
-              <FlatList
-                data={paired}
-                keyExtractor={(item) => item.id}
-                renderItem={renderItem}
-                scrollEnabled={false}
-              />
-            )}
-            <Pressable
-              onPress={() => {
-                onClose();
-                router.push({ pathname: '/devices' as any });
+          <Animated.View style={{ transform: [{ translateY }] }}>
+            <View
+              style={{
+                borderRadius: 28,
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.09)',
+                backgroundColor: '#10101A',
+                paddingTop: 12,
+                marginHorizontal: 8,
+                marginBottom: 8,
               }}
-              className="flex-row items-center gap-2 border-t border-surface-border px-4 py-3"
             >
-              <Plus size={18} color="#00E5FF" />
-              <Text className="font-medium text-[15px] text-accent-cyan">Add Device</Text>
-            </Pressable>
+              <View style={{ alignItems: 'center', marginBottom: 8 }}>
+                <View
+                  style={{
+                    width: 44,
+                    height: 5,
+                    borderRadius: 3,
+                    backgroundColor: 'rgba(255,255,255,0.16)',
+                  }}
+                />
+              </View>
+              <Title style={{ paddingHorizontal: 20, paddingBottom: 12 }}>Switch Device</Title>
+              {paired.length === 0 ? (
+                <View style={{ paddingVertical: 28 }}>
+                  <Label style={{ textAlign: 'center', color: '#747B8A' }}>No paired devices</Label>
+                </View>
+              ) : (
+                <FlatList
+                  data={paired}
+                  keyExtractor={(item) => item.id}
+                  renderItem={renderItem}
+                  scrollEnabled={false}
+                  contentContainerStyle={{ paddingBottom: 8 }}
+                />
+              )}
+              <Pressable
+                onPress={() => {
+                  onClose();
+                  router.push({ pathname: '/devices' as any });
+                }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                  paddingHorizontal: 20,
+                  paddingVertical: 16,
+                  borderTopWidth: 1,
+                  borderTopColor: 'rgba(255,255,255,0.07)',
+                }}
+              >
+                <View
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 12,
+                    backgroundColor: 'rgba(139,140,248,0.14)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Plus size={18} color="#8B8CF8" />
+                </View>
+                <Label style={{ color: '#8B8CF8', fontSize: 15 }}>Add Device</Label>
+              </Pressable>
+            </View>
           </Animated.View>
         </SafeAreaView>
       </Pressable>

@@ -26,7 +26,9 @@ jest.mock('@/components/TroubleshootSheet', () => ({
     if (!open) return null;
     const React = require('react');
     const { View, Text } = require('react-native');
-    return React.createElement(View, { testID: 'troubleshoot-sheet' },
+    return React.createElement(
+      View,
+      { testID: 'troubleshoot-sheet' },
       React.createElement(Text, null, 'Troubleshoot content'),
     );
   },

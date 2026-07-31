@@ -1,7 +1,5 @@
 export type MacroStep =
-  | { type: 'key'; keyCode: number }
-  | { type: 'app'; appId: string }
-  | { type: 'wait'; ms: number };
+  { type: 'key'; keyCode: number } | { type: 'app'; appId: string } | { type: 'wait'; ms: number };
 
 export type ShortcutAction =
   | { kind: 'app'; appId: string }

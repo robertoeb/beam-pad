@@ -57,26 +57,33 @@ export class PairingProtocol {
 
       this.setStep('connecting');
       this.subs.push(
-        AtvSocket.onSocketData(
-          (e: { id: string; base64: string }) => {
+        AtvSocket.onSocketData((e: { id: string; base64: string }) => {
+          if (e.id === this.socketId) {
+            console.log('[PairingProtocol] Socket data received, length:', e.base64.length);
+            this.handle(e.base64);
+          }
+        }),
+        AtvSocket.onSocketState(
+          (e: { id: string; state: string; error?: string; code?: string }) => {
             if (e.id === this.socketId) {
-              console.log('[PairingProtocol] Socket data received, length:', e.base64.length);
-              this.handle(e.base64);
+              console.log(
+                '[PairingProtocol] Socket state changed:',
+                e.state,
+                e.error ?? '',
+                e.code ?? '',
+              );
+              if (e.state !== 'open' && this.step !== 'done') {
+                if (e.state === 'error') {
+                  this.fail(classify(e.error, { phase: 'pair', host: this.host }));
+                } else {
+                  this.fail(
+                    classify(e.error ?? 'socket closed', { phase: 'pair', host: this.host }),
+                  );
+                }
+              }
             }
           },
         ),
-        AtvSocket.onSocketState((e: { id: string; state: string; error?: string; code?: string }) => {
-          if (e.id === this.socketId) {
-            console.log('[PairingProtocol] Socket state changed:', e.state, e.error ?? '', e.code ?? '');
-            if (e.state !== 'open' && this.step !== 'done') {
-              if (e.state === 'error') {
-                this.fail(classify(e.error, { phase: 'pair', host: this.host }));
-              } else {
-                this.fail(classify(e.error ?? 'socket closed', { phase: 'pair', host: this.host }));
-              }
-            }
-          }
-        }),
       );
       await AtvSocket.connect(
         this.socketId,
@@ -125,7 +132,12 @@ export class PairingProtocol {
   handle(base64: string) {
     for (const payload of this.codec.push(fromB64(base64))) {
       const msg = pb.PairingMessage.decode(payload);
-      console.log('[PairingProtocol] Decoded msg:', JSON.stringify(msg), 'current step:', this.step);
+      console.log(
+        '[PairingProtocol] Decoded msg:',
+        JSON.stringify(msg),
+        'current step:',
+        this.step,
+      );
       const statusNum = Number(msg.status);
       const isOk =
         statusNum === pb.Status.STATUS_OK ||
@@ -139,13 +151,19 @@ export class PairingProtocol {
         if (statusNum === pb.Status.STATUS_ERROR && this.serviceName === 'atvremote') {
           this.retryWith('androidtv-remote');
           return;
-        } else if (statusNum === pb.Status.STATUS_ERROR && this.serviceName === 'androidtv-remote') {
+        } else if (
+          statusNum === pb.Status.STATUS_ERROR &&
+          this.serviceName === 'androidtv-remote'
+        ) {
           this.retryWith('com.google.android.tv.remote');
           return;
         }
         return this.fail(classify(`TV status ${msg.status}`, { phase: 'pair', host: this.host }));
       }
-      if ((this.step === 'request' || this.step === 'connecting') && (msg.pairingRequestAck || msg.pairingOption)) {
+      if (
+        (this.step === 'request' || this.step === 'connecting') &&
+        (msg.pairingRequestAck || msg.pairingOption)
+      ) {
         console.log('[PairingProtocol] Handling requestAck/pairingOption -> sending pairingOption');
         this.setStep('option');
         this.send({
@@ -174,7 +192,9 @@ export class PairingProtocol {
           },
         });
       } else if (msg.pairingConfigurationAck || this.step === 'configuration') {
-        console.log('[PairingProtocol] Pairing configuration ACK received -> setStep awaiting_code');
+        console.log(
+          '[PairingProtocol] Pairing configuration ACK received -> setStep awaiting_code',
+        );
         this.setStep('awaiting_code');
       } else if (msg.pairingSecretAck) {
         console.log('[PairingProtocol] Pairing secret ACK received -> finish');
@@ -208,7 +228,10 @@ export class PairingProtocol {
   }
 
   private async retryWith(newServiceName: string) {
-    console.log('[PairingProtocol] Retrying pairing with fresh socket connection & serviceName:', newServiceName);
+    console.log(
+      '[PairingProtocol] Retrying pairing with fresh socket connection & serviceName:',
+      newServiceName,
+    );
     this.destroy();
     this.serviceName = newServiceName;
     this.codec = new FrameCodec();

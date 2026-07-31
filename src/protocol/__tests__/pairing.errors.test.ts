@@ -103,7 +103,9 @@ describe('PairingProtocol error classification', () => {
   it('handshake reset during pair → TLS_HANDSHAKE', async () => {
     const errors: any[] = [];
     const proto = new PairingProtocol('192.168.1.100', {
-      onStep: (_s: string, err: any) => { if (err) errors.push(err); },
+      onStep: (_s: string, err: any) => {
+        if (err) errors.push(err);
+      },
     });
 
     const origConnect = mockFake.connect.bind(mockFake);
@@ -122,7 +124,9 @@ describe('PairingProtocol error classification', () => {
   it('STATUS_BAD_CONFIGURATION → PROTOCOL', async () => {
     const errors: any[] = [];
     const proto = new PairingProtocol('192.168.1.100', {
-      onStep: (_s: string, err: any) => { if (err) errors.push(err); },
+      onStep: (_s: string, err: any) => {
+        if (err) errors.push(err);
+      },
     });
 
     await proto.start();
@@ -153,7 +157,9 @@ describe('PairingProtocol error classification', () => {
   it('error has message and steps', async () => {
     const errors: any[] = [];
     const proto = new PairingProtocol('192.168.1.100', {
-      onStep: (_s: string, err: any) => { if (err) errors.push(err); },
+      onStep: (_s: string, err: any) => {
+        if (err) errors.push(err);
+      },
     });
 
     await proto.start();

@@ -1,26 +1,36 @@
-import { ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { ReactNode, useEffect } from 'react';
+import { BackHandler, Pressable, View, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
-  runOnJS,
 } from 'react-native-reanimated';
-import { SPRING } from '@/lib/spring';
 import * as Haptics from 'expo-haptics';
-import { useEffect } from 'react';
+import { SPRING } from '@/lib/spring';
+import { radius, zIndex } from '@/theme/tokens';
 
 interface SheetProps {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
+  maxHeightRatio?: number;
+  bottomInset?: number;
   testID?: string;
 }
 
-export function Sheet({ open, onClose, children, testID }: SheetProps) {
-  const translateY = useSharedValue(600);
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+export function Sheet({
+  open,
+  onClose,
+  children,
+  maxHeightRatio = 0.72,
+  bottomInset = 0,
+  testID,
+}: SheetProps) {
+  const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
 
   useEffect(() => {
@@ -29,10 +39,19 @@ export function Sheet({ open, onClose, children, testID }: SheetProps) {
       translateY.value = withSpring(0, SPRING);
       backdropOpacity.value = withTiming(0.6, { duration: 200 });
     } else {
-      translateY.value = withTiming(600, { duration: 250 });
+      translateY.value = withTiming(SCREEN_HEIGHT, { duration: 250 });
       backdropOpacity.value = withTiming(0, { duration: 200 });
     }
   }, [open, translateY, backdropOpacity]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = BackHandler.addEventListener('hardwareBackPress', () => {
+      onClose();
+      return true;
+    });
+    return () => handler.remove();
+  }, [open, onClose]);
 
   const sheetStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
@@ -41,6 +60,8 @@ export function Sheet({ open, onClose, children, testID }: SheetProps) {
   const backdropStyle = useAnimatedStyle(() => ({
     opacity: backdropOpacity.value,
   }));
+
+  const maxHeight = SCREEN_HEIGHT * maxHeightRatio;
 
   return (
     <View
@@ -52,6 +73,7 @@ export function Sheet({ open, onClose, children, testID }: SheetProps) {
         left: 0,
         right: 0,
         bottom: 0,
+        zIndex: zIndex.sheet,
       }}
     >
       <Animated.View
@@ -62,7 +84,7 @@ export function Sheet({ open, onClose, children, testID }: SheetProps) {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: '#000',
+            backgroundColor: '#05050A',
           },
           backdropStyle,
         ]}
@@ -80,27 +102,28 @@ export function Sheet({ open, onClose, children, testID }: SheetProps) {
           style={[
             sheetStyle,
             {
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
+              borderRadius: radius.sheet,
               borderWidth: 1,
-              borderColor: 'rgba(255,255,255,0.08)',
-              backgroundColor: '#0C0C0E',
+              borderColor: 'rgba(255,255,255,0.09)',
+              backgroundColor: '#10101A',
               overflow: 'hidden',
+              maxHeight,
+              marginHorizontal: 8,
+              marginBottom: 8 + bottomInset,
             },
           ]}
         >
-          <View
-            style={{
-              width: 36,
-              height: 4,
-              borderRadius: 2,
-              backgroundColor: 'rgba(255,255,255,0.12)',
-              alignSelf: 'center',
-              marginTop: 8,
-              marginBottom: 8,
-            }}
-          />
-          {children}
+          <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+            <View
+              style={{
+                width: 44,
+                height: 5,
+                borderRadius: 3,
+                backgroundColor: 'rgba(255,255,255,0.16)',
+              }}
+            />
+          </View>
+          <View style={{ maxHeight: maxHeight - 44 }}>{children}</View>
         </Animated.View>
       </SafeAreaView>
     </View>

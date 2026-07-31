@@ -59,7 +59,7 @@ describe('IrStudioScreen', () => {
 
   it('shows capability section with ranges', async () => {
     const { getByText } = await render(<IrStudioScreen />);
-    expect(getByText('30–60 kHz')).toBeTruthy();
+    expect(getByText('30-60 kHz')).toBeTruthy();
   });
 
   it('sends command on tap and shows sent status', async () => {

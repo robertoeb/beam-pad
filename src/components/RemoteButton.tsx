@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -47,7 +47,18 @@ export function RemoteButton({
     width: size,
     height: size,
     transform: [{ scale: scale.value }],
-    backgroundColor: flash.value > 0 ? `rgba(0,229,255,${0.2 * flash.value})` : 'transparent',
+    backgroundColor:
+      flash.value > 0
+        ? accent === 'red'
+          ? `rgba(255,69,58,${0.18 * flash.value})`
+          : `rgba(34,211,238,${0.22 * flash.value})`
+        : 'transparent',
+    borderColor:
+      flash.value > 0
+        ? accent === 'red'
+          ? 'rgba(255,69,58,0.55)'
+          : 'rgba(34,211,238,0.55)'
+        : 'rgba(255,255,255,0.08)',
   }));
 
   const clearTimers = () => {
@@ -95,7 +106,7 @@ export function RemoteButton({
     }
   };
 
-  const iconColor = accent === 'red' ? '#FF3B30' : '#FFFFFF';
+  const iconColor = accent === 'red' ? '#FF453A' : '#F5F6FA';
 
   return (
     <AnimatedPressable
@@ -110,24 +121,23 @@ export function RemoteButton({
           alignItems: 'center',
           justifyContent: 'center',
           borderWidth: 1,
-          borderColor: 'rgba(255,255,255,0.08)',
-          backgroundColor: '#0C0C0E',
-          borderRadius: round ? size / 2 : 18,
+          backgroundColor: '#15151F',
+          borderRadius: round ? size / 2 : 20,
         },
       ]}
     >
-      <Icon size={label ? 22 : 22} strokeWidth={1.5} color={iconColor} />
+      <Icon size={label ? 20 : 22} strokeWidth={1.6} color={iconColor} />
       {label ? (
-        <Text
+        <Animated.Text
           style={{
             marginTop: 4,
-            fontWeight: '500',
+            fontFamily: 'Inter-Medium',
             fontSize: 11,
-            color: '#A1A1AA',
+            color: '#B7BDCB',
           }}
         >
           {label}
-        </Text>
+        </Animated.Text>
       ) : null}
     </AnimatedPressable>
   );

@@ -52,12 +52,7 @@ describe('TroubleshootSheet', () => {
     const error = makeError({ code: 'CERT_REVOKED', retryable: false });
     const onRepair = jest.fn();
     const { getByTestId } = await render(
-      <TroubleshootSheet
-        open={true}
-        onClose={jest.fn()}
-        error={error}
-        onRepair={onRepair}
-      />,
+      <TroubleshootSheet open={true} onClose={jest.fn()} error={error} onRepair={onRepair} />,
     );
     const btn = getByTestId('troubleshoot-repair');
     expect(btn).toBeTruthy();
@@ -68,7 +63,13 @@ describe('TroubleshootSheet', () => {
   it('diagnostics copy button is present', async () => {
     const error = makeError();
     const { getByTestId } = await render(
-      <TroubleshootSheet open={true} onClose={jest.fn()} error={error} host="10.0.0.5" port={6466} />,
+      <TroubleshootSheet
+        open={true}
+        onClose={jest.fn()}
+        error={error}
+        host="10.0.0.5"
+        port={6466}
+      />,
     );
     expect(getByTestId('troubleshoot-copy')).toBeTruthy();
   });

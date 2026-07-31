@@ -1,0 +1,45 @@
+import { useState } from 'react';
+import { Pressable } from 'react-native';
+import { Volume2, VolumeX } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { useConnectionStore } from '@/stores/connection';
+import { volumeCommand } from '@/services/volumeRouter';
+
+export function MuteButton() {
+  const muted = useConnectionStore((s) => s.volume?.muted ?? false);
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <Pressable
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        volumeCommand('mute');
+      }}
+      accessibilityRole="button"
+      accessibilityLabel="Mute"
+      style={{
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        borderWidth: 1,
+        borderColor: pressed
+          ? 'transparent'
+          : muted
+            ? 'rgba(34,211,238,0.45)'
+            : 'rgba(255,255,255,0.08)',
+        backgroundColor: pressed ? '#22D3EE' : muted ? 'rgba(34,211,238,0.1)' : '#15151F',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: [{ scale: pressed ? 0.92 : 1 }],
+      }}
+    >
+      {muted ? (
+        <VolumeX size={20} strokeWidth={1.6} color={pressed ? '#0A0A12' : '#22D3EE'} />
+      ) : (
+        <Volume2 size={20} strokeWidth={1.6} color={pressed ? '#0A0A12' : '#F5F6FA'} />
+      )}
+    </Pressable>
+  );
+}

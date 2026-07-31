@@ -13,16 +13,21 @@ function commonPrefixLen(a: string, b: string): number {
 }
 
 export function commitImeText(next: string) {
-  const client = getActiveClient();
   const st = useImeStore.getState();
-  if (!client || !st.visible) return;
+  if (!st.visible) return;
 
   const prev = st.value;
-  useImeStore.getState().setValue(next);
+  st.setValue(next);
+
+  const client = getActiveClient();
+  if (!client) return;
 
   const p = commonPrefixLen(prev, next);
 
-  const edits: Array<{ insert: number; textFieldStatus: { start: number; end: number; value: string } }> = [];
+  const edits: Array<{
+    insert: number;
+    textFieldStatus: { start: number; end: number; value: string };
+  }> = [];
   if (prev.length > p) {
     edits.push({ insert: 0, textFieldStatus: { start: p, end: prev.length, value: '' } });
   }

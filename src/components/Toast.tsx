@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
+import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
+import { Label } from '@/theme/typography';
+import { zIndex } from '@/theme/tokens';
 
 interface ToastState {
   message: string;
@@ -40,14 +43,41 @@ export function ToastHost() {
     transform: [{ translateY: withTiming(toast.visible ? 0 : 20, { duration: 200 }) }],
   }));
 
+  if (!toast.message) return null;
+
   return (
     <Animated.View
       pointerEvents="none"
-      style={animStyle}
-      className="absolute bottom-24 left-0 right-0 items-center"
+      style={[
+        animStyle,
+        {
+          position: 'absolute',
+          bottom: 96,
+          left: 0,
+          right: 0,
+          alignItems: 'center',
+          zIndex: zIndex.toast,
+        },
+      ]}
     >
-      <View className="rounded-full border border-surface-border bg-surface px-4 py-2">
-        <Text className="font-medium text-[13px] text-text-secondary">{toast.message}</Text>
+      <View
+        style={{
+          borderRadius: 999,
+          borderWidth: 1,
+          borderColor: 'rgba(34,211,238,0.3)',
+          backgroundColor: '#13131E',
+          paddingHorizontal: 16,
+          paddingVertical: 9,
+          overflow: 'hidden',
+        }}
+      >
+        <Gradient
+          colors={BRAND_GRADIENT}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          opacity={0.12}
+        />
+        <Label style={{ color: '#E8EAF2' }}>{toast.message}</Label>
       </View>
     </Animated.View>
   );

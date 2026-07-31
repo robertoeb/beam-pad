@@ -13,12 +13,7 @@ describe('layout store migration', () => {
     };
 
     const state = useLayoutStore.getState();
-    expect(state.shortcuts).toEqual([
-      'app:netflix',
-      'app:youtube',
-      'app:prime',
-      'app:disney',
-    ]);
+    expect(state.shortcuts).toEqual(['app:netflix', 'app:youtube', 'app:prime', 'app:disney']);
   });
 
   it('preserves already-migrated shortcut ids', () => {
@@ -26,11 +21,7 @@ describe('layout store migration', () => {
       shortcuts: ['app:netflix', 'key:guide', 'user:abc'],
       hidden: [],
     });
-    expect(useLayoutStore.getState().shortcuts).toEqual([
-      'app:netflix',
-      'key:guide',
-      'user:abc',
-    ]);
+    expect(useLayoutStore.getState().shortcuts).toEqual(['app:netflix', 'key:guide', 'user:abc']);
   });
 
   it('addShortcut appends without duplicates', () => {

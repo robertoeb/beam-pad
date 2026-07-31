@@ -28,7 +28,7 @@ describe('key() helper — no-connection path', () => {
   it('shows toast when no client', () => {
     const result = key(KEYS.up);
     expect(result).toBe(false);
-    expect(showToast).toHaveBeenCalledWith('No TV connected — pick a device');
+    expect(showToast).toHaveBeenCalledWith('No TV connected - pick a device');
   });
 
   it('debounces toast to once per 3s', () => {

@@ -7,7 +7,7 @@ export function launchApp(id: string): boolean {
   const client = getActiveClient();
   if (!app) return false;
   if (!client) {
-    showToast('No TV connected — pick a device');
+    showToast('No TV connected - pick a device');
     return false;
   }
   client.launchApp(app.deepLink);

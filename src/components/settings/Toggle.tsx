@@ -1,10 +1,7 @@
-import { Pressable } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
+import { Pressable, View } from 'react-native';
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { SPRING } from '@/lib/spring';
-import { tokens } from '@/theme/tokens';
+import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
 import { useSettingsStore } from '@/stores/settings';
 
 interface ToggleProps {
@@ -15,7 +12,13 @@ interface ToggleProps {
   testID?: string;
 }
 
-export function Toggle({ value, onValueChange, disabled, accessibilityLabel, testID }: ToggleProps) {
+export function Toggle({
+  value,
+  onValueChange,
+  disabled,
+  accessibilityLabel,
+  testID,
+}: ToggleProps) {
   const reduceMotion = useSettingsStore((s) => s.reduceMotion);
 
   const knobStyle = useAnimatedStyle(() => {
@@ -36,21 +39,23 @@ export function Toggle({ value, onValueChange, disabled, accessibilityLabel, tes
         width: 44,
         height: 24,
         borderRadius: 12,
-        backgroundColor: value
-          ? tokens.colors.accent.cyan
-          : 'rgba(255,255,255,0.12)',
+        backgroundColor: value ? 'transparent' : 'rgba(255,255,255,0.12)',
         justifyContent: 'center',
         paddingHorizontal: 2,
         opacity: disabled ? 0.5 : 1,
+        overflow: 'hidden',
       }}
     >
+      {value ? (
+        <Gradient colors={BRAND_GRADIENT} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+      ) : null}
       <Animated.View
         style={[
           {
             width: 20,
             height: 20,
             borderRadius: 10,
-            backgroundColor: tokens.colors.text.primary,
+            backgroundColor: '#FFFFFF',
           },
           knobStyle,
         ]}

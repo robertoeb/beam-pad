@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
-import { Pressable, ScrollView, Text, View, Clipboard } from 'react-native';
+import { Pressable, ScrollView, View, Clipboard } from 'react-native';
 import { Sheet } from './Sheet';
+import { Title, Label } from '@/theme/typography';
 import type { ConnectError } from '@/protocol/errors';
 
 interface TroubleshootSheetProps {
@@ -35,54 +36,89 @@ export function TroubleshootSheet({
     Clipboard.setString(lines.join('\n'));
   }, [error, host, port]);
 
-  const showRepair =
-    error?.code === 'CERT_REVOKED' || error?.code === 'PAIRING_REJECTED';
+  const showRepair = error?.code === 'CERT_REVOKED' || error?.code === 'PAIRING_REJECTED';
 
   return (
     <Sheet open={open} onClose={onClose} testID="troubleshoot-sheet">
-      <ScrollView className="px-6 pb-8" contentContainerClassName="gap-4">
-        <Text className="font-semibold text-xl text-text-primary">
-          {error?.message ?? 'Connection error'}
-        </Text>
+      <ScrollView
+        style={{ flexShrink: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32, gap: 12 }}
+      >
+        <Title>{error?.message ?? 'Connection error'}</Title>
 
         {error?.steps && error.steps.length > 0 && (
-          <View className="gap-2">
+          <View style={{ gap: 10, marginTop: 4 }}>
             {error.steps.map((step, i) => (
-              <View key={i} className="flex-row items-start gap-2">
-                <Text className="mt-0.5 text-sm text-accent-cyan">•</Text>
-                <Text className="flex-1 text-sm text-text-secondary">{step}</Text>
+              <View key={i} style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+                <View
+                  style={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: 11,
+                    backgroundColor: 'rgba(34,211,238,0.12)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: 1,
+                  }}
+                >
+                  <Title style={{ fontSize: 11, color: '#22D3EE', fontFamily: 'Inter-Medium' }}>
+                    {i + 1}
+                  </Title>
+                </View>
+                <Label style={{ flex: 1, color: '#B7BDCB', fontSize: 14 }}>{step}</Label>
               </View>
             ))}
           </View>
         )}
 
-        <View className="flex-row flex-wrap gap-3 pt-2">
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingTop: 8 }}>
           {error?.retryable && onRetry && (
             <Pressable
               onPress={onRetry}
-              className="rounded-lg bg-accent-cyan/10 px-5 py-2.5"
+              style={{
+                borderRadius: 14,
+                backgroundColor: 'rgba(34,211,238,0.12)',
+                borderWidth: 1,
+                borderColor: 'rgba(34,211,238,0.35)',
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+              }}
               testID="troubleshoot-retry"
             >
-              <Text className="font-medium text-sm text-accent-cyan">Retry</Text>
+              <Label style={{ color: '#22D3EE' }}>Retry</Label>
             </Pressable>
           )}
 
           {showRepair && onRepair && (
             <Pressable
               onPress={onRepair}
-              className="rounded-lg bg-accent-cyan/10 px-5 py-2.5"
+              style={{
+                borderRadius: 14,
+                backgroundColor: 'rgba(34,211,238,0.12)',
+                borderWidth: 1,
+                borderColor: 'rgba(34,211,238,0.35)',
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+              }}
               testID="troubleshoot-repair"
             >
-              <Text className="font-medium text-sm text-accent-cyan">Re-pair</Text>
+              <Label style={{ color: '#22D3EE' }}>Re-pair</Label>
             </Pressable>
           )}
 
           <Pressable
             onPress={handleCopyDiagnostics}
-            className="rounded-lg bg-surface-elevated px-5 py-2.5"
+            style={{
+              borderRadius: 14,
+              backgroundColor: '#1A1A2A',
+              borderWidth: 1,
+              borderColor: 'rgba(255,255,255,0.08)',
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+            }}
             testID="troubleshoot-copy"
           >
-            <Text className="font-medium text-sm text-text-secondary">Copy diagnostics</Text>
+            <Label style={{ color: '#B7BDCB' }}>Copy diagnostics</Label>
           </Pressable>
         </View>
       </ScrollView>

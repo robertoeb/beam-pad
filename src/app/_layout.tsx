@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View } from 'react-native';
+import { initCastListeners } from '@/services/cast';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -16,14 +17,19 @@ export default function RootLayout() {
     'Inter-SemiBold': require('../../assets/fonts/Inter-SemiBold.ttf'),
   });
   useEffect(() => {
-    if (loaded) SplashScreen.hideAsync();
+    if (loaded) {
+      initCastListeners();
+      SplashScreen.hideAsync();
+    }
   }, [loaded]);
   if (!loaded) return null;
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#000' }}>
-      <View className="flex-1 bg-background">
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#0A0A12' }}>
+      <View style={{ flex: 1, backgroundColor: '#0A0A12' }}>
         <StatusBar style="light" />
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#000' } }} />
+        <Stack
+          screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0A0A12' } }}
+        />
       </View>
     </GestureHandlerRootView>
   );

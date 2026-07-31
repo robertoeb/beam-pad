@@ -73,18 +73,12 @@ const COPY: Record<
   },
   PAIRING_TIMEOUT: {
     message: () => 'The TV never showed a pairing code.',
-    steps: [
-      'Make sure the TV is awake and on the home screen',
-      'Try pairing again',
-    ],
+    steps: ['Make sure the TV is awake and on the home screen', 'Try pairing again'],
     retryable: true,
   },
   PROTOCOL: {
     message: () => 'The TV replied with an unexpected protocol message.',
-    steps: [
-      'Restart the TV',
-      'Try pairing again',
-    ],
+    steps: ['Restart the TV', 'Try pairing again'],
     retryable: true,
   },
   TIMEOUT: {
@@ -117,10 +111,7 @@ export function classify(raw: unknown, ctx: ClassifyCtx): ConnectError {
 
   if (lower.includes('wifi') && (lower.includes('off') || lower.includes('disabled'))) {
     code = 'WIFI_OFF';
-  } else if (
-    lower.includes('econnrefused') ||
-    lower.includes('connection refused')
-  ) {
+  } else if (lower.includes('econnrefused') || lower.includes('connection refused')) {
     code = 'PORT_CLOSED';
   } else if (
     lower.includes('ehostunreach') ||

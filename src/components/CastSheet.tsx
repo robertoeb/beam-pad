@@ -1,8 +1,10 @@
-import { View, Text, Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Play, Pause, X } from 'lucide-react-native';
 import { Sheet } from './Sheet';
 import { useCastStore } from '@/stores/cast';
 import { castPlayPause, castStop } from '@/services/cast';
+import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
+import { Label, Title } from '@/theme/typography';
 
 export function CastSheet() {
   const open = useCastStore((s) => s.castSheetOpen);
@@ -22,54 +24,86 @@ export function CastSheet() {
 
   return (
     <Sheet open={open} onClose={close} testID="cast-sheet">
-      <View className="px-5 pb-8 pt-2">
-        <Text
-          className="mb-1 text-center font-semibold text-lg text-text-primary"
-          testID="cast-device-name"
-        >
+      <View
+        style={{ paddingHorizontal: 20, paddingBottom: 32, paddingTop: 4, alignItems: 'center' }}
+      >
+        <Title style={{ marginBottom: 4, textAlign: 'center' }} testID="cast-device-name">
           {deviceName ?? 'Cast Device'}
-        </Text>
+        </Title>
         {mediaTitle ? (
-          <Text
-            className="mb-4 text-center text-sm text-text-secondary"
+          <Label
+            style={{ marginBottom: 16, textAlign: 'center', color: '#B7BDCB' }}
             numberOfLines={1}
             testID="cast-media-title"
           >
             {mediaTitle}
-          </Text>
+          </Label>
         ) : (
-          <View className="mb-4" />
+          <View style={{ marginBottom: 16 }} />
         )}
 
-        <View className="mb-4 flex-row items-center justify-center gap-6">
+        <View
+          style={{
+            marginBottom: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 20,
+          }}
+        >
           <Pressable
             onPress={castPlayPause}
-            className="h-14 w-14 items-center justify-center rounded-full border border-surface-border bg-surface"
+            style={{
+              height: 60,
+              width: 60,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 30,
+              borderWidth: 1,
+              borderColor: 'rgba(34,211,238,0.4)',
+              backgroundColor: '#15151F',
+              overflow: 'hidden',
+            }}
             accessibilityLabel={mediaStatus === 'playing' ? 'Pause' : 'Play'}
             accessibilityRole="button"
             testID="cast-play-pause"
           >
+            <Gradient
+              colors={BRAND_GRADIENT}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              opacity={0.25}
+            />
             {mediaStatus === 'playing' ? (
-              <Pause size={24} strokeWidth={1.5} color="#00E5FF" />
+              <Pause size={24} strokeWidth={1.6} color="#22D3EE" />
             ) : (
-              <Play size={24} strokeWidth={1.5} color="#00E5FF" />
+              <Play size={24} strokeWidth={1.6} color="#22D3EE" />
             )}
           </Pressable>
 
           <Pressable
             onPress={handleStop}
-            className="h-14 w-14 items-center justify-center rounded-full border border-surface-border bg-surface"
+            style={{
+              height: 60,
+              width: 60,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 30,
+              borderWidth: 1,
+              borderColor: 'rgba(255,69,58,0.4)',
+              backgroundColor: '#15151F',
+            }}
             accessibilityLabel="Stop and disconnect"
             accessibilityRole="button"
             testID="cast-stop"
           >
-            <X size={24} strokeWidth={1.5} color="#FF3B30" />
+            <X size={24} strokeWidth={1.6} color="#FF453A" />
           </Pressable>
         </View>
 
-        <Text className="text-center text-xs text-text-muted">
+        <Label style={{ textAlign: 'center', color: '#747B8A', fontSize: 11 }}>
           Volume controls cast device via TV volume keys
-        </Text>
+        </Label>
       </View>
     </Sheet>
   );

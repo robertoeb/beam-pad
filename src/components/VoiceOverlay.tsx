@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Mic } from 'lucide-react-native';
 import Animated, {
   useSharedValue,
@@ -7,6 +7,8 @@ import Animated, {
   withRepeat,
 } from 'react-native-reanimated';
 import { useEffect } from 'react';
+import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
+import { Label } from '@/theme/typography';
 
 interface VoiceOverlayProps {
   active: boolean;
@@ -17,7 +19,7 @@ export function VoiceOverlay({ active }: VoiceOverlayProps) {
 
   useEffect(() => {
     if (active) {
-      scale.value = withRepeat(withTiming(1.15, { duration: 800 }), -1, true);
+      scale.value = withRepeat(withTiming(1.12, { duration: 800 }), -1, true);
     } else {
       scale.value = 1;
     }
@@ -37,7 +39,7 @@ export function VoiceOverlay({ active }: VoiceOverlayProps) {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.9)',
+        backgroundColor: 'rgba(5,5,10,0.92)',
         justifyContent: 'center',
         alignItems: 'center',
         opacity: active ? 1 : 0,
@@ -49,22 +51,25 @@ export function VoiceOverlay({ active }: VoiceOverlayProps) {
             width: 120,
             height: 120,
             borderRadius: 60,
-            borderWidth: 3,
-            borderColor: '#00E5FF',
+            borderWidth: 2,
+            borderColor: '#22D3EE',
             justifyContent: 'center',
             alignItems: 'center',
+            overflow: 'hidden',
+            backgroundColor: '#0F0F1A',
           },
           ringStyle,
         ]}
       >
-        <Mic size={48} strokeWidth={1.5} color="#00E5FF" />
+        <Gradient
+          colors={BRAND_GRADIENT}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          opacity={0.18}
+        />
+        <Mic size={48} strokeWidth={1.5} color="#22D3EE" />
       </Animated.View>
-      <Text
-        className="mt-6 text-[15px] text-text-secondary"
-        style={{ fontFamily: 'Inter-Medium' }}
-      >
-        Listening… release to send
-      </Text>
+      <Label style={{ marginTop: 24, color: '#B7BDCB' }}>Listening… release to send</Label>
     </View>
   );
 }

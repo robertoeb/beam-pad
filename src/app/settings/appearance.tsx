@@ -1,35 +1,143 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft } from 'lucide-react-native';
-import { router } from 'expo-router';
-import { useSettingsStore, type Density, type HapticStrength } from '@/stores/settings';
+import { Pressable, ScrollView, View } from 'react-native';
+import {
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  CircleDot,
+  Hand,
+} from 'lucide-react-native';
+import {
+  useSettingsStore,
+  type Density,
+  type HapticStrength,
+  type NavigationMode,
+} from '@/stores/settings';
 import { SettingsSection } from '@/components/settings/SettingsSection';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { Toggle } from '@/components/settings/Toggle';
 import { SegmentedControl } from '@/components/settings/SegmentedControl';
-import { tokens } from '@/theme/tokens';
+import { Screen } from '@/components/ui/Screen';
+import { ScreenHeader } from '@/components/ui/ScreenHeader';
+import { Label } from '@/theme/typography';
+import { radius, space } from '@/theme/tokens';
+
+function ExampleDpad() {
+  const size = 20;
+  const dot = {
+    width: size,
+    height: size,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  };
+  return (
+    <View style={{ width: 88, height: 88, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ position: 'absolute', top: 6, left: 34, ...dot }}>
+        <ChevronUp size={12} color="#A7ADBF" />
+      </View>
+      <View style={{ position: 'absolute', bottom: 6, left: 34, ...dot }}>
+        <ChevronDown size={12} color="#A7ADBF" />
+      </View>
+      <View style={{ position: 'absolute', left: 6, top: 34, ...dot }}>
+        <ChevronLeft size={12} color="#A7ADBF" />
+      </View>
+      <View style={{ position: 'absolute', right: 6, top: 34, ...dot }}>
+        <ChevronRight size={12} color="#A7ADBF" />
+      </View>
+      <View
+        style={{
+          width: size,
+          height: size,
+          borderRadius: 6,
+          backgroundColor: 'rgba(34,211,238,0.14)',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <CircleDot size={12} color="#22D3EE" />
+      </View>
+    </View>
+  );
+}
+
+function ExampleTouchpad() {
+  return (
+    <View
+      style={{
+        width: 88,
+        height: 88,
+        borderRadius: radius.lg,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.08)',
+        backgroundColor: 'rgba(19,19,30,0.8)',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <View
+        style={{
+          width: 12,
+          height: 12,
+          borderRadius: 6,
+          backgroundColor: '#22D3EE',
+          marginBottom: 8,
+        }}
+      />
+      <Hand size={20} color="#747B8A" />
+    </View>
+  );
+}
 
 export default function AppearanceScreen() {
   const density = useSettingsStore((s) => s.density);
   const hapticStrength = useSettingsStore((s) => s.hapticStrength);
   const reduceMotion = useSettingsStore((s) => s.reduceMotion);
   const showShortcutLabels = useSettingsStore((s) => s.showShortcutLabels);
+  const navigationMode = useSettingsStore((s) => s.navigationMode);
   const set = useSettingsStore((s) => s.set);
 
-  return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-      <View className="flex-row items-center gap-3 px-5 py-3">
-        <Pressable
-          onPress={() => router.back()}
-          accessibilityLabel="Back"
-          accessibilityRole="button"
-        >
-          <ArrowLeft size={22} color={tokens.colors.text.primary} />
-        </Pressable>
-        <Text className="font-semibold text-lg text-text-primary">Appearance</Text>
-      </View>
+  const navOptions: { value: NavigationMode; label: string; example: React.ReactNode }[] = [
+    { value: 'dpad', label: 'D-pad', example: <ExampleDpad /> },
+    { value: 'touchpad', label: 'Touchpad', example: <ExampleTouchpad /> },
+  ];
 
-      <ScrollView className="flex-1 px-5">
+  return (
+    <Screen>
+      <ScreenHeader title="Appearance" back />
+
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <SettingsSection title="Navigation">
+          <View style={{ flexDirection: 'row', gap: space[3] }}>
+            {navOptions.map((opt) => {
+              const selected = navigationMode === opt.value;
+              return (
+                <Pressable
+                  key={opt.value}
+                  onPress={() => set({ navigationMode: opt.value })}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Use ${opt.label}`}
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    borderRadius: radius.xl,
+                    borderWidth: 1,
+                    borderColor: selected ? 'rgba(34,211,238,0.5)' : 'rgba(255,255,255,0.07)',
+                    backgroundColor: selected ? 'rgba(34,211,238,0.07)' : 'rgba(19,19,30,0.8)',
+                    paddingVertical: 12,
+                  }}
+                >
+                  {opt.example}
+                  <Label style={{ marginTop: 8, color: selected ? '#22D3EE' : '#F5F6FA' }}>
+                    {opt.label}
+                  </Label>
+                </Pressable>
+              );
+            })}
+          </View>
+        </SettingsSection>
+
         <SettingsSection title="Density">
           <SegmentedControl
             options={[
@@ -73,7 +181,9 @@ export default function AppearanceScreen() {
             />
           </SettingRow>
         </SettingsSection>
+
+        <View style={{ height: space[10] }} />
       </ScrollView>
-    </SafeAreaView>
+    </Screen>
   );
 }

@@ -47,7 +47,7 @@ describe('executeMacro', () => {
     const steps = [{ type: 'key' as const, keyCode: 1 }];
     const result = await executeMacro(steps);
     expect(result).toBe(false);
-    expect(showToast).toHaveBeenCalledWith('Macro aborted — TV disconnected');
+    expect(showToast).toHaveBeenCalledWith('Macro aborted - TV disconnected');
   });
 
   it('aborts mid-macro if disconnect happens', async () => {
@@ -65,7 +65,7 @@ describe('executeMacro', () => {
     ];
     const result = await executeMacro(steps);
     expect(result).toBe(false);
-    expect(showToast).toHaveBeenCalledWith('Macro aborted — TV disconnected');
+    expect(showToast).toHaveBeenCalledWith('Macro aborted - TV disconnected');
   });
 
   it('shows single toast on failure', async () => {

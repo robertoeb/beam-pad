@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { Micro } from '@/theme/typography';
+import { space } from '@/theme/tokens';
 
 export function SettingsSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <View className="mb-6">
-      <Text className="mb-3 font-medium text-[11px] uppercase tracking-[1.2px] text-text-muted">
-        {title}
-      </Text>
+    <View style={{ marginBottom: space[6] }}>
+      <Micro style={{ marginBottom: space[3], color: '#747B8A' }}>{title}</Micro>
       {children}
     </View>
   );

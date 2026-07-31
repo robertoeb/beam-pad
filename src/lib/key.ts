@@ -14,7 +14,7 @@ export function key(code: number): boolean {
     const now = Date.now();
     if (now - _lastToast >= DEBOUNCE || _lastToast === 0) {
       _lastToast = now;
-      showToast('No TV connected — pick a device');
+      showToast('No TV connected - pick a device');
     }
     return false;
   }

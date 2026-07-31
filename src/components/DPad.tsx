@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CircleDot } from 'lucide-react-native';
 import { RemoteButton } from './RemoteButton';
+import { Glow } from '@/theme/gradient';
 import { KEYS } from '@/protocol/keycodes';
 import { key } from '@/lib/key';
 
@@ -13,10 +14,14 @@ export function DPad({ diameter = 228 }: DPadProps) {
   const offset = (diameter - btnSize) / 2;
 
   return (
-    <View
-      style={{ width: diameter, height: diameter, alignSelf: 'center' }}
-      className="items-center justify-center"
-    >
+    <View style={{ width: diameter, height: diameter, alignSelf: 'center' }}>
+      <Glow
+        color="#22D3EE"
+        size={diameter * 0.62}
+        x={diameter * 0.19}
+        y={diameter * 0.19}
+        opacity={0.1}
+      />
       <View style={{ position: 'absolute', top: 0, left: offset }}>
         <RemoteButton
           round
@@ -39,14 +44,16 @@ export function DPad({ diameter = 228 }: DPadProps) {
           onPress={() => key(KEYS.left)}
         />
       </View>
-      <RemoteButton
-        round
-        size={btnSize}
-        icon={CircleDot}
-        accessibilityLabel="OK"
-        testID="dpad-ok"
-        onPress={() => key(KEYS.ok)}
-      />
+      <View style={{ position: 'absolute', left: offset, top: offset }}>
+        <RemoteButton
+          round
+          size={btnSize}
+          icon={CircleDot}
+          accessibilityLabel="OK"
+          testID="dpad-ok"
+          onPress={() => key(KEYS.ok)}
+        />
+      </View>
       <View style={{ position: 'absolute', right: 0, top: offset }}>
         <RemoteButton
           round

@@ -12,24 +12,18 @@ beforeEach(() => {
 describe('ShortcutTile', () => {
   it('renders app shortcut with brand icon', async () => {
     const shortcut = shortcutRegistry.resolve('app:netflix')!;
-    const { getByLabelText } = await render(
-      <ShortcutTile shortcut={shortcut} size={64} />,
-    );
+    const { getByLabelText } = await render(<ShortcutTile shortcut={shortcut} size={64} />);
     expect(getByLabelText('Open Netflix')).toBeTruthy();
   });
 
   it('renders key shortcut with lucide icon', async () => {
     const shortcut = shortcutRegistry.resolve('key:guide')!;
-    const { getByLabelText } = await render(
-      <ShortcutTile shortcut={shortcut} size={64} />,
-    );
+    const { getByLabelText } = await render(<ShortcutTile shortcut={shortcut} size={64} />);
     expect(getByLabelText('Open Guide')).toBeTruthy();
   });
 
   it('renders missing shortcut with "?" icon', async () => {
-    const { getByLabelText } = await render(
-      <ShortcutTile shortcut={null} size={64} missing />,
-    );
+    const { getByLabelText } = await render(<ShortcutTile shortcut={null} size={64} missing />);
     const tile = getByLabelText('Remove Unknown');
     expect(tile).toBeTruthy();
   });
@@ -39,9 +33,7 @@ describe('ShortcutTile', () => {
       currentApp: { label: 'Netflix', packageName: 'com.netflix.ninja' },
     });
     const shortcut = shortcutRegistry.resolve('app:netflix')!;
-    const { getByLabelText } = await render(
-      <ShortcutTile shortcut={shortcut} size={64} />,
-    );
+    const { getByLabelText } = await render(<ShortcutTile shortcut={shortcut} size={64} />);
     expect(getByLabelText('Open Netflix')).toBeTruthy();
   });
 
@@ -63,9 +55,7 @@ describe('ShortcutTile', () => {
       icon: 'nonexistent_icon',
       builtIn: false,
     };
-    const { getByLabelText } = await render(
-      <ShortcutTile shortcut={customShortcut} size={64} />,
-    );
+    const { getByLabelText } = await render(<ShortcutTile shortcut={customShortcut} size={64} />);
     expect(getByLabelText('Open Custom Thing')).toBeTruthy();
   });
 });

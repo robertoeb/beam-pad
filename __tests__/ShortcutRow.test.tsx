@@ -51,7 +51,7 @@ describe('ShortcutRow', () => {
     expect(router.push).toHaveBeenCalledWith('/shortcuts');
   });
 
-  it('shows "N more" tile when shortcuts overflow', async () => {
+  it('renders every pinned shortcut in the scrollable row', async () => {
     useLayoutStore.setState({
       shortcuts: [
         'app:netflix',
@@ -63,16 +63,9 @@ describe('ShortcutRow', () => {
         'app:peacock',
       ],
     });
-    const { getByLabelText, queryByLabelText } = await render(<ShortcutRow />);
-    expect(getByLabelText(/more shortcuts/)).toBeTruthy();
-  });
-
-  it('never renders more tiles than fit allows', async () => {
-    useLayoutStore.setState({
-      shortcuts: Array.from({ length: 20 }, (_, i) => `app:app${i}`),
-    });
-    const { queryAllByLabelText } = await render(<ShortcutRow />);
-    const tiles = queryAllByLabelText(/Open/);
-    expect(tiles.length).toBeLessThanOrEqual(6);
+    const { getByLabelText } = await render(<ShortcutRow />);
+    expect(getByLabelText('Open Netflix')).toBeTruthy();
+    expect(getByLabelText('Open Max')).toBeTruthy();
+    expect(getByLabelText('Open Peacock')).toBeTruthy();
   });
 });

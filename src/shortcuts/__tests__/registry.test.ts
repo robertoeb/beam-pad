@@ -1,10 +1,5 @@
 import { shortcutRegistry } from '../registry';
-import {
-  appShortcutId,
-  keyShortcutId,
-  userShortcutId,
-  parseShortcutId,
-} from '../types';
+import { appShortcutId, keyShortcutId, userShortcutId, parseShortcutId } from '../types';
 import type { UserShortcut } from '../types';
 
 describe('shortcutRegistry', () => {

@@ -1,8 +1,9 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { useConnectionStore } from '@/stores/connection';
 import { space } from '@/theme/tokens';
+import { Label } from '@/theme/typography';
 
 export function NowPlayingStrip() {
   const currentApp = useConnectionStore((s) => s.currentApp);
@@ -31,15 +32,7 @@ export function NowPlayingStrip() {
   if (state === 'RECONNECTING') {
     return (
       <View style={{ height: 28, justifyContent: 'center', alignItems: 'center' }}>
-        <Text
-          style={{
-            fontSize: 11,
-            fontWeight: '500',
-            color: '#A1A1AA',
-          }}
-        >
-          RECONNECTING
-        </Text>
+        <Label style={{ color: '#FBBF24' }}>RECONNECTING</Label>
       </View>
     );
   }
@@ -48,25 +41,30 @@ export function NowPlayingStrip() {
 
   return (
     <View style={{ height: 28, justifyContent: 'center', alignItems: 'center' }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2] }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: space[2],
+          borderRadius: 999,
+          backgroundColor: 'rgba(34,211,238,0.08)',
+          borderWidth: 1,
+          borderColor: 'rgba(34,211,238,0.2)',
+          paddingHorizontal: 10,
+          paddingVertical: 3,
+        }}
+      >
         <View
           style={{
             width: 6,
             height: 6,
             borderRadius: 3,
-            backgroundColor: '#00E5FF',
+            backgroundColor: '#22D3EE',
           }}
         />
-        <Text
-          style={{
-            fontSize: 11,
-            fontWeight: '500',
-            color: '#A1A1AA',
-          }}
-          numberOfLines={1}
-        >
+        <Label style={{ color: '#B7BDCB', fontSize: 11 }} numberOfLines={1}>
           {currentApp.label}
-        </Text>
+        </Label>
       </View>
       <Animated.View
         style={[
@@ -77,7 +75,7 @@ export function NowPlayingStrip() {
             left: 0,
             right: 0,
             height: 2,
-            backgroundColor: 'rgba(0,229,255,0.3)',
+            backgroundColor: 'rgba(34,211,238,0.3)',
             borderRadius: 1,
           },
         ]}
@@ -86,7 +84,7 @@ export function NowPlayingStrip() {
           style={{
             height: '100%',
             width: `${fillRatio * 100}%`,
-            backgroundColor: '#00E5FF',
+            backgroundColor: '#22D3EE',
             borderRadius: 1,
           }}
         />

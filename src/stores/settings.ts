@@ -5,6 +5,7 @@ export type PowerKeyMode = 'toggle' | 'sleep-wake';
 export type Density = 'compact' | 'comfortable' | 'spacious';
 export type HapticStrength = 'off' | 'light' | 'medium';
 export type OkLongPress = 'none' | 'voice' | 'menu';
+export type NavigationMode = 'dpad' | 'touchpad';
 
 export const SETTINGS_VERSION = 1;
 
@@ -21,6 +22,7 @@ interface SettingsState {
   volumeStep: 1 | 2 | 5;
   backDoubleTapHome: boolean;
   okLongPress: OkLongPress;
+  navigationMode: NavigationMode;
   wakeOnConnect: boolean;
   irPerDevice: Record<string, string>;
   irRepeatCount: number;
@@ -43,6 +45,7 @@ const defaults = {
   volumeStep: 1 as 1 | 2 | 5,
   backDoubleTapHome: false,
   okLongPress: 'voice' as OkLongPress,
+  navigationMode: 'dpad' as NavigationMode,
   wakeOnConnect: false,
   irPerDevice: {} as Record<string, string>,
   irRepeatCount: 1,
@@ -77,6 +80,7 @@ export const useSettingsStore = createPersistedStore<SettingsState>(
         volumeStep: s.volumeStep,
         backDoubleTapHome: s.backDoubleTapHome,
         okLongPress: s.okLongPress,
+        navigationMode: s.navigationMode,
         wakeOnConnect: s.wakeOnConnect,
         irPerDevice: s.irPerDevice,
         irRepeatCount: s.irRepeatCount,

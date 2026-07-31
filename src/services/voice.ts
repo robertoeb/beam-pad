@@ -12,14 +12,11 @@ let pendingBytes = 0;
 
 async function ensureMicPermission(): Promise<boolean> {
   if (Platform.OS !== 'android') return false;
-  const res = await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-    {
-      title: 'BeamPad microphone',
-      message: 'Used only while you hold voice search.',
-      buttonPositive: 'Allow',
-    },
-  );
+  const res = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, {
+    title: 'BeamPad microphone',
+    message: 'Used only while you hold voice search.',
+    buttonPositive: 'Allow',
+  });
   return res === PermissionsAndroid.RESULTS.GRANTED;
 }
 

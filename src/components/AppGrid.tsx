@@ -27,9 +27,7 @@ export function AppGrid({ edit: editProp }: AppGridProps) {
   const edit = editProp ?? editLocal;
 
   const pinnedAppIds = new Set(
-    shortcuts
-      .filter((id) => id.startsWith('app:'))
-      .map((id) => id.split(':')[1]),
+    shortcuts.filter((id) => id.startsWith('app:')).map((id) => id.split(':')[1]),
   );
 
   const catalogApps = TV_APPS.filter((a) => !pinnedAppIds.has(a.id));
