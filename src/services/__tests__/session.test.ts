@@ -85,6 +85,65 @@ describe('session switchTo', () => {
   });
 });
 
+describe('session generation guard and active rollback (arch P0-2/P0-3, QA P0-3)', () => {
+  it('does not mark the new device active before connect succeeds; rolls back on failure', async () => {
+    const deviceB = aDevice({ id: 'tv-session-2', host: '192.168.1.60' });
+    useDevicesStore.getState().addPaired(deviceB);
+    useDevicesStore.getState().setActive(DEVICE_ID);
+    jest.useFakeTimers();
+    const p = switchTo('tv-session-2');
+    // Still on the old device while the new one dials.
+    expect(useDevicesStore.getState().activeDeviceId).toBe(DEVICE_ID);
+    jest.advanceTimersByTime(13_000);
+    const r = await p;
+    expect(r.ok).toBe(false);
+    expect(r.error).toBeDefined();
+    expect(useDevicesStore.getState().activeDeviceId).toBe(DEVICE_ID);
+    jest.useRealTimers();
+  });
+
+  it('superseded switchTo loses: winner goes ACTIVE, loser reports ok:false without clobbering stores', async () => {
+    const deviceB = aDevice({ id: 'tv-session-2', host: '192.168.1.60' });
+    useDevicesStore.getState().addPaired(deviceB);
+    jest.useFakeTimers();
+    const pA = switchTo(DEVICE_ID);
+    const pB = switchTo('tv-session-2');
+    activate(); // reaches the last-connected socket (B)
+    const [rA, rB] = await Promise.all([pA, pB]);
+    expect(rB.ok).toBe(true);
+    expect(rA.ok).toBe(false);
+    expect(useDevicesStore.getState().activeDeviceId).toBe('tv-session-2');
+    // A's destroy() emits IDLE on its own callbacks — must not leak through.
+    expect(useConnectionStore.getState().state).toBe('ACTIVE');
+    jest.useRealTimers();
+  });
+
+  it('cancels the 12s budget once ACTIVE so the reconnect ladder can run past it', async () => {
+    jest.useFakeTimers();
+    const p = switchTo(DEVICE_ID);
+    activate();
+    expect((await p).ok).toBe(true);
+    jest.advanceTimersByTime(30_000);
+    expect(getClient()).not.toBeNull();
+    expect(useConnectionStore.getState().state).toBe('ACTIVE');
+    jest.useRealTimers();
+  });
+
+  it('clears stale telemetry on connect so a new TV never shows the old TV volume', async () => {
+    jest.useFakeTimers();
+    const p = switchTo(DEVICE_ID);
+    activate();
+    await p;
+    harness.pushFrame({
+      remoteSetVolumeLevel: { volumeMax: 30, volumeLevel: 15, volumeMuted: false, playerModel: 'X' },
+    });
+    expect(useConnectionStore.getState().volume).toBeDefined();
+    disconnect();
+    expect(useConnectionStore.getState().volume).toBeUndefined();
+    expect(useConnectionStore.getState().state).toBe('IDLE');
+    jest.useRealTimers();
+  });
+});
 describe('session connect/disconnect/reset', () => {
   it('connect throws for unknown device', async () => {
     await expect(connect('ghost')).rejects.toThrow('unknown device ghost');

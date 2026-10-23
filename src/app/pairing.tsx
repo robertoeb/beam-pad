@@ -15,7 +15,7 @@ import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
 import { Label, Micro, Title } from '@/theme/typography';
 import { space, radius } from '@/theme/tokens';
 import type { ConnectError } from '@/protocol/errors';
-import { PAIRING_PORT } from '@/protocol/ports';
+import { COMMAND_PORT, PAIRING_PORT } from '@/protocol/ports';
 
 const STEP_COPY: Record<string, string> = {
   probing: 'Contacting TV…',
@@ -43,9 +43,14 @@ type PairStep =
   | 'cancelled';
 
 export default function PairingScreen() {
-  const { host, name } = useLocalSearchParams();
+  const { host, name, port } = useLocalSearchParams();
   const h = (host as string) ?? '';
   const n = (name as string) ?? 'ATV';
+  // Command-channel port: devices discovered over mDNS report the *pairing*
+  // service port, so default to the command port and only honor an explicit
+  // param. Persisting the pairing port here used to send every post-pair
+  // connect to the wrong service (6467 instead of 6466).
+  const cmdPort = Number(port) || COMMAND_PORT;
   const [step, setStep] = useState<PairStep>('probing');
   const [connectError, setConnectError] = useState<ConnectError | undefined>();
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
@@ -129,7 +134,7 @@ export default function PairingScreen() {
         id: h,
         name: n,
         host: h,
-        port: PAIRING_PORT,
+        port: cmdPort,
         certPem: result.certPem,
         keyPem: result.keyPem,
       };
@@ -137,7 +142,7 @@ export default function PairingScreen() {
       setActive(h);
       goBack();
     }
-  }, [step, h, n, addPaired, setActive, goBack]);
+  }, [step, h, n, cmdPort, addPaired, setActive, goBack]);
 
   useEffect(() => {
     if (step === 'cancelled') {

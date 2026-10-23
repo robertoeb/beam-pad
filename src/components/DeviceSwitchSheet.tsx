@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Tv, Check } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useDevicesStore } from '@/stores/devices';
-import { useConnectionStore } from '@/stores/connection';
 import { switchTo } from '@/services/sessionManager';
+import { showToast } from '@/stores/toast';
 import { Label, Title } from '@/theme/typography';
 
 interface DeviceSwitchSheetProps {
@@ -18,7 +18,6 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
   const pairedRaw = useDevicesStore((s) => s.paired);
   const paired = useMemo(() => Object.values(pairedRaw), [pairedRaw]);
   const activeDeviceId = useDevicesStore((s) => s.activeDeviceId);
-  const setState = useConnectionStore((s) => s.setState);
 
   useEffect(() => {
     if (visible) {
@@ -38,18 +37,20 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
     }
   }, [visible, translateY]);
 
+  // The session's onState callback is the sole writer of the connection
+  // machine — never force states from here (it used to show ACTIVE while the
+  // socket was still handshaking). Close on success; stay open with the
+  // classified error on failure so the user can retry or pick another TV.
   const handleSwitch = useCallback(
     async (id: string) => {
-      setState('CONNECTING');
       const result = await switchTo(id);
       if (result.ok) {
-        setState('ACTIVE');
+        onClose();
       } else {
-        setState('ERROR_STATE');
+        showToast(result.error?.message ?? 'Could not connect to TV');
       }
-      onClose();
     },
-    [setState, onClose],
+    [onClose],
   );
 
   const renderItem = useCallback(
