@@ -35,7 +35,7 @@ describe('IR profile database', () => {
   it('command values fit protocol bit-width', () => {
     for (const p of IR_PROFILES) {
       const maxCmd = p.protocol.startsWith('sirc') ? 127 : 255;
-      for (const [name, val] of Object.entries(p.commands)) {
+      for (const [, val] of Object.entries(p.commands)) {
         expect(val).toBeGreaterThanOrEqual(0);
         expect(val).toBeLessThanOrEqual(maxCmd);
       }

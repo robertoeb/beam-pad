@@ -33,7 +33,15 @@ export function encodeRc6(mode: number, address: number, command: number): IrFra
     }
   }
 
-  pattern.push(0);
+  // Trailing gap (signal-free). Never emit a zero duration: Android's
+  // ConsumerIrManager rejects non-positive entries, and the IR property
+  // test enforces it. Ensure even length (mark/space pairs).
+  const TRAIL = H * 6;
+  if (pattern.length % 2 === 1) {
+    pattern.push(TRAIL);
+  } else {
+    pattern[pattern.length - 1]! += TRAIL;
+  }
 
   return { frequency: 36000, pattern };
 }
