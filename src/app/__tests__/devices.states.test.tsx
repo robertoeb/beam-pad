@@ -1,7 +1,9 @@
 import { render, fireEvent, userEvent } from '@testing-library/react-native';
 import DevicesScreen from '../devices';
 import { useDevicesStore } from '@/stores/devices';
+import { useConnectionStore } from '@/stores/connection';
 import { startDiscovery } from '@/services/discovery';
+import { aDevice } from '@/test/factories';
 import { router } from 'expo-router';
 
 jest.mock('@/services/discovery', () => ({
@@ -91,5 +93,48 @@ describe('DevicesScreen states', () => {
       pathname: '/pairing',
       params: { host: '192.168.1.120', port: 6466, name: 'Manual Entry' },
     });
+  });
+
+  it('lists paired TVs with forget buttons', async () => {
+    useDevicesStore.setState({
+      found: {},
+      scanning: false,
+      paired: { 'tv-1': aDevice({ id: 'tv-1', name: 'Living Room' }) },
+      activeDeviceId: 'tv-1',
+    });
+    const { getByText, getByLabelText } = await render(<DevicesScreen />);
+    expect(getByText('Paired TVs')).toBeTruthy();
+    expect(getByText('Living Room')).toBeTruthy();
+    expect(getByLabelText('Forget Living Room')).toBeTruthy();
+  });
+
+  it('forget removes a non-active device', async () => {
+    const user = userEvent.setup();
+    useDevicesStore.setState({
+      found: {},
+      scanning: false,
+      paired: { 'tv-1': aDevice({ id: 'tv-1', name: 'Living Room' }) },
+      activeDeviceId: null,
+    });
+    const { getByLabelText, queryByText } = await render(<DevicesScreen />);
+    await user.press(getByLabelText('Forget Living Room'));
+    expect(useDevicesStore.getState().paired['tv-1']).toBeUndefined();
+    expect(queryByText('Living Room')).toBeNull();
+  });
+
+  it('forgetting the active device disconnects and clears it', async () => {
+    const user = userEvent.setup();
+    useDevicesStore.setState({
+      found: {},
+      scanning: false,
+      paired: { 'tv-1': aDevice({ id: 'tv-1', name: 'Living Room' }) },
+      activeDeviceId: 'tv-1',
+    });
+    useConnectionStore.setState({ state: 'ACTIVE' } as never);
+    const { getByLabelText } = await render(<DevicesScreen />);
+    await user.press(getByLabelText('Forget Living Room'));
+    expect(useDevicesStore.getState().paired['tv-1']).toBeUndefined();
+    expect(useDevicesStore.getState().activeDeviceId).toBeNull();
+    expect(useConnectionStore.getState().state).toBe('IDLE');
   });
 });

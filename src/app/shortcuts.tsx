@@ -73,6 +73,11 @@ export default function ShortcutsScreen() {
   const showLabels = useSettingsStore((s) => s.showShortcutLabels);
   const [edit, setEdit] = useState(params.edit === '1');
   const [dragging, setDragging] = useState(false);
+  // A vertical ScrollView always wins move-negotiation against the grid
+  // cells, so drags (especially vertical ones) feel dead. Lock scrolling the
+  // moment a touch starts inside the grid; the cell's capture-phase responder
+  // then owns every move. Released on touch end.
+  const [gridTouched, setGridTouched] = useState(false);
 
   const pinnedIds = new Set(shortcuts);
 
@@ -130,9 +135,14 @@ export default function ShortcutsScreen() {
         <ScrollView
           style={{ flex: 1 }}
           showsVerticalScrollIndicator={false}
-          scrollEnabled={!dragging}
+          scrollEnabled={!dragging && !gridTouched}
         >
           {shortcuts.length > 0 && (
+            <View
+              onTouchStart={() => setGridTouched(true)}
+              onTouchEnd={() => setGridTouched(false)}
+              onTouchCancel={() => setGridTouched(false)}
+            >
             <ReorderableGrid
               data={shortcuts}
               onChange={setShortcuts}
@@ -169,6 +179,7 @@ export default function ShortcutsScreen() {
                 );
               }}
             />
+            </View>
           )}
 
           {catalogApps.length > 0 && (
