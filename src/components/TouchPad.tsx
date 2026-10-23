@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { PanResponder, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import { key } from '@/lib/key';
 import { KEYS } from '@/protocol/keycodes';
 import { radius } from '@/theme/tokens';
@@ -67,7 +67,7 @@ export function TouchPad({ size = 228 }: TouchPadProps) {
           ax >= ay ? (accum.current.x > 0 ? 'right' : 'left') : accum.current.y > 0 ? 'down' : 'up';
         setDir(d);
         key(DIRECTION_KEYS[d as keyof typeof DIRECTION_KEYS]);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        haptic('light');
         // Reset both so the user can freely switch axes mid-gesture while a
         // small perpendicular wobble never accumulates into a wrong direction.
         accum.current = { x: 0, y: 0 };
@@ -77,7 +77,7 @@ export function TouchPad({ size = 228 }: TouchPadProps) {
         glowOpacity.value = withTiming(0, { duration: 250 });
         if (totalMoved.current < 12) {
           key(KEYS.ok);
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          haptic('light');
         }
         setDir(null);
         last.current = null;

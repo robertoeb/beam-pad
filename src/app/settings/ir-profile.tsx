@@ -197,7 +197,7 @@ export default function IrProfileScreen() {
           onChangeText={setSearchQuery}
           placeholder="Search brand, type, protocol…"
           placeholderTextColor="#747B8A"
-          style={{ flex: 1, color: '#FFFFFF', fontSize: 14, fontFamily: 'Inter-Medium' }}
+          style={{ flex: 1, color: '#F5F6FA', fontSize: 14, fontFamily: 'Inter-Medium' }}
           autoCapitalize="none"
         />
       </View>
@@ -237,7 +237,7 @@ export default function IrProfileScreen() {
                   <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                     <View style={{ flex: 1 }}>
                       <Label style={{ color: '#F5F6FA' }}>{profile.brand}</Label>
-                      <Label style={{ color: '#747B8A', fontSize: 11 }}>
+                      <Label style={{ color: '#9AA0B4', fontSize: 11 }}>
                         {profile.protocol.toUpperCase()}
                       </Label>
                     </View>

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Pressable, View } from 'react-native';
 import { Minus, Plus } from 'lucide-react-native';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -41,7 +41,7 @@ function VolButton({
         flash.value = withTiming(0, { duration: 240 });
       }}
       onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        haptic('light');
         onPress();
       }}
       style={{

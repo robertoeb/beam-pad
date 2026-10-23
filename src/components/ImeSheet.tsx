@@ -50,12 +50,14 @@ export function ImeSheet() {
             value={value}
             onChangeText={commitImeText}
             selectionColor="#22D3EE"
+            cursorColor="#22D3EE"
+            keyboardAppearance="dark"
             placeholder="Start typing..."
             placeholderTextColor="#747B8A"
             style={{
               fontFamily: 'Inter-Regular',
               fontSize: 17,
-              color: '#FFFFFF',
+              color: '#F5F6FA',
               backgroundColor: '#15151F',
               borderRadius: 16,
               borderWidth: 1,

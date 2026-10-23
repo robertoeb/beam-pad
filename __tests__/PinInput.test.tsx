@@ -18,4 +18,10 @@ describe('PinInput', () => {
 
     expect(onComplete).toHaveBeenCalledWith('12AB');
   });
+
+  it('exposes an accessible pairing-code label with digit progress', async () => {
+    const { getByLabelText } = await render(<PinInput length={6} onComplete={jest.fn()} />);
+    const input = getByLabelText('6-character pairing code');
+    expect(input.props.accessibilityValue).toMatchObject({ max: 6 });
+  });
 });

@@ -6,7 +6,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import { SPRING } from '@/lib/spring';
 import type { LucideIcon } from 'lucide-react-native';
 
@@ -72,12 +72,12 @@ export function RemoteButton({
     fired.current = false;
     scale.value = withSpring(0.95, SPRING);
     flash.value = withTiming(1, { duration: 90 });
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    haptic('light');
 
     if (onLongPress && !repeat) {
       holdTimer.current = setTimeout(() => {
         fired.current = true;
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        haptic('heavy');
         onLongPress();
       }, 800);
     }
@@ -85,10 +85,10 @@ export function RemoteButton({
     if (repeat) {
       holdTimer.current = setTimeout(() => {
         onPress();
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        haptic('light');
         repeatTimer.current = setInterval(() => {
           onPress();
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          haptic('light');
         }, 150);
       }, 400);
     }

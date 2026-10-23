@@ -8,11 +8,10 @@ import Animated, {
   withTiming,
   withSpring,
 } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import { SPRING } from '@/lib/spring';
 import { Glow } from '@/theme/gradient';
 import { powerShortPress, powerHoldStart, powerHoldEnd } from '@/services/power';
-import { useSettingsStore } from '@/stores/settings';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -37,9 +36,7 @@ export function PowerButton() {
 
     holdTimer.current = setTimeout(() => {
       fired.current = true;
-      if (useSettingsStore.getState().haptics) {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-      }
+      haptic('heavy');
       powerHoldStart();
     }, 800);
   };
@@ -56,9 +53,7 @@ export function PowerButton() {
     if (fired.current) {
       powerHoldEnd();
     } else {
-      if (useSettingsStore.getState().haptics) {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+      haptic('light');
       powerShortPress();
     }
   };

@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { MinusCircle } from 'lucide-react-native';
 import { useEffect } from 'react';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import { useConnectionStore } from '@/stores/connection';
 import { shortcutRegistry } from '@/shortcuts/registry';
 import { BRAND_ICONS, KEY_ICONS, initialsFallback } from '@/shortcuts/icons';
@@ -154,14 +154,14 @@ export function ShortcutTile({
           onPressOut={pressOut}
           onPress={() => {
             if (onPress) {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              haptic('light');
               onPress();
             }
           }}
           onLongPress={
             onLongPress
               ? () => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                  haptic('heavy');
                   onLongPress();
                 }
               : undefined
@@ -222,13 +222,13 @@ export function ShortcutTile({
               accessibilityRole="button"
               accessibilityLabel={`Remove ${label}`}
               onPress={onRemove}
-              hitSlop={12}
+              hitSlop={16}
               style={{
                 position: 'absolute',
-                top: 2,
-                right: 2,
-                width: 24,
-                height: 24,
+                top: 0,
+                right: 0,
+                width: 32,
+                height: 32,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}

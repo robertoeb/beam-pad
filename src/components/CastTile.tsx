@@ -30,12 +30,11 @@ export function CastTile({ size = 68 }: { size?: number }) {
           : pressed
             ? 'rgba(255,255,255,0.08)'
             : 'rgba(255,255,255,0.02)',
-        opacity: active ? 1 : 0.45,
+        opacity: active ? 1 : 0.7,
         overflow: 'hidden',
       })}
       accessibilityLabel={active ? 'Cast connected' : 'Cast (no device connected)'}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !active }}
       testID="cast-tile"
     >
       {active ? (

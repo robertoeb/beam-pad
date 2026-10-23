@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Pressable, ScrollView } from 'react-native';
 import { PenLine, LayoutGrid, Plus } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 
 import { ShortcutTile } from '@/components/ShortcutTile';
 import { AppIcon } from '@/components/AppIcon';
@@ -155,7 +155,7 @@ export default function ShortcutsScreen() {
                       }}
                       onLongPress={
                         edit
-                          ? () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+                          ? () => haptic('medium')
                           : undefined
                       }
                     />

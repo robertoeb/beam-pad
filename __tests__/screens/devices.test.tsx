@@ -1,4 +1,4 @@
-import { render, userEvent, fireEvent } from '@testing-library/react-native';
+import { render, userEvent } from '@testing-library/react-native';
 import DevicesScreen from '@/app/devices';
 import { useDevicesStore } from '@/stores/devices';
 import { router } from 'expo-router';

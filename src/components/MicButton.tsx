@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Mic } from 'lucide-react-native';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -54,7 +54,7 @@ export function MicButton({ voiceHolding, onPressIn, onPressOut, onPress }: MicB
       <Pressable
         onPressIn={() => {
           setPressed(true);
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          haptic('light');
           onPressIn();
         }}
         onPressOut={() => {

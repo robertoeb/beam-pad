@@ -36,9 +36,10 @@ export function Toggle({
       testID={testID}
       disabled={disabled}
       style={{
-        width: 44,
-        height: 24,
-        borderRadius: 12,
+        width: 48,
+        height: 28,
+        minHeight: 28,
+        borderRadius: 14,
         backgroundColor: value ? 'transparent' : 'rgba(255,255,255,0.12)',
         justifyContent: 'center',
         paddingHorizontal: 2,
@@ -52,10 +53,10 @@ export function Toggle({
       <Animated.View
         style={[
           {
-            width: 20,
-            height: 20,
-            borderRadius: 10,
-            backgroundColor: '#FFFFFF',
+            width: 24,
+            height: 24,
+            borderRadius: 12,
+            backgroundColor: '#F5F6FA',
           },
           knobStyle,
         ]}

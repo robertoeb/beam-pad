@@ -87,7 +87,7 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
           </View>
           <View style={{ flex: 1 }}>
             <Label style={{ color: '#F5F6FA' }}>{item.name}</Label>
-            <Label style={{ color: '#747B8A', fontSize: 11 }}>{item.host}</Label>
+            <Label style={{ color: '#9AA0B4', fontSize: 11 }}>{item.host}</Label>
           </View>
           {isActive ? <Check size={18} color="#22D3EE" /> : null}
         </Pressable>

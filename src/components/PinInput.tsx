@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import { Label } from '@/theme/typography';
 import { radius, space } from '@/theme/tokens';
 
@@ -31,7 +31,7 @@ export function PinInput({ length = 6, onComplete }: PinInputProps) {
       const next = filtered.split('').slice(0, length);
       setDigits((prev) => {
         if (next.length > prev.length) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+          haptic('light');
         }
         return next;
       });
@@ -73,7 +73,7 @@ export function PinInput({ length = 6, onComplete }: PinInputProps) {
       style={styles.wrapper}
     >
       <View style={styles.row}>
-        <View style={styles.boxes} pointerEvents="none">
+        <View style={styles.boxes} pointerEvents="none" accessible={false}>
           {boxes}
         </View>
         <TextInput
@@ -92,6 +92,8 @@ export function PinInput({ length = 6, onComplete }: PinInputProps) {
           cursorColor="transparent"
           caretHidden
           testID="pin-input"
+          accessibilityLabel="6-character pairing code"
+          accessibilityValue={{ now: digits.length, max: length, text: `${digits.length} of ${length} digits entered` }}
           style={styles.hiddenInput}
         />
       </View>

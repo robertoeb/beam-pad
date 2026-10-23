@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { Volume2, VolumeX } from 'lucide-react-native';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import { useConnectionStore } from '@/stores/connection';
 import { volumeCommand } from '@/services/volumeRouter';
 
@@ -14,7 +14,7 @@ export function MuteButton() {
       onPressIn={() => setPressed(true)}
       onPressOut={() => setPressed(false)}
       onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        haptic('light');
         volumeCommand('mute');
       }}
       accessibilityRole="button"

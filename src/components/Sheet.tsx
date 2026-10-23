@@ -7,7 +7,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 import { SPRING } from '@/lib/spring';
 import { radius, zIndex } from '@/theme/tokens';
 
@@ -35,7 +35,7 @@ export function Sheet({
 
   useEffect(() => {
     if (open) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      haptic('light');
       translateY.value = withSpring(0, SPRING);
       backdropOpacity.value = withTiming(0.6, { duration: 200 });
     } else {

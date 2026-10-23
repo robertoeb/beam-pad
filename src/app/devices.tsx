@@ -95,7 +95,7 @@ export default function DevicesScreen() {
           <Label style={{ color: '#F5F6FA' }}>{item?.name}</Label>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 1 }}>
             <Signal size={10} color="#747B8A" />
-            <Label style={{ color: '#747B8A', fontSize: 11 }}>
+            <Label style={{ color: '#9AA0B4', fontSize: 11 }}>
               {item?.host}:{item?.port}
             </Label>
           </View>
@@ -109,6 +109,8 @@ export default function DevicesScreen() {
             borderColor: 'rgba(34,211,238,0.35)',
             paddingHorizontal: 18,
             paddingVertical: 9,
+            minHeight: 44,
+            justifyContent: 'center',
             overflow: 'hidden',
           }}
         >
@@ -198,6 +200,9 @@ export default function DevicesScreen() {
             onChangeText={setManualHost}
             keyboardType="url"
             autoCapitalize="none"
+            keyboardAppearance="dark"
+            cursorColor="#22D3EE"
+            selectionColor="rgba(34,211,238,0.3)"
             style={{
               flex: 1,
               borderRadius: radius.lg,
@@ -206,7 +211,9 @@ export default function DevicesScreen() {
               backgroundColor: 'rgba(19,19,30,0.8)',
               paddingHorizontal: 14,
               paddingVertical: 12,
-              color: '#FFFFFF',
+              minHeight: 44,
+              justifyContent: 'center',
+              color: '#F5F6FA',
               fontSize: 14,
               fontFamily: 'Inter-Medium',
             }}
@@ -220,6 +227,8 @@ export default function DevicesScreen() {
               borderColor: 'rgba(34,211,238,0.35)',
               paddingHorizontal: 18,
               paddingVertical: 12,
+              minHeight: 44,
+              justifyContent: 'center',
               overflow: 'hidden',
             }}
           >

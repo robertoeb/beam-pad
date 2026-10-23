@@ -253,7 +253,7 @@ export default function PairingScreen() {
               }}
             >
               <ShieldCheck size={14} color="#22D3EE" strokeWidth={1.8} />
-              <Micro style={{ color: '#8B93A3', letterSpacing: 0.6 }}>
+              <Micro style={{ color: '#9AA0B4', letterSpacing: 0.6 }}>
                 SECURE · TV DISPLAYS A 6-CHARACTER CODE
               </Micro>
             </View>
@@ -315,11 +315,18 @@ export default function PairingScreen() {
         >
           <Pressable
             onPress={() => setShowTroubleshoot(true)}
-            hitSlop={8}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: space[1] }}
+            hitSlop={16}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: space[1],
+              minHeight: 44,
+              justifyContent: 'center',
+              paddingHorizontal: space[4],
+            }}
           >
             <Info size={13} color="#747B8A" strokeWidth={1.8} />
-            <Label style={{ color: '#747B8A', fontSize: 13 }}>
+            <Label style={{ color: '#9AA0B4', fontSize: 13 }}>
               No code? Check the troubleshooting tips
             </Label>
           </Pressable>
@@ -330,7 +337,7 @@ export default function PairingScreen() {
         <Label
           style={{
             textAlign: 'center',
-            color: '#5A6172',
+            color: '#9AA0B4',
             fontSize: 12,
             paddingBottom: space[5],
           }}

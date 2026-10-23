@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Plus, Check } from 'lucide-react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
-import * as Haptics from 'expo-haptics';
+import { haptic } from '@/lib/haptics';
 
 import { ShortcutTile } from './ShortcutTile';
 import { useLayoutStore } from '@/stores/layout';
@@ -75,7 +75,7 @@ export function AppGrid({ edit: editProp }: AppGridProps) {
                   if (!edit) fireShortcut(item);
                 }}
                 onLongPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  haptic('medium');
                   if (!edit) setEditLocal(true);
                   drag();
                 }}
