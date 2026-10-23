@@ -15,7 +15,7 @@ import {space, radius, tokens} from '@/theme/tokens';
 
 const SCAN_WINDOW_MS = 15_000;
 
-export default function DevicesScreen() {
+export default function DevicesScreen({ scanWindowMs = SCAN_WINDOW_MS }: { scanWindowMs?: number } = {}) {
   const foundRaw = useDevicesStore((s) => s.found);
   const scanning = useDevicesStore((s) => s.scanning);
   const found = useMemo(() => Object.values(foundRaw), [foundRaw]);
@@ -31,8 +31,8 @@ export default function DevicesScreen() {
     if (scanTimer.current) clearTimeout(scanTimer.current);
     scanTimer.current = setTimeout(() => {
       useDevicesStore.getState().setScanning(false);
-    }, SCAN_WINDOW_MS);
-  }, []);
+    }, scanWindowMs);
+  }, [scanWindowMs]);
 
   const handleRescan = useCallback(() => {
     beginScan(false);
