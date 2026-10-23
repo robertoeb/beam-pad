@@ -1,12 +1,11 @@
-import { getActiveClient } from './sessionManager';
+import { getActiveClient } from './session';
 import { getApp } from '@/protocol/deeplinks';
 import { showToast } from '@/components/Toast';
 import { shortcutRegistry } from '@/shortcuts/registry';
-import type { Shortcut, MacroStep, ShortcutId } from '@/shortcuts/types';
+import type { MacroStep, ShortcutId } from '@/shortcuts/types';
 
 const WAIT_MIN = 50;
 const WAIT_MAX = 3000;
-const WAIT_DEFAULT = 200;
 
 function clampWait(ms: number): number {
   if (ms < WAIT_MIN) return WAIT_MIN;

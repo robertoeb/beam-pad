@@ -1,49 +1,45 @@
 import { powerShortPress, powerHoldStart, powerHoldEnd } from '../power';
-import { getActiveClient } from '../sessionManager';
+import { remote } from '@/lib/remote';
 import { KEYS } from '@/protocol/keycodes';
 
-jest.mock('../sessionManager', () => ({
-  getActiveClient: jest.fn(),
+jest.mock('@/lib/remote', () => ({
+  remote: {
+    key: jest.fn(),
+    longPress: jest.fn(),
+  },
 }));
 
-const mockKeyPress = jest.fn();
-const mockKeyLongStart = jest.fn();
-const mockKeyLongEnd = jest.fn();
+const mockKey = jest.mocked(remote.key);
+const mockLongPress = jest.mocked(remote.longPress);
+const mockEnd = jest.fn();
 
 beforeEach(() => {
-  (getActiveClient as jest.Mock).mockReturnValue({
-    keyPress: mockKeyPress,
-    keyLongStart: mockKeyLongStart,
-    keyLongEnd: mockKeyLongEnd,
-  });
-  mockKeyPress.mockClear();
-  mockKeyLongStart.mockClear();
-  mockKeyLongEnd.mockClear();
+  jest.clearAllMocks();
+  mockLongPress.mockReturnValue({ end: mockEnd });
 });
 
 describe('power service', () => {
-  it('short press sends KEYCODE_POWER as SHORT', () => {
+  it('short press sends KEYCODE_POWER via remote.key', () => {
     powerShortPress();
-    expect(mockKeyPress).toHaveBeenCalledWith(KEYS.power);
+    expect(mockKey).toHaveBeenCalledWith(KEYS.power);
   });
 
-  it('hold start sends START_LONG', () => {
+  it('hold start begins a long press', () => {
     powerHoldStart();
-    expect(mockKeyLongStart).toHaveBeenCalledWith(KEYS.power);
+    expect(mockLongPress).toHaveBeenCalledWith(KEYS.power);
   });
 
-  it('hold end sends END_LONG', () => {
+  it('hold end finishes the long press', () => {
+    powerHoldStart();
     powerHoldEnd();
-    expect(mockKeyLongEnd).toHaveBeenCalledWith(KEYS.power);
+    expect(mockEnd).toHaveBeenCalledTimes(1);
   });
 
-  it('no-op when no active client', () => {
-    (getActiveClient as jest.Mock).mockReturnValue(null);
+  it('does not throw when there is no active client', () => {
+    mockKey.mockReturnValue(false);
+    mockLongPress.mockReturnValue({ end: () => {} });
     expect(() => powerShortPress()).not.toThrow();
     expect(() => powerHoldStart()).not.toThrow();
     expect(() => powerHoldEnd()).not.toThrow();
-    expect(mockKeyPress).not.toHaveBeenCalled();
-    expect(mockKeyLongStart).not.toHaveBeenCalled();
-    expect(mockKeyLongEnd).not.toHaveBeenCalled();
   });
 });

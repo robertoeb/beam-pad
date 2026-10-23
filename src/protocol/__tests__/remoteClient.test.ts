@@ -50,7 +50,7 @@ class TestFakeAtvSocket {
     this.stateListeners.forEach((cb) => cb({ id, state: 'open' }));
   }
 
-  send(id: string, base64: string) {
+  send(_id: string, base64: string) {
     this.sentFrames.push(base64);
   }
 
@@ -500,7 +500,7 @@ describe('RemoteClient inbound handlers', () => {
   });
 
   it('tolerates unknown fields (forward compat)', async () => {
-    const { states, telemetry, client } = activateClient();
+    const { states, client } = activateClient();
     const connectPromise = client.connect();
     mockFake.injectData(toB64(encodeMsg({ remoteConfigure: { code1: 622 } })));
     await connectPromise;
@@ -656,8 +656,8 @@ describe('RemoteClient keepalive', () => {
 
 describe('sessionManager binder', () => {
   beforeEach(() => {
-    const { __testSetCurrent } = require('@/services/sessionManager');
-    __testSetCurrent(null);
+    const { reset } = require('@/services/session');
+    reset();
     mockFake.client = null;
     useDevicesStore.getState().addPaired(createDevice() as any);
     useDevicesStore.getState().setActive(null);

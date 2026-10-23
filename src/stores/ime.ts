@@ -30,6 +30,6 @@ export const useImeStore = create<ImeState>()((set) => ({
       end: s.end ?? 0,
     }),
   setValue: (value, start, end) =>
-    set((st) => ({ value, start: start ?? value.length, end: end ?? value.length })),
+    set(() => ({ value, start: start ?? value.length, end: end ?? value.length })),
   dismiss: () => set({ visible: false }),
 }));

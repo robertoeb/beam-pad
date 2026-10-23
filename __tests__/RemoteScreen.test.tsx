@@ -1,14 +1,15 @@
 import { render } from '@testing-library/react-native';
 import Index from '@/app/index';
-import { getActiveClient } from '@/services/sessionManager';
+import { getClient } from '@/services/session';
 import { useLayoutStore } from '@/stores/layout';
 
-jest.mock('@/services/sessionManager', () => ({
+jest.mock('@/services/session', () => ({
+  getClient: jest.fn(),
   getActiveClient: jest.fn(),
 }));
 
 beforeEach(() => {
-  (getActiveClient as jest.Mock).mockReturnValue(null);
+  (getClient as jest.Mock).mockReturnValue(null);
   useLayoutStore.setState({ moreSheetOpen: false });
 });
 

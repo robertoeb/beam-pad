@@ -15,7 +15,8 @@ export type PairingStep =
   | 'awaiting_code'
   | 'secret'
   | 'done'
-  | 'failed';
+  | 'failed'
+  | 'cancelled';
 
 export interface PairingCallbacks {
   onStep: (step: PairingStep, error?: ConnectError) => void;
@@ -23,6 +24,7 @@ export interface PairingCallbacks {
 
 const SERVICE_NAME = 'atvremote';
 const CLIENT_NAME = 'Android TV Remote';
+const HANDSHAKE_TIMEOUT_MS = 20_000;
 
 export interface PairingResult {
   certPem: string;
@@ -34,6 +36,8 @@ export class PairingProtocol {
   private socketId = `pairing-${Date.now()}`;
   private step: PairingStep = 'probing';
   private serviceName = SERVICE_NAME;
+  private handshakeTimer: ReturnType<typeof setTimeout> | null = null;
+  private cancelled = false;
   private client: {
     pem: string;
     privateKeyPem: string;
@@ -73,6 +77,14 @@ export class PairingProtocol {
                 e.code ?? '',
               );
               if (e.state !== 'open' && this.step !== 'done') {
+                if (
+                  (this.step === 'awaiting_code' || this.step === 'secret') &&
+                  e.state === 'closed'
+                ) {
+                  console.log('[PairingProtocol] Socket closed while waiting → TV cancelled');
+                  this.cancel();
+                  return;
+                }
                 if (e.state === 'error') {
                   this.fail(classify(e.error, { phase: 'pair', host: this.host }));
                 } else {
@@ -100,16 +112,36 @@ export class PairingProtocol {
       this.setStep('request');
       this.send({
         protocolVersion: 2,
+        status: pb.Status.STATUS_OK,
         pairingRequest: { serviceName: this.serviceName, clientName: CLIENT_NAME },
       });
+      this.scheduleHandshakeTimeout();
     } catch (e) {
       console.log('[PairingProtocol] Error in start():', e);
       this.fail(classify(e, { phase: 'pair', host: this.host }));
     }
   }
 
+  private scheduleHandshakeTimeout() {
+    this.clearHandshakeTimeout();
+    this.handshakeTimer = setTimeout(() => {
+      if (this.step === 'request' || this.step === 'option' || this.step === 'configuration') {
+        console.log('[PairingProtocol] Handshake timed out at step:', this.step);
+        this.fail(classify('timeout', { phase: 'pair', host: this.host }));
+      }
+    }, HANDSHAKE_TIMEOUT_MS);
+  }
+
+  private clearHandshakeTimeout() {
+    if (this.handshakeTimer) {
+      clearTimeout(this.handshakeTimer);
+      this.handshakeTimer = null;
+    }
+  }
+
   submitCode(code: string) {
     console.log('[PairingProtocol] Submitting code:', code);
+    if (this.cancelled) return;
     if (this.step !== 'awaiting_code') return;
     if (!this.client || !this.serverKeys) {
       this.fail(classify('missing certificate components', { phase: 'pair', host: this.host }));
@@ -125,6 +157,7 @@ export class PairingProtocol {
     });
     this.send({
       protocolVersion: 2,
+      status: pb.Status.STATUS_OK,
       pairingSecret: { secret },
     });
   }
@@ -148,6 +181,16 @@ export class PairingProtocol {
         msg.status == null;
       if (!isOk) {
         console.log('[PairingProtocol] Unrecognized/Error msg status:', msg.status);
+        // If the TV rejects while we're waiting for (or verifying) the code, the
+        // user cancelled the pairing on the TV — tear down and head back to the
+        // device list instead of restarting the handshake.
+        if (
+          statusNum === pb.Status.STATUS_ERROR &&
+          (this.step === 'awaiting_code' || this.step === 'secret')
+        ) {
+          this.cancel();
+          return;
+        }
         if (statusNum === pb.Status.STATUS_ERROR && this.serviceName === 'atvremote') {
           this.retryWith('androidtv-remote');
           return;
@@ -168,6 +211,7 @@ export class PairingProtocol {
         this.setStep('option');
         this.send({
           protocolVersion: 2,
+          status: pb.Status.STATUS_OK,
           pairingOption: {
             preferredRole: pb.RoleType.ROLE_TYPE_INPUT,
             inputEncodings: [
@@ -178,11 +222,13 @@ export class PairingProtocol {
             ],
           },
         });
+        this.scheduleHandshakeTimeout();
       } else if (this.step === 'option' && (msg.pairingOption || msg.pairingRequestAck)) {
         console.log('[PairingProtocol] Handling option -> sending pairingConfiguration');
         this.setStep('configuration');
         this.send({
           protocolVersion: 2,
+          status: pb.Status.STATUS_OK,
           pairingConfiguration: {
             encoding: {
               type: pb.EncodingType.ENCODING_TYPE_HEXADECIMAL,
@@ -191,10 +237,12 @@ export class PairingProtocol {
             clientRole: pb.RoleType.ROLE_TYPE_INPUT,
           },
         });
+        this.scheduleHandshakeTimeout();
       } else if (msg.pairingConfigurationAck || this.step === 'configuration') {
         console.log(
           '[PairingProtocol] Pairing configuration ACK received -> setStep awaiting_code',
         );
+        this.clearHandshakeTimeout();
         this.setStep('awaiting_code');
       } else if (msg.pairingSecretAck) {
         console.log('[PairingProtocol] Pairing secret ACK received -> finish');
@@ -222,6 +270,16 @@ export class PairingProtocol {
     this.destroy();
   }
 
+  /** Cancels an in-progress pairing (TV cancelled, or the user backed out). */
+  cancel() {
+    if (this.cancelled || this.step === 'done' || this.step === 'failed') return;
+    this.cancelled = true;
+    console.log('[PairingProtocol] Cancelling pairing');
+    this.clearHandshakeTimeout();
+    this.destroy();
+    this.setStep('cancelled');
+  }
+
   private finish() {
     this.setStep('done');
     this.destroy();
@@ -241,15 +299,16 @@ export class PairingProtocol {
   }
 
   private destroy() {
+    this.clearHandshakeTimeout();
     this.subs.forEach((s) => s.remove());
     AtvSocket.close(this.socketId);
   }
 
-  getResult(): PairingResult {
-    return {
-      certPem: this.client?.pem ?? '',
-      keyPem: this.client?.privateKeyPem ?? '',
-    };
+  getResult(): PairingResult | null {
+    const pem = this.client?.pem ?? '';
+    const privateKeyPem = this.client?.privateKeyPem ?? '';
+    if (!this.client || !pem || !privateKeyPem) return null;
+    return { certPem: pem, keyPem: privateKeyPem };
   }
 
   _injectFrames(frames: Uint8Array[]) {
@@ -260,9 +319,5 @@ export class PairingProtocol {
 
   get _step(): PairingStep {
     return this.step;
-  }
-
-  _getOutboundFrames(): string[] {
-    return [];
   }
 }

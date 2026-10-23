@@ -1,4 +1,4 @@
-import { Pressable, View } from 'react-native';
+import { Pressable } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { SPRING } from '@/lib/spring';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';

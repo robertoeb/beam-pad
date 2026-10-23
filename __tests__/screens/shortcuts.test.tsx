@@ -2,7 +2,6 @@ import { render, fireEvent, act } from '@testing-library/react-native';
 import ShortcutsScreen from '@/app/shortcuts';
 import { useLayoutStore } from '@/stores/layout';
 import { useConnectionStore } from '@/stores/connection';
-import { shortcutRegistry } from '@/shortcuts/registry';
 
 jest.mock('@/services/shortcuts', () => ({
   fireShortcut: jest.fn(() => true),

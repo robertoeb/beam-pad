@@ -1,15 +1,16 @@
 import { useImeStore } from '@/stores/ime';
-import { commitImeText, dismissIme, __testResetCounter } from '@/services/ime';
+import { commitImeText, imeSession } from '@/services/ime';
 
 const mockImeBatchEdit = jest.fn();
 
-jest.mock('@/services/sessionManager', () => ({
+jest.mock('@/services/session', () => ({
+  getClient: jest.fn(() => ({ imeBatchEdit: mockImeBatchEdit })),
   getActiveClient: jest.fn(() => ({ imeBatchEdit: mockImeBatchEdit })),
 }));
 
 beforeEach(() => {
   mockImeBatchEdit.mockClear();
-  __testResetCounter();
+  imeSession.reset();
   useImeStore.setState({
     visible: true,
     fieldCounter: 5,

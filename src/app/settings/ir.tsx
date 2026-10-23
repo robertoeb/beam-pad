@@ -3,7 +3,7 @@ import { View, Pressable, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { useSettingsStore } from '@/stores/settings';
 import { useDevicesStore } from '@/stores/devices';
-import { IR_PROFILES, type IrProfile } from '@/ir/profiles';
+import { type IrProfile } from '@/ir/profiles';
 import { irSend, resolveProfile, type IrResult } from '@/services/volumeRouter';
 import { IrBlaster } from '@/modules/expo-ir-blaster';
 import { SettingsSection } from '@/components/settings/SettingsSection';
@@ -12,7 +12,7 @@ import { Screen } from '@/components/ui/Screen';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { Label } from '@/theme/typography';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
-import { space, radius } from '@/theme/tokens';
+import { radius } from '@/theme/tokens';
 
 type RowStatus = 'idle' | 'sent' | 'unsupported' | 'failed';
 

@@ -17,7 +17,6 @@ import {
   SlidersHorizontal,
   Repeat,
   Volume2,
-  Sun,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { radius, space } from '@/theme/tokens';

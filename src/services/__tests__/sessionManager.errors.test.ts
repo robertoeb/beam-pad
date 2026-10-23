@@ -1,34 +1,85 @@
+import { FrameCodec } from '@/protocol/framing';
+import { toB64 } from '@/protocol/bytes';
+import { remote as pb } from '@/proto/bundle';
+
+interface SocketDataEvent {
+  id: string;
+  base64: string;
+}
+
+interface SocketStateEvent {
+  id: string;
+  state: string;
+  error?: string;
+  code?: string;
+}
+
+class FakeAtvSocket {
+  public sentFrames: string[] = [];
+  public lastSocketId: string | null = null;
+
+  private dataListeners: Array<(e: SocketDataEvent) => void> = [];
+  private stateListeners: Array<(e: SocketStateEvent) => void> = [];
+
+  async connect(id: string, _host: string, _port: number, _certPem: string, _keyPem: string) {
+    this.lastSocketId = id;
+    this.stateListeners.forEach((cb) => cb({ id, state: 'open' }));
+  }
+
+  send(_id: string, base64: string) {
+    this.sentFrames.push(base64);
+  }
+
+  close(_id: string) {}
+
+  onSocketData(cb: (e: SocketDataEvent) => void) {
+    this.dataListeners.push(cb);
+    return { remove: () => this.dataListeners.splice(this.dataListeners.indexOf(cb), 1) };
+  }
+
+  onSocketState(cb: (e: SocketStateEvent) => void) {
+    this.stateListeners.push(cb);
+    return { remove: () => this.stateListeners.splice(this.stateListeners.indexOf(cb), 1) };
+  }
+
+  injectData(base64: string) {
+    const id = this.lastSocketId ?? 'default';
+    this.dataListeners.forEach((cb) => cb({ id, base64 }));
+  }
+
+  reset() {
+    this.sentFrames = [];
+    this.dataListeners = [];
+    this.stateListeners = [];
+    this.lastSocketId = null;
+  }
+}
+
+const mockFake = new FakeAtvSocket();
 jest.mock('@/modules/expo-atv-socket', () => ({
-  AtvSocket: {
-    getServerPublicKeyComponents: jest.fn(),
-    getPeerPublicKeyComponents: jest.fn(),
-    generateClientCertificate: jest.fn(() =>
-      Promise.resolve({
-        pem: 'FAKE_CERT',
-        privateKeyPem: 'FAKE_KEY',
-        modulusB64: 'BQRFBA==',
-        exponentB64: 'AgM=',
-      }),
-    ),
-    connect: jest.fn(),
-    send: jest.fn(),
-    close: jest.fn(),
-    onSocketData: jest.fn(() => () => {}),
-    onSocketState: jest.fn(() => () => {}),
-  },
+  AtvSocket: mockFake,
 }));
 
-import { switchTo, registerConnector } from '@/services/sessionManager';
-import { useDevicesStore } from '@/stores/devices';
-import { useConnectionStore } from '@/stores/connection';
+// Required lazily (not imported) so the mock above is fully initialized
+// before the session chain pulls in RemoteClient.
+const { switchTo, reset } = require('@/services/sessionManager');
+const { useDevicesStore } = require('@/stores/devices');
+const { useConnectionStore } = require('@/stores/connection');
 
-describe('sessionManager error handling', () => {
+function encodeMsg(fields: pb.IRemoteMessage): Uint8Array {
+  const payload = pb.RemoteMessage.encode(pb.RemoteMessage.create(fields)).finish();
+  return FrameCodec.encode(payload);
+}
+
+describe('session error handling', () => {
   beforeEach(() => {
+    mockFake.reset();
+    reset();
     useDevicesStore.setState(useDevicesStore.getInitialState());
     useConnectionStore.setState({ state: 'IDLE', error: undefined });
   });
 
-  it('12s budget: native error at 8s wins over timeout', async () => {
+  it('fast native failure beats the 12s budget', async () => {
     jest.useFakeTimers();
     useDevicesStore.getState().addPaired({
       id: 'tv-err',
@@ -39,18 +90,13 @@ describe('sessionManager error handling', () => {
       keyPem: 'KEY',
     });
 
-    registerConnector(async () => {
-      await new Promise<void>((_, reject) => {
-        setTimeout(() => reject(new Error('ECONNREFUSED')), 8000);
-      });
-    });
-
     const promise = switchTo('tv-err');
-    jest.advanceTimersByTime(8000);
+    mockFake.injectData(toB64(encodeMsg({ remoteError: { value: true } })));
     const result = await promise;
 
     expect(result.ok).toBe(false);
-    expect(result.error?.code).toBe('PORT_CLOSED');
+    expect(result.error).toBeDefined();
+    expect(result.elapsedMs).toBeLessThan(12000);
     jest.useRealTimers();
   });
 
@@ -65,18 +111,12 @@ describe('sessionManager error handling', () => {
       keyPem: 'KEY',
     });
 
-    registerConnector(async () => {
-      await new Promise<void>((_, reject) => {
-        setTimeout(() => reject(new Error('timeout')), 12000);
-      });
-    });
-
     const promise = switchTo('tv-slow');
     jest.advanceTimersByTime(12000);
     const result = await promise;
 
     expect(result.ok).toBe(false);
-    expect(result.error).toBeDefined();
+    expect(result.error?.code).toBe('TIMEOUT');
     jest.useRealTimers();
   });
 });

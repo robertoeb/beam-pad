@@ -3,14 +3,14 @@ import { ChevronDown } from 'lucide-react-native';
 import { useDevicesStore } from '@/stores/devices';
 import { useConnectionStore } from '@/stores/connection';
 import { Label } from '@/theme/typography';
+import { statusFor } from './ConnectionStatus';
 
 export function DevicePill({ onPress }: { onPress: () => void }) {
   const active = useDevicesStore((s) => (s.activeDeviceId ? s.paired[s.activeDeviceId] : null));
   const fsm = useConnectionStore((s) => s.state);
+  const { color: dotColor } = statusFor(fsm);
 
-  const connected = fsm === 'ACTIVE';
   const error = fsm === 'ERROR_STATE';
-  const dotColor = connected ? '#22D3EE' : error ? '#FF453A' : '#747B8A';
 
   return (
     <Pressable

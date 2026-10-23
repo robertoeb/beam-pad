@@ -1,9 +1,10 @@
 import { render, userEvent } from '@testing-library/react-native';
 import { DPad } from '@/components/DPad';
 import { KEYS } from '@/protocol/keycodes';
-import { getActiveClient } from '@/services/sessionManager';
+import { getClient } from '@/services/session';
 
-jest.mock('@/services/sessionManager', () => ({
+jest.mock('@/services/session', () => ({
+  getClient: jest.fn(),
   getActiveClient: jest.fn(),
 }));
 
@@ -11,7 +12,7 @@ const mockKeyPress = jest.fn();
 
 beforeEach(() => {
   jest.useFakeTimers();
-  (getActiveClient as jest.Mock).mockReturnValue({ keyPress: mockKeyPress });
+  (getClient as jest.Mock).mockReturnValue({ keyPress: mockKeyPress });
   mockKeyPress.mockClear();
 });
 

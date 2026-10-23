@@ -2,7 +2,7 @@ import { TV_APPS, getApp } from '@/protocol/deeplinks';
 import { KEYS } from '@/protocol/keycodes';
 import { BRAND_ICONS, KEY_ICONS } from './icons';
 import type { Shortcut, ShortcutId, UserShortcut } from './types';
-import { parseShortcutId, appShortcutId, keyShortcutId } from './types';
+import { appShortcutId, keyShortcutId } from './types';
 
 const KEY_LABELS: Record<string, string> = {
   guide: 'Guide',

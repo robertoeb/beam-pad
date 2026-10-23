@@ -1,14 +1,17 @@
 import { PermissionsAndroid, Platform, AppState } from 'react-native';
 import { AtvSocket } from '@/modules/expo-atv-socket';
-import { getActiveClient } from './sessionManager';
+import { getClient } from './session';
 import { fromB64 } from '@/protocol/bytes';
 import { KEYS } from '@/protocol/keycodes';
 
 const CHUNK_TARGET = 20 * 1024;
-let sessionId: number | null = null;
-let micSub: { remove(): void } | null = null;
-let pending: Uint8Array[] = [];
-let pendingBytes = 0;
+
+const voiceSession: {
+  id: number | null;
+  mic: { remove(): void } | null;
+  pending: Uint8Array[];
+  pendingBytes: number;
+} = { id: null, mic: null, pending: [], pendingBytes: 0 };
 
 async function ensureMicPermission(): Promise<boolean> {
   if (Platform.OS !== 'android') return false;
@@ -30,58 +33,62 @@ function concatChunks(chunks: Uint8Array[], bytes: number): Uint8Array {
   return out;
 }
 
-export async function voiceStart(): Promise<boolean> {
-  const client = getActiveClient();
-  if (!client || sessionId !== null) return false;
+/**
+ * Begin a voice session. Resolves with the session id on success,
+ * or false when there is no active client, a session is already
+ * running, or mic permission is denied.
+ */
+export async function voiceStart(): Promise<number | false> {
+  const client = getClient();
+  if (!client || voiceSession.id !== null) return false;
   if (!(await ensureMicPermission())) return false;
 
-  sessionId = Date.now() & 0x7fffffff;
-  pending = [];
-  pendingBytes = 0;
+  const sessionId = Date.now() & 0x7fffffff;
+  voiceSession.id = sessionId;
+  voiceSession.pending = [];
+  voiceSession.pendingBytes = 0;
   client.voiceBegin(sessionId);
 
-  micSub = AtvSocket.onMicData(({ base64 }: { base64: string }) => {
-    if (sessionId === null) return;
+  voiceSession.mic = AtvSocket.onMicData(({ base64 }: { base64: string }) => {
+    const sid = voiceSession.id;
+    if (sid === null) return;
     const bytes = fromB64(base64);
-    pending.push(bytes);
-    pendingBytes += bytes.length;
-    while (pendingBytes >= CHUNK_TARGET) {
-      const toSend = concatChunks(pending, pendingBytes);
+    voiceSession.pending.push(bytes);
+    voiceSession.pendingBytes += bytes.length;
+    while (voiceSession.pendingBytes >= CHUNK_TARGET) {
+      const toSend = concatChunks(voiceSession.pending, voiceSession.pendingBytes);
       const flushBytes = CHUNK_TARGET;
-      getActiveClient()?.voicePayload(sessionId, toSend.slice(0, flushBytes));
+      getClient()?.voicePayload(sid, toSend.slice(0, flushBytes));
       const leftover = toSend.slice(flushBytes);
-      pending = leftover.length > 0 ? [leftover] : [];
-      pendingBytes = leftover.length;
+      voiceSession.pending = leftover.length > 0 ? [leftover] : [];
+      voiceSession.pendingBytes = leftover.length;
     }
   });
   await AtvSocket.startMicStream();
-  return true;
+  return sessionId;
 }
 
 export function voiceStop() {
-  if (sessionId === null) return;
+  if (voiceSession.id === null) return;
+  const sessionId = voiceSession.id;
   AtvSocket.stopMicStream();
-  micSub?.remove();
-  micSub = null;
-  if (pendingBytes > 0) {
-    getActiveClient()?.voicePayload(sessionId, concatChunks(pending, pendingBytes));
+  voiceSession.mic?.remove();
+  voiceSession.mic = null;
+  if (voiceSession.pendingBytes > 0) {
+    getClient()?.voicePayload(sessionId, concatChunks(voiceSession.pending, voiceSession.pendingBytes));
   }
-  getActiveClient()?.voiceEnd(sessionId);
-  sessionId = null;
-  pending = [];
-  pendingBytes = 0;
+  getClient()?.voiceEnd(sessionId);
+  voiceSession.id = null;
+  voiceSession.pending = [];
+  voiceSession.pendingBytes = 0;
 }
 
 export function voiceSearchUi() {
-  getActiveClient()?.keyPress(KEYS.search);
+  getClient()?.keyPress(KEYS.search);
 }
 
 AppState.addEventListener('change', (state) => {
-  if (state === 'background' && sessionId !== null) {
+  if (state === 'background' && voiceSession.id !== null) {
     voiceStop();
   }
 });
-
-export function __testGetSessionId() {
-  return sessionId;
-}

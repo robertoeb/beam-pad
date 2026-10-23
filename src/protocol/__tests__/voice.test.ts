@@ -26,15 +26,16 @@ const mockClient = {
   keyPress: mockKeyPress,
 };
 
-jest.mock('@/services/sessionManager', () => ({
+jest.mock('@/services/session', () => ({
+  getClient: jest.fn(),
   getActiveClient: jest.fn(),
 }));
 
-import { voiceStart, voiceStop, voiceSearchUi, __testGetSessionId } from '@/services/voice';
-import { getActiveClient } from '@/services/sessionManager';
+import { voiceStart, voiceStop, voiceSearchUi } from '@/services/voice';
+import { getClient } from '@/services/session';
 import { toB64 } from '@/protocol/bytes';
 
-const typedGetActiveClient = jest.mocked(getActiveClient);
+const typedGetClient = jest.mocked(getClient);
 
 function makeChunk(size: number): string {
   return toB64(new Uint8Array(size));
@@ -48,7 +49,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   micListeners.length = 0;
   voiceStop();
-  typedGetActiveClient.mockReturnValue(mockClient as any);
+  typedGetClient.mockReturnValue(mockClient as any);
   Object.defineProperty(Platform, 'OS', { value: 'android', configurable: true });
   jest.spyOn(PermissionsAndroid, 'request').mockResolvedValue('granted' as any);
   useImeStore.setState(useImeStore.getInitialState());
@@ -61,7 +62,7 @@ afterEach(() => {
 
 describe('voice service', () => {
   it('returns false without active client', async () => {
-    typedGetActiveClient.mockReturnValue(null);
+    typedGetClient.mockReturnValue(null);
     const result = await voiceStart();
     expect(result).toBe(false);
     expect(mockVoiceBegin).not.toHaveBeenCalled();
@@ -76,7 +77,7 @@ describe('voice service', () => {
 
   it('chunks mic data at 20KB boundary', async () => {
     const result = await voiceStart();
-    expect(result).toBe(true);
+    expect(result).toBe(1000);
 
     emitMic(makeChunk(11 * 1024));
     expect(mockVoicePayload).not.toHaveBeenCalled();
@@ -107,7 +108,7 @@ describe('voice service', () => {
 
   it('prevents double start', async () => {
     const r1 = await voiceStart();
-    expect(r1).toBe(true);
+    expect(r1).toBe(1000);
     const r2 = await voiceStart();
     expect(r2).toBe(false);
     expect(mockVoiceBegin).toHaveBeenCalledTimes(1);
@@ -120,7 +121,10 @@ describe('voice service', () => {
     expect(listeners.length).toBeGreaterThan(0);
     listeners[listeners.length - 1]!('background');
     expect(mockVoiceEnd).toHaveBeenCalledTimes(1);
-    expect(__testGetSessionId()).toBeNull();
+    // Session fully released — a new start succeeds with a fresh id.
+    const again = await voiceStart();
+    expect(again).toBe(1000);
+    voiceStop();
   });
 
   it('voiceSearchUi sends search key', () => {

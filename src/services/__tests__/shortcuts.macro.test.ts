@@ -1,8 +1,9 @@
 import { executeMacro, clampWait } from '../shortcuts';
-import { getActiveClient } from '../sessionManager';
+import { getActiveClient } from '../session';
 import { showToast } from '@/components/Toast';
 
-jest.mock('../sessionManager', () => ({
+jest.mock('../session', () => ({
+  getClient: jest.fn(),
   getActiveClient: jest.fn(),
 }));
 
@@ -14,8 +15,6 @@ const mockClient = {
   keyPress: jest.fn(),
   launchApp: jest.fn(),
 };
-
-const { getActiveClient: mockGetActive } = getActiveClient as any;
 
 beforeEach(() => {
   jest.clearAllMocks();

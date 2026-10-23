@@ -31,9 +31,11 @@ export class RemoteClient {
   private state: ConnectionState = 'IDLE';
   private reconnectAttempt = 0;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-  private _connectResolve: ((value: void) => void) | null = null;
-  private _connectReject: ((reason: Error) => void) | null = null;
-  private _promiseSettled = false;
+  private pending: {
+    promise: Promise<void>;
+    resolve: () => void;
+    reject: (err: unknown) => void;
+  } | null = null;
   private lastVolume: Telemetry['volume'] | undefined;
   private destroyed = false;
   private lastError: ConnectError | undefined;
@@ -45,15 +47,24 @@ export class RemoteClient {
     this.socketId = `remote-${device.id}`;
   }
 
-  async connect() {
+  connect(): Promise<void> {
     this.subs.forEach((s) => s.remove());
     this.subs = [];
 
-    const activePromise = new Promise<void>((resolve, reject) => {
-      this._connectResolve = resolve;
-      this._connectReject = reject;
-    });
-    activePromise.catch(() => {});
+    if (!this.pending) {
+      let resolve!: () => void;
+      let reject!: (err: unknown) => void;
+      const promise = new Promise<void>((res, rej) => {
+        resolve = res;
+        reject = rej;
+      });
+      // Reconnect retries share this promise without awaiting it; mark it
+      // handled so unawaited retries never trip unhandledrejection.
+      promise.catch(() => {});
+      this.pending = { promise, resolve, reject };
+    }
+    const current = this.pending.promise;
+
     this.setState('CONNECTING');
     this.subs.push(
       AtvSocket.onSocketData(
@@ -66,19 +77,18 @@ export class RemoteClient {
       }),
     );
     try {
-      await AtvSocket.connect(
+      const result = AtvSocket.connect(
         this.socketId,
         this.device.host,
         this.device.port ?? COMMAND_PORT,
         this.device.certPem,
         this.device.keyPem,
       );
+      Promise.resolve(result).catch((e: unknown) => this.onDrop(String(e)));
     } catch (e) {
       this.onDrop(String(e));
     }
-    try {
-      await activePromise;
-    } catch {}
+    return current;
   }
 
   private onOpen() {
@@ -140,7 +150,7 @@ export class RemoteClient {
           host: this.device.host,
           hasCerts: true,
         });
-        this.ev.onState('ERROR_STATE', err);
+        this.setState('ERROR_STATE', err);
       }
     }
   }
@@ -201,7 +211,7 @@ export class RemoteClient {
     this.send({ remoteVoiceEnd: { sessionId } });
   }
 
-  private onDrop(error?: string, code?: string) {
+  private onDrop(error?: string, _code?: string) {
     if (this.destroyed) return;
     const classified = classify(error, {
       phase: 'connect',
@@ -224,14 +234,18 @@ export class RemoteClient {
 
   destroy() {
     this.destroyed = true;
-    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
-    this.subs.forEach((s) => s.remove());
-    AtvSocket.close(this.socketId);
-    if (!this._promiseSettled && this._connectReject) {
-      this._connectReject(new Error('destroyed'));
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
     }
-    this._connectResolve = null;
-    this._connectReject = null;
+    this.subs.forEach((s) => s.remove());
+    this.subs = [];
+    AtvSocket.close(this.socketId);
+    if (this.pending) {
+      const pending = this.pending;
+      this.pending = null;
+      pending.reject(classify('destroyed', { phase: 'connect', host: this.device.host }));
+    }
     this.setState('IDLE');
   }
 
@@ -243,16 +257,18 @@ export class RemoteClient {
   private setState(s: ConnectionState, error?: ConnectError) {
     this.state = s;
     this.ev.onState(s, error);
-    if (s === 'ACTIVE' && this._connectResolve) {
-      this._promiseSettled = true;
-      this._connectResolve();
-      this._connectResolve = null;
-      this._connectReject = null;
-    } else if (s === 'ERROR_STATE' && this._connectReject) {
-      this._promiseSettled = true;
-      this._connectReject(new Error(error?.detail ?? error?.message ?? 'connection failed'));
-      this._connectResolve = null;
-      this._connectReject = null;
+    if (s === 'ACTIVE' && this.pending) {
+      const pending = this.pending;
+      this.pending = null;
+      pending.resolve();
+    } else if (s === 'ERROR_STATE' && this.pending) {
+      const pending = this.pending;
+      this.pending = null;
+      pending.reject(
+        error ??
+          this.lastError ??
+          classify('connection failed', { phase: 'connect', host: this.device.host }),
+      );
     }
   }
 }

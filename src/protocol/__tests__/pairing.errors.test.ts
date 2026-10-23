@@ -50,7 +50,7 @@ class MockFakeAtvSocket {
     this.stateListeners.forEach((cb) => cb({ id, state: 'open' }));
   }
 
-  send(id: string, base64: string) {
+  send(_id: string, base64: string) {
     this.sentFrames.push(base64);
   }
 
@@ -152,6 +152,7 @@ describe('PairingProtocol error classification', () => {
     await proto.start();
 
     expect(mockFake.connectCallCount).toBe(1);
+    proto.cancel();
   });
 
   it('error has message and steps', async () => {
@@ -168,5 +169,160 @@ describe('PairingProtocol error classification', () => {
     expect(errors.length).toBe(1);
     expect(errors[0].message.length).toBeGreaterThan(0);
     expect(errors[0].steps.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('socket closed while awaiting code → cancelled step', async () => {
+    const steps: string[] = [];
+    const proto = new PairingProtocol('192.168.1.100', {
+      onStep: (s: string) => steps.push(s),
+    });
+
+    await proto.start();
+
+    // TV accepts the pairing request and options → we land on awaiting_code
+    mockFake.injectData(
+      toB64(
+        encodeMsg({
+          status: pb.Status.STATUS_OK,
+          protocolVersion: 2,
+          pairingRequestAck: {},
+        }),
+      ),
+    );
+    mockFake.injectData(
+      toB64(
+        encodeMsg({
+          status: pb.Status.STATUS_OK,
+          protocolVersion: 2,
+          pairingOption: {
+            preferredRole: pb.RoleType.ROLE_TYPE_OUTPUT,
+            outputEncodings: [
+              { type: pb.EncodingType.ENCODING_TYPE_HEXADECIMAL, symbolLength: 6 },
+            ],
+          },
+        }),
+      ),
+    );
+    mockFake.injectData(
+      toB64(
+        encodeMsg({
+          status: pb.Status.STATUS_OK,
+          protocolVersion: 2,
+          pairingConfigurationAck: {},
+        }),
+      ),
+    );
+
+    expect(proto._step).toBe('awaiting_code');
+
+    mockFake.emitState('closed');
+
+    expect(proto._step).toBe('cancelled');
+    expect(steps).toContain('cancelled');
+  });
+
+  it('cancel() tears down and reports cancelled', async () => {
+    const steps: string[] = [];
+    const proto = new PairingProtocol('192.168.1.100', {
+      onStep: (s: string) => steps.push(s),
+    });
+
+    await proto.start();
+    proto.cancel();
+
+    expect(steps).toContain('cancelled');
+    expect(proto._step).toBe('cancelled');
+  });
+
+  it('STATUS_ERROR while awaiting code → cancelled (TV cancelled pairing)', async () => {
+    const steps: string[] = [];
+    const proto = new PairingProtocol('192.168.1.100', {
+      onStep: (s: string) => steps.push(s),
+    });
+
+    await proto.start();
+    mockFake.injectData(
+      toB64(
+        encodeMsg({ status: pb.Status.STATUS_OK, protocolVersion: 2, pairingRequestAck: {} }),
+      ),
+    );
+    mockFake.injectData(
+      toB64(
+        encodeMsg({
+          status: pb.Status.STATUS_OK,
+          protocolVersion: 2,
+          pairingOption: {
+            preferredRole: pb.RoleType.ROLE_TYPE_OUTPUT,
+            outputEncodings: [
+              { type: pb.EncodingType.ENCODING_TYPE_HEXADECIMAL, symbolLength: 6 },
+            ],
+          },
+        }),
+      ),
+    );
+    mockFake.injectData(
+      toB64(
+        encodeMsg({
+          status: pb.Status.STATUS_OK,
+          protocolVersion: 2,
+          pairingConfigurationAck: {},
+        }),
+      ),
+    );
+    expect(proto._step).toBe('awaiting_code');
+
+    mockFake.injectData(
+      toB64(encodeMsg({ status: pb.Status.STATUS_ERROR, protocolVersion: 2 })),
+    );
+
+    expect(proto._step).toBe('cancelled');
+    expect(steps).toContain('cancelled');
+  });
+
+  it('STATUS_BAD_SECRET after submitting code → failed (not cancelled)', async () => {
+    const steps: string[] = [];
+    const proto = new PairingProtocol('192.168.1.100', {
+      onStep: (s: string) => steps.push(s),
+    });
+
+    await proto.start();
+    mockFake.injectData(
+      toB64(
+        encodeMsg({ status: pb.Status.STATUS_OK, protocolVersion: 2, pairingRequestAck: {} }),
+      ),
+    );
+    mockFake.injectData(
+      toB64(
+        encodeMsg({
+          status: pb.Status.STATUS_OK,
+          protocolVersion: 2,
+          pairingOption: {
+            preferredRole: pb.RoleType.ROLE_TYPE_OUTPUT,
+            outputEncodings: [
+              { type: pb.EncodingType.ENCODING_TYPE_HEXADECIMAL, symbolLength: 6 },
+            ],
+          },
+        }),
+      ),
+    );
+    mockFake.injectData(
+      toB64(
+        encodeMsg({
+          status: pb.Status.STATUS_OK,
+          protocolVersion: 2,
+          pairingConfigurationAck: {},
+        }),
+      ),
+    );
+    proto.submitCode('A1B2C3');
+    expect(proto._step).toBe('secret');
+
+    mockFake.injectData(
+      toB64(encodeMsg({ status: pb.Status.STATUS_BAD_SECRET, protocolVersion: 2 })),
+    );
+
+    expect(proto._step).toBe('failed');
+    expect(steps).toContain('failed');
+    expect(steps).not.toContain('cancelled');
   });
 });

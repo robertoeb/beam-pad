@@ -7,11 +7,12 @@ export type HapticStrength = 'off' | 'light' | 'medium';
 export type OkLongPress = 'none' | 'voice' | 'menu';
 export type NavigationMode = 'dpad' | 'touchpad';
 
-export const SETTINGS_VERSION = 1;
+export const SETTINGS_VERSION = 2;
 
 interface SettingsState {
   volumeTarget: VolumeTarget;
   irProfileId: string | null;
+  /** @deprecated moved to useCapabilitiesStore; kept for backwards-compat reads */
   irAvailable: boolean;
   haptics: boolean;
   powerKeyMode: PowerKeyMode;
@@ -58,6 +59,12 @@ function migrate(persisted: any, version: number): SettingsState {
     if (typeof persisted?.haptics === 'boolean') {
       base.hapticStrength = persisted.haptics ? 'light' : 'off';
     }
+  }
+  if (version < 2) {
+    // irAvailable moved to the non-persisted capabilities store; drop any
+    // persisted copy so stale values can never rehydrate.
+    delete (base as any).irAvailable;
+    base.irAvailable = defaults.irAvailable;
   }
   return base;
 }

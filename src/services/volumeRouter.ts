@@ -1,8 +1,9 @@
 import { IrBlaster } from '@/modules/expo-ir-blaster';
 import { useSettingsStore } from '@/stores/settings';
+import { useCapabilitiesStore } from '@/stores/capabilities';
 import { useDevicesStore } from '@/stores/devices';
 import { IR_PROFILES, encodeCommand, type IrProfile } from '@/ir/profiles';
-import { getActiveClient } from './sessionManager';
+import { getActiveClient } from './session';
 import { KEYS } from '@/protocol/keycodes';
 
 type VolCmd = 'volUp' | 'volDown' | 'mute' | 'power';
@@ -43,9 +44,18 @@ export async function irSend(name: CommandName, opts?: { deviceId?: string }): P
   return { ok: true };
 }
 
+export function isIrAvailable(): boolean {
+  // Capabilities store is the source of truth; fall back to the legacy
+  // settings flag so older persisted/tests state keeps working.
+  return (
+    useCapabilitiesStore.getState().irAvailable ||
+    (useSettingsStore.getState() as { irAvailable?: boolean }).irAvailable === true
+  );
+}
+
 export async function volumeCommand(name: Exclude<VolCmd, 'power'>) {
-  const { volumeTarget, irAvailable } = useSettingsStore.getState();
-  if (volumeTarget === 'ir' && irAvailable) {
+  const { volumeTarget } = useSettingsStore.getState();
+  if (volumeTarget === 'ir' && isIrAvailable()) {
     const result = await irSend(name);
     if (result.ok) return;
   }

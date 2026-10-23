@@ -9,7 +9,6 @@ import { useLayoutStore } from '@/stores/layout';
 import { shortcutRegistry } from '@/shortcuts/registry';
 import { fireShortcut } from '@/services/shortcuts';
 import { TV_APPS } from '@/protocol/deeplinks';
-import { space, radius } from '@/theme/tokens';
 import type { ShortcutId } from '@/shortcuts/types';
 import { appShortcutId } from '@/shortcuts/types';
 

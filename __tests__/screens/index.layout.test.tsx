@@ -1,9 +1,10 @@
 import { render } from '@testing-library/react-native';
 import Index from '@/app/index';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getActiveClient } from '@/services/sessionManager';
+import { getClient } from '@/services/session';
 
-jest.mock('@/services/sessionManager', () => ({
+jest.mock('@/services/session', () => ({
+  getClient: jest.fn(),
   getActiveClient: jest.fn(),
 }));
 
@@ -21,7 +22,7 @@ jest.mock('react-native-safe-area-context', () => {
 });
 
 beforeEach(() => {
-  (getActiveClient as jest.Mock).mockReturnValue(null);
+  (getClient as jest.Mock).mockReturnValue(null);
   jest.mocked(useSafeAreaFrame).mockReturnValue({ x: 0, y: 0, width: 390, height: 844 });
   jest.mocked(useSafeAreaInsets).mockReturnValue({ top: 47, bottom: 34, left: 0, right: 0 });
 });

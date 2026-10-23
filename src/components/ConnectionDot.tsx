@@ -1,10 +1,10 @@
 import { View } from 'react-native';
 import { useConnectionStore } from '@/stores/connection';
+import { statusFor } from './ConnectionStatus';
 
 export function ConnectionDot() {
   const state = useConnectionStore((s) => s.state);
-
-  const color = state === 'ACTIVE' ? '#22D3EE' : state === 'ERROR_STATE' ? '#FF453A' : '#747B8A';
+  const { color } = statusFor(state);
 
   const isError = state === 'ERROR_STATE';
 

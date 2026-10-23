@@ -1,23 +1,16 @@
-import { act } from '@testing-library/react-native';
-import { key, resetLastToast } from '@/lib/key';
-import { showToast } from '@/components/Toast';
-import { getActiveClient } from '@/services/sessionManager';
+import { key } from '@/lib/key';
+import { getClient } from '@/services/session';
+import { useToastStore } from '@/stores/toast';
 import { KEYS } from '@/protocol/keycodes';
 
-jest.mock('@/services/sessionManager', () => ({
-  getActiveClient: jest.fn(),
-}));
-
-jest.mock('@/components/Toast', () => ({
-  showToast: jest.fn(),
-  ToastHost: () => null,
+jest.mock('@/services/session', () => ({
+  getClient: jest.fn(),
 }));
 
 beforeEach(() => {
   jest.useFakeTimers();
-  resetLastToast();
-  (getActiveClient as jest.Mock).mockReturnValue(null);
-  (showToast as jest.Mock).mockClear();
+  useToastStore.getState().reset();
+  (getClient as jest.Mock).mockReturnValue(null);
 });
 
 afterEach(() => {
@@ -28,30 +21,32 @@ describe('key() helper — no-connection path', () => {
   it('shows toast when no client', () => {
     const result = key(KEYS.up);
     expect(result).toBe(false);
-    expect(showToast).toHaveBeenCalledWith('No TV connected - pick a device');
+    expect(useToastStore.getState().message).toBe('No TV connected - pick a device');
+    expect(useToastStore.getState().visible).toBe(true);
   });
 
-  it('debounces toast to once per 3s', () => {
+  it('debounces toast to once per 3s (single policy in the Toast store)', () => {
     key(KEYS.up);
+    const first = useToastStore.getState().lastFired;
+    expect(first).toBeGreaterThan(0);
+
     key(KEYS.down);
     key(KEYS.ok);
-    expect(showToast).toHaveBeenCalledTimes(1);
+    expect(useToastStore.getState().lastFired).toBe(first);
 
-    act(() => {
-      jest.advanceTimersByTime(3000);
-    });
+    jest.advanceTimersByTime(3000);
 
     key(KEYS.up);
-    expect(showToast).toHaveBeenCalledTimes(2);
+    expect(useToastStore.getState().lastFired).toBeGreaterThan(first);
   });
 
   it('fires keyPress when client exists', () => {
     const mockKeyPress = jest.fn();
-    (getActiveClient as jest.Mock).mockReturnValue({ keyPress: mockKeyPress });
+    (getClient as jest.Mock).mockReturnValue({ keyPress: mockKeyPress });
 
     const result = key(KEYS.home);
     expect(result).toBe(true);
     expect(mockKeyPress).toHaveBeenCalledWith(KEYS.home);
-    expect(showToast).not.toHaveBeenCalled();
+    expect(useToastStore.getState().message).toBe('');
   });
 });

@@ -6,27 +6,29 @@ import CastContext, {
 } from 'react-native-google-cast';
 import { useCastStore } from '@/stores/cast';
 
-let _unsubCastState: { remove: () => void } | null = null;
-let _unsubSessionStarted: { remove: () => void } | null = null;
-let _unsubSessionEnded: { remove: () => void } | null = null;
-let _unsubMediaStatus: { remove: () => void } | null = null;
+const castSubs: {
+  castState: { remove: () => void } | null;
+  sessionStarted: { remove: () => void } | null;
+  sessionEnded: { remove: () => void } | null;
+  mediaStatus: { remove: () => void } | null;
+} = { castState: null, sessionStarted: null, sessionEnded: null, mediaStatus: null };
 
 export function initCastListeners() {
-  _unsubCastState?.remove();
-  _unsubSessionStarted?.remove();
-  _unsubSessionEnded?.remove();
+  castSubs.castState?.remove();
+  castSubs.sessionStarted?.remove();
+  castSubs.sessionEnded?.remove();
 
-  _unsubCastState = CastContext.onCastStateChanged((state) => {
+  castSubs.castState = CastContext.onCastStateChanged((state) => {
     useCastStore.getState().set({ connected: state === GCastState.CONNECTED });
   });
 
-  _unsubSessionStarted = CastContext.getSessionManager().onSessionStarted((session) => {
+  castSubs.sessionStarted = CastContext.getSessionManager().onSessionStarted((session) => {
     session.getCastDevice().then((d) => {
       useCastStore.getState().set({ deviceName: d?.friendlyName });
     });
 
-    _unsubMediaStatus?.remove();
-    _unsubMediaStatus = session.client.onMediaStatusUpdated((status: MediaStatus | null) => {
+    castSubs.mediaStatus?.remove();
+    castSubs.mediaStatus = session.client.onMediaStatusUpdated((status: MediaStatus | null) => {
       if (!status) return;
       const playerState = status.playerState;
       let mapped: 'idle' | 'buffering' | 'playing' | 'paused' = 'idle';
@@ -45,9 +47,9 @@ export function initCastListeners() {
     });
   });
 
-  _unsubSessionEnded = CastContext.getSessionManager().onSessionEnded(() => {
-    _unsubMediaStatus?.remove();
-    _unsubMediaStatus = null;
+  castSubs.sessionEnded = CastContext.getSessionManager().onSessionEnded(() => {
+    castSubs.mediaStatus?.remove();
+    castSubs.mediaStatus = null;
     useCastStore.getState().set({
       connected: false,
       deviceName: undefined,

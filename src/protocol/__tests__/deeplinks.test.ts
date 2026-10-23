@@ -28,7 +28,7 @@ class TestFakeAtvSocket {
     this.stateListeners.forEach((cb) => cb({ id, state: 'open' }));
   }
 
-  send(id: string, base64: string) {
+  send(_id: string, base64: string) {
     this.sentFrames.push(base64);
   }
 
@@ -81,6 +81,10 @@ function createDevice(overrides = {}) {
 
 afterEach(() => {
   mockFake.reset();
+  const { reset } = require('@/services/session');
+  reset();
+  const { useDevicesStore } = require('@/stores/devices');
+  useDevicesStore.getState().setActive(null);
 });
 
 // ─── Catalog Integrity ─────────────────────────────────────────────────────
@@ -145,21 +149,15 @@ describe('deeplinks catalog integrity', () => {
 
 describe('deeplinks launch frame', () => {
   it('launchApp(netflix) sends correct remoteAppLinkLaunchRequest', async () => {
-    const { RemoteClient } = require('../RemoteClient');
-    const { __testSetCurrent } = require('@/services/sessionManager');
+    const { useDevicesStore } = require('@/stores/devices');
+    useDevicesStore.getState().addPaired(createDevice() as any);
+    useDevicesStore.getState().setActive(null);
 
-    const states: string[] = [];
-    const client = new RemoteClient(createDevice(), {
-      onState: (s: string) => states.push(s),
-      onTelemetry: () => {},
-      onImeShow: () => {},
-    });
+    const { switchTo } = require('@/services/session');
+    const switchPromise = switchTo('tv1');
 
-    const connectPromise = client.connect();
     mockFake.injectData(toB64(encodeMsg({ remoteConfigure: { code1: 622 } })));
-    await connectPromise;
-
-    __testSetCurrent(client);
+    await switchPromise;
 
     mockFake.sentFrames = [];
     const { launchApp } = require('@/services/apps');
@@ -174,12 +172,13 @@ describe('deeplinks launch frame', () => {
     const msg = pb.RemoteMessage.decode(payloads[0]!);
     expect(msg.remoteAppLinkLaunchRequest?.appLink).toBe('https://www.netflix.com/title.*');
 
-    __testSetCurrent(null);
+    const { reset } = require('@/services/session');
+    reset();
   });
 
   it('launchApp returns false with no active client', () => {
-    const { __testSetCurrent } = require('@/services/sessionManager');
-    __testSetCurrent(null);
+    const { reset } = require('@/services/session');
+    reset();
 
     const { launchApp } = require('@/services/apps');
     const result = launchApp('youtube');

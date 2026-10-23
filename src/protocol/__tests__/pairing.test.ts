@@ -50,7 +50,7 @@ class MockFakeAtvSocket {
     this.stateListeners.forEach((cb) => cb({ id, state: 'open' }));
   }
 
-  send(id: string, base64: string) {
+  send(_id: string, base64: string) {
     this.sentFrames.push(base64);
   }
 
@@ -117,6 +117,7 @@ describe('PairingProtocol', () => {
     expect(msg.pairingRequest?.serviceName).toBe('atvremote');
     expect(msg.pairingRequest?.clientName).toBe('Android TV Remote');
     expect(steps).toContain('request');
+    proto.cancel();
   });
 
   it('golden vector 2: full flow step sequence', async () => {

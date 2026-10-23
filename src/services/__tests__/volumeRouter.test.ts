@@ -1,10 +1,11 @@
 import { volumeCommand, irSend } from '../volumeRouter';
-import { getActiveClient } from '../sessionManager';
+import { getActiveClient } from '../session';
 import { useSettingsStore } from '@/stores/settings';
 import { IrBlaster } from '@/modules/expo-ir-blaster';
 import { KEYS } from '@/protocol/keycodes';
 
-jest.mock('../sessionManager', () => ({
+jest.mock('../session', () => ({
+  getClient: jest.fn(),
   getActiveClient: jest.fn(),
 }));
 

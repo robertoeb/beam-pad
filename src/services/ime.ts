@@ -1,7 +1,12 @@
-import { getActiveClient } from './sessionManager';
+import { getClient } from './session';
 import { useImeStore } from '@/stores/ime';
 
-let imeCounter = 0;
+export const imeSession = {
+  counter: 0,
+  reset() {
+    imeSession.counter = 0;
+  },
+};
 
 function commonPrefixLen(a: string, b: string): number {
   const max = Math.min(a.length, b.length);
@@ -19,7 +24,7 @@ export function commitImeText(next: string) {
   const prev = st.value;
   st.setValue(next);
 
-  const client = getActiveClient();
+  const client = getClient();
   if (!client) return;
 
   const p = commonPrefixLen(prev, next);
@@ -37,7 +42,7 @@ export function commitImeText(next: string) {
   if (edits.length === 0) return;
 
   client.imeBatchEdit({
-    imeCounter: ++imeCounter,
+    imeCounter: ++imeSession.counter,
     fieldCounter: st.fieldCounter,
     editInfo: edits,
   });
@@ -45,8 +50,4 @@ export function commitImeText(next: string) {
 
 export function dismissIme() {
   useImeStore.getState().dismiss();
-}
-
-export function __testResetCounter() {
-  imeCounter = 0;
 }
