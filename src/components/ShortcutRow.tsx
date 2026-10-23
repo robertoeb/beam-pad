@@ -14,10 +14,18 @@ export function ShortcutRow() {
   const shortcuts = useLayoutStore((s) => s.shortcuts);
   const showLabels = useSettingsStore((s) => s.showShortcutLabels);
 
-  const tileSize = useRemoteMetrics().tile;
+  const { tile: tileSize, gutter } = useRemoteMetrics();
 
   return (
-    <View style={{ height: tileSize + (showLabels ? 28 : 8), justifyContent: 'center' }}>
+    // Full-bleed: break out of the screen's side gutter so the row spans
+    // edge to edge with no inset padding.
+    <View
+      style={{
+        height: tileSize + (showLabels ? 28 : 8),
+        justifyContent: 'center',
+        marginHorizontal: -gutter,
+      }}
+    >
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -25,7 +33,6 @@ export function ShortcutRow() {
           flexDirection: 'row',
           alignItems: 'flex-start',
           gap: space[2],
-          paddingHorizontal: space[4],
         }}
       >
         {shortcuts.map((id) => {
