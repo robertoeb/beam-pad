@@ -73,13 +73,14 @@ jest.mock('@/modules/expo-atv-socket', () => ({
 }));
 
 jest.mock('react-native-reanimated', () => {
-  const { View, Text, Image, ScrollView } = require('react-native');
+  const { View, Text, Image, ScrollView, FlatList } = require('react-native');
   const createAnimatedComponent = (comp) => comp;
   const Animated = {
     View,
     Text,
     Image,
     ScrollView,
+    FlatList,
     createAnimatedComponent,
     call: jest.fn(),
   };
@@ -90,6 +91,7 @@ jest.mock('react-native-reanimated', () => {
     Text,
     Image,
     ScrollView,
+    FlatList,
     createAnimatedComponent,
     useSharedValue: (init) => ({ value: init }),
     useAnimatedStyle: (fn) => fn(),
@@ -98,21 +100,51 @@ jest.mock('react-native-reanimated', () => {
     withRepeat: (val) => val,
     withSequence: (val) => val,
     runOnJS: (fn) => fn,
+    runOnUI: (fn) => fn,
     useAnimatedProps: (fn) => fn(),
+    useAnimatedReaction: () => {},
+    useAnimatedScrollHandler: () => () => {},
+    useDerivedValue: (fn) => ({ value: typeof fn === 'function' ? fn() : fn }),
   };
 });
 
 jest.mock('react-native-gesture-handler', () => {
   const View = require('react-native').View;
+  const State = {
+    UNDETERMINED: 0,
+    FAILED: 1,
+    BEGAN: 2,
+    CANCELLED: 3,
+    ACTIVE: 4,
+    END: 5,
+  };
+  const gestureProxy = new Proxy(
+    {},
+    {
+      get: (_t, prop) => {
+        if (prop === '__esModule') return undefined;
+        return (..._args) => gestureProxy;
+      },
+    },
+  );
   return {
     __esModule: true,
     GestureDetector: ({ children }) => children,
-    Gesture: {
-      Pan: () => ({
-        minDistance: () => ({ onEnd: () => ({}) }),
-      }),
-    },
+    Gesture: new Proxy(
+      {},
+      {
+        get: (_t, prop) => {
+          if (prop === '__esModule') return undefined;
+          return (..._args) => gestureProxy;
+        },
+      },
+    ),
     GestureHandlerRootView: View,
+    FlatList: View,
+    ScrollView: View,
+    State,
+    GestureState: State,
+    Directions: { RIGHT: 1, LEFT: 2, UP: 4, DOWN: 8 },
   };
 });
 
@@ -261,6 +293,28 @@ const mockCastContext = {
   getCastState: jest.fn(() => Promise.resolve(null)),
 };
 
+// ─── Global test policy (TASK_17) ────────────────────────────────────────────
+// - Real timers after every test (fake timers are opt-in per test via
+//   jest.useFakeTimers(); leaked fakes fail loudly otherwise).
+// - Every Zustand store resets BEFORE each test (no tree is mounted yet, so
+//   no act() warnings and no corruption of the act queue for the next render.
+//   Isolation is identical — every test still starts from initial state;
+//   suites needing specific state set it explicitly in beforeEach/it).
+// - No .skip/.only allowed in committed suites (enforced by eslint
+//   no-focused-tests / no-disabled-tests where configured).
+try {
+  const { resetAllStores } = require('@/test/storeRegistry');
+  beforeEach(() => {
+    resetAllStores();
+  });
+} catch {
+  // storeRegistry may be unavailable in exotic runners; timers policy below
+  // still applies.
+}
+
+afterEach(() => {
+  jest.useRealTimers();
+});
 jest.mock('react-native-google-cast', () => {
   const CastState = {
     NO_DEVICES_AVAILABLE: 'noDevicesAvailable',

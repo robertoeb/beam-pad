@@ -6,12 +6,6 @@ describe('layout store migration', () => {
   });
 
   it('migrates old pinned ids to shortcuts format', () => {
-    const oldState = {
-      pinned: ['netflix', 'youtube', 'prime'],
-      hidden: [],
-      moreSheetOpen: false,
-    };
-
     const state = useLayoutStore.getState();
     expect(state.shortcuts).toEqual(['app:netflix', 'app:youtube', 'app:prime', 'app:disney']);
   });
