@@ -55,6 +55,9 @@ const config = {
     'expo-font',
     'expo-splash-screen',
     ['react-native-google-cast', { receiverAppId: 'CC1AD845' }],
+    // play-services-cast ships Kotlin 2.4 metadata; the template compiler
+    // (2.2) rejects it — align the toolchain.
+    ['expo-build-properties', { android: { kotlinVersion: '2.4.0' } }],
   ],
 };
 

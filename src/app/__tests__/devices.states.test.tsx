@@ -1,4 +1,4 @@
-import { render, fireEvent, act, userEvent } from '@testing-library/react-native';
+import { render, fireEvent, act } from '@testing-library/react-native';
 import DevicesScreen from '../devices';
 import { useDevicesStore } from '@/stores/devices';
 import { useConnectionStore } from '@/stores/connection';
@@ -6,8 +6,8 @@ import { startDiscovery } from '@/services/discovery';
 import { aDevice } from '@/test/factories';
 import { router } from 'expo-router';
 
-// Interaction-heavy suite (userEvent typing): CI runners can stall
-// past the 5s default under load. 15s still catches real hangs.
+// TextInput-driven suite: CI runners can stall past the 5s default under
+// load. 15s still catches real hangs.
 jest.setTimeout(15_000);
 
 jest.mock('@/services/discovery', () => ({
@@ -100,24 +100,29 @@ describe('DevicesScreen states', () => {
   });
 
   it('manual entry with blank host does not navigate', async () => {
-    const user = userEvent.setup();
     await act(async () => {
       useDevicesStore.setState({ found: {}, scanning: false });
     });
-    const { getByPlaceholderText, getAllByText } = await render(<DevicesScreen />);
-    await user.type(getByPlaceholderText('TV IP address'), '   ');
-    await user.press(getAllByText('Pair')[0]!);
+    const { getAllByText } = await render(<DevicesScreen />);
+    // Initial value is '' (blank) — no typing needed; pressing Pair is a no-op.
+    await fireEvent.press(getAllByText('Pair')[0]!);
     expect(router.push).not.toHaveBeenCalled();
   });
 
   it('manual entry navigates with COMMAND_PORT', async () => {
-    const user = userEvent.setup();
     await act(async () => {
       useDevicesStore.setState({ found: {}, scanning: false });
     });
     const { getByPlaceholderText, getAllByText } = await render(<DevicesScreen />);
-    await user.type(getByPlaceholderText('TV IP address'), '192.168.1.120');
-    await user.press(getAllByText('Pair')[0]!);
+    const input = getByPlaceholderText('TV IP address');
+    await act(async () => {
+      fireEvent(input, 'onChangeText', '192.168.1.120');
+    });
+    expect(
+      (getByPlaceholderText('TV IP address') as unknown as { props: { value: string } })
+        .props.value,
+    ).toBe('192.168.1.120');
+    await fireEvent.press(getAllByText('Pair')[0]!);
     await flushPairTimer();
     expect(router.push).toHaveBeenCalledWith({
       pathname: '/pairing',
@@ -141,7 +146,6 @@ describe('DevicesScreen states', () => {
   });
 
   it('forget removes a non-active device', async () => {
-    const user = userEvent.setup();
     await act(async () => {
       useDevicesStore.setState({
         found: {},
@@ -151,13 +155,12 @@ describe('DevicesScreen states', () => {
       });
     });
     const { getByLabelText, queryByText } = await render(<DevicesScreen />);
-    await user.press(getByLabelText('Forget Living Room'));
+    await fireEvent.press(getByLabelText('Forget Living Room'));
     expect(useDevicesStore.getState().paired['tv-1']).toBeUndefined();
     expect(queryByText('Living Room')).toBeNull();
   });
 
   it('forgetting the active device disconnects and clears it', async () => {
-    const user = userEvent.setup();
     await act(async () => {
       useDevicesStore.setState({
         found: {},
@@ -170,7 +173,7 @@ describe('DevicesScreen states', () => {
       useConnectionStore.setState({ state: 'ACTIVE' } as never);
     });
     const { getByLabelText } = await render(<DevicesScreen />);
-    await user.press(getByLabelText('Forget Living Room'));
+    await fireEvent.press(getByLabelText('Forget Living Room'));
     expect(useDevicesStore.getState().paired['tv-1']).toBeUndefined();
     expect(useDevicesStore.getState().activeDeviceId).toBeNull();
     expect(useConnectionStore.getState().state).toBe('IDLE');
