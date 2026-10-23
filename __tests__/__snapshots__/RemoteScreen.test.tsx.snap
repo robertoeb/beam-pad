@@ -1580,6 +1580,16 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
     <View
       style={
         {
+          "backgroundColor": "rgba(255,255,255,0.07)",
+          "height": 0.5,
+          "marginBottom": 8,
+          "marginHorizontal": -20,
+        }
+      }
+    />
+    <View
+      style={
+        {
           "height": 64,
           "justifyContent": "center",
         }

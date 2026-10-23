@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Settings, ArrowLeft, House, Keyboard } from 'lucide-react-native';
 import { router } from 'expo-router';
@@ -171,7 +171,15 @@ export default function Index() {
           </View>
         </View>
 
-        {/* Bottom bar */}
+        {/* Bottom bar: full-bleed hairline, then the shortcuts row */}
+        <View
+          style={{
+            height: StyleSheet.hairlineWidth,
+            backgroundColor: tokens.colors.surface.border,
+            marginHorizontal: -metrics.gutter,
+            marginBottom: space[2],
+          }}
+        />
         <ShortcutRow />
       </View>
 
