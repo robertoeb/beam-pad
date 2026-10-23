@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { useRef } from 'react';
 import { Pressable, View } from 'react-native';
 import { Power } from 'lucide-react-native';
@@ -72,7 +73,7 @@ export function PowerButton() {
         justifyContent: 'center',
       }}
     >
-      <Glow color="#FF453A" size={120} x={-32} y={-32} opacity={0.16} />
+      <Glow color={tokens.colors.accent.red} size={120} x={-32} y={-32} opacity={0.16} />
       <Svg width={SIZE} height={SIZE} style={{ position: 'absolute', top: 0, left: 0 }}>
         <Circle
           cx={SIZE / 2}
@@ -87,7 +88,7 @@ export function PowerButton() {
           cy={SIZE / 2}
           r={R}
           fill="none"
-          stroke="#FF453A"
+          stroke={tokens.colors.accent.red}
           strokeWidth={2}
           strokeDasharray={CIRCUMFERENCE}
           strokeLinecap="round"
@@ -104,7 +105,7 @@ export function PowerButton() {
         }}
       >
         <Animated.View style={{ transform: [{ scale }] }}>
-          <Power size={22} strokeWidth={1.6} color="#FF453A" />
+          <Power size={22} strokeWidth={1.6} color={tokens.colors.accent.red} />
         </Animated.View>
       </View>
     </Pressable>

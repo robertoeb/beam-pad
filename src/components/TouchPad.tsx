@@ -4,7 +4,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { haptic } from '@/lib/haptics';
 import { key } from '@/lib/key';
 import { KEYS } from '@/protocol/keycodes';
-import { radius } from '@/theme/tokens';
+import {radius, tokens} from '@/theme/tokens';
 
 const DIRECTION_KEYS = {
   up: KEYS.up,
@@ -113,7 +113,7 @@ export function TouchPad({ size = 228 }: TouchPadProps) {
           borderRadius: radius.xl,
           borderWidth: 1,
           borderColor: 'rgba(255,255,255,0.08)',
-          backgroundColor: '#13131E',
+          backgroundColor: tokens.colors.surface.DEFAULT,
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
@@ -145,7 +145,7 @@ export function TouchPad({ size = 228 }: TouchPadProps) {
           height: 14,
           borderRadius: 7,
           borderWidth: 2,
-          borderColor: dir ? '#22D3EE' : '#5E6472',
+          borderColor: dir ? tokens.colors.accent.cyan : tokens.colors.disabled,
           backgroundColor: dir ? 'rgba(34,211,238,0.15)' : 'transparent',
         }}
       />

@@ -8,7 +8,7 @@ import { SegmentedControl } from '@/components/settings/SegmentedControl';
 import { Screen } from '@/components/ui/Screen';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
-import { Label, Title } from '@/theme/typography';
+import {Label, Title, Micro} from '@/theme/typography';
 import {
   RadioTower,
   Palette,
@@ -19,7 +19,7 @@ import {
   Volume2,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { radius, space } from '@/theme/tokens';
+import {radius, space, tokens} from '@/theme/tokens';
 
 export default function SettingsIndex() {
   const volumeTarget = useSettingsStore((s) => s.volumeTarget);
@@ -53,10 +53,10 @@ export default function SettingsIndex() {
             opacity={0.12}
           />
           <Title style={{ fontSize: 24, lineHeight: 30 }}>BeamPad</Title>
-          <Label style={{ color: '#B7BDCB', marginTop: 2 }}>
+          <Label style={{ color: tokens.colors.text.secondary, marginTop: 2 }}>
             Remote for Android TV &amp; Google TV
           </Label>
-          <Label style={{ color: '#747B8A', fontSize: 11, marginTop: 10 }}>Version {version}</Label>
+          <Micro style={{ marginTop: 10 }}>Version {version}</Micro>
         </View>
 
         <SettingsSection title="Volume">

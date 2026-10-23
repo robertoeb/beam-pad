@@ -19,7 +19,7 @@ describe('computeMetrics', () => {
     expect(m.dpad).toBeLessThanOrEqual(288);
     expect(m.dpad % 2).toBe(0);
     expect(m.actionSize).toBeGreaterThanOrEqual(44);
-    expect(m.tile).toBe(64);
+    expect(m.tile).toBeGreaterThanOrEqual(42);
     expect(m.gutter).toBeGreaterThan(0);
     expect(m.zoneGap).toBeGreaterThan(0);
     expect(typeof m.showNowPlaying).toBe('boolean');
@@ -43,6 +43,18 @@ describe('computeMetrics', () => {
         expect(m.dpad).toBeGreaterThanOrEqual(200);
       }
     }
+  });
+
+  it('tile and dpad scale with density', () => {
+    const frame = { width: 390, height: 844 };
+    const compact = computeMetrics(frame, insets, 'compact');
+    const comfortable = computeMetrics(frame, insets, 'comfortable');
+    const spacious = computeMetrics(frame, insets, 'spacious');
+    expect(comfortable.tile).toBe(56);
+    expect(compact.tile).toBeLessThan(comfortable.tile);
+    expect(spacious.tile).toBeGreaterThan(comfortable.tile);
+    expect(spacious.dpad).toBeGreaterThanOrEqual(comfortable.dpad);
+    expect(comfortable.dpad).toBeGreaterThanOrEqual(compact.dpad);
   });
 
   it('compact has smaller gutter and zoneGap than spacious', () => {

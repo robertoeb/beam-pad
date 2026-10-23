@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { Pressable, View } from 'react-native';
 import { Play, Pause, X } from 'lucide-react-native';
 import { Sheet } from './Sheet';
@@ -32,7 +33,7 @@ export function CastSheet() {
         </Title>
         {mediaTitle ? (
           <Label
-            style={{ marginBottom: 16, textAlign: 'center', color: '#B7BDCB' }}
+            style={{ marginBottom: 16, textAlign: 'center', color: tokens.colors.text.secondary }}
             numberOfLines={1}
             testID="cast-media-title"
           >
@@ -61,7 +62,7 @@ export function CastSheet() {
               borderRadius: 30,
               borderWidth: 1,
               borderColor: 'rgba(34,211,238,0.4)',
-              backgroundColor: '#15151F',
+              backgroundColor: tokens.colors.surface.sunken,
               overflow: 'hidden',
             }}
             accessibilityLabel={mediaStatus === 'playing' ? 'Pause' : 'Play'}
@@ -75,9 +76,9 @@ export function CastSheet() {
               opacity={0.25}
             />
             {mediaStatus === 'playing' ? (
-              <Pause size={24} strokeWidth={1.6} color="#22D3EE" />
+              <Pause size={24} strokeWidth={1.6} color={tokens.colors.accent.cyan} />
             ) : (
-              <Play size={24} strokeWidth={1.6} color="#22D3EE" />
+              <Play size={24} strokeWidth={1.6} color={tokens.colors.accent.cyan} />
             )}
           </Pressable>
 
@@ -91,17 +92,17 @@ export function CastSheet() {
               borderRadius: 30,
               borderWidth: 1,
               borderColor: 'rgba(255,69,58,0.4)',
-              backgroundColor: '#15151F',
+              backgroundColor: tokens.colors.surface.sunken,
             }}
             accessibilityLabel="Stop and disconnect"
             accessibilityRole="button"
             testID="cast-stop"
           >
-            <X size={24} strokeWidth={1.6} color="#FF453A" />
+            <X size={24} strokeWidth={1.6} color={tokens.colors.accent.red} />
           </Pressable>
         </View>
 
-        <Label style={{ textAlign: 'center', color: '#747B8A', fontSize: 11 }}>
+        <Label style={{ textAlign: 'center', color: tokens.colors.text.muted, fontSize: 11 }}>
           Volume controls cast device via TV volume keys
         </Label>
       </View>

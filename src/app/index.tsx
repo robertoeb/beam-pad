@@ -23,8 +23,8 @@ import { ToastHost } from '@/components/Toast';
 import { useImeStore } from '@/stores/ime';
 import { useSettingsStore } from '@/stores/settings';
 import { useRemoteMetrics } from '@/lib/useRemoteMetrics';
-import { Gradient, Glow, SCREEN_GRADIENT } from '@/theme/gradient';
-import { space } from '@/theme/tokens';
+import { AuroraBackground } from '@/components/AuroraBackground';
+import {space, tokens, radius} from '@/theme/tokens';
 import { KEYS } from '@/protocol/keycodes';
 import { key } from '@/lib/key';
 import { voiceStart, voiceStop, voiceSearchUi } from '@/services/voice';
@@ -73,12 +73,10 @@ export default function Index() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: '#0A0A12' }}
+      style={{ flex: 1, backgroundColor: tokens.colors.background }}
       edges={['top', 'bottom', 'left', 'right']}
     >
-      <Gradient colors={SCREEN_GRADIENT} />
-      <Glow color="#6D5DF6" size={420} x={-160} y={-160} opacity={0.18} />
-      <Glow color="#22D3EE" size={360} x={30} y={420} opacity={0.1} />
+      <AuroraBackground />
 
       <View style={{ flex: 1, paddingHorizontal: metrics.gutter, paddingTop: space[2] }}>
         {/* Header: power left, device centered, app settings right */}
@@ -94,7 +92,7 @@ export default function Index() {
               style={{
                 width: 44,
                 height: 44,
-                borderRadius: 22,
+                borderRadius: radius.xl,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'rgba(255,255,255,0.05)',
@@ -102,7 +100,7 @@ export default function Index() {
                 borderColor: 'rgba(255,255,255,0.07)',
               }}
             >
-              <Settings size={20} strokeWidth={1.6} color="#B7BDCB" />
+              <Settings size={20} strokeWidth={1.6} color={tokens.colors.text.secondary} />
             </Pressable>
           </View>
           <DevicePill onPress={handleSheetOpen} />

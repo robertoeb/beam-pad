@@ -5,7 +5,7 @@ import { useImeStore } from '@/stores/ime';
 import { commitImeText, dismissIme } from '@/services/ime';
 import { Button } from '@/components/ui/Button';
 import { Title } from '@/theme/typography';
-import { space } from '@/theme/tokens';
+import {space, tokens} from '@/theme/tokens';
 
 export function ImeSheet() {
   const visible = useImeStore((s) => s.visible);
@@ -49,16 +49,16 @@ export function ImeSheet() {
             testID="ime-input"
             value={value}
             onChangeText={commitImeText}
-            selectionColor="#22D3EE"
-            cursorColor="#22D3EE"
+            selectionColor={tokens.colors.accent.cyan}
+            cursorColor={tokens.colors.accent.cyan}
             keyboardAppearance="dark"
             placeholder="Start typing..."
-            placeholderTextColor="#747B8A"
+            placeholderTextColor={tokens.colors.text.muted}
             style={{
               fontFamily: 'Inter-Regular',
               fontSize: 17,
-              color: '#F5F6FA',
-              backgroundColor: '#15151F',
+              color: tokens.colors.text.primary,
+              backgroundColor: tokens.colors.surface.sunken,
               borderRadius: 16,
               borderWidth: 1,
               borderColor: 'rgba(255,255,255,0.09)',
@@ -76,7 +76,7 @@ export function ImeSheet() {
                 paddingVertical: 4,
               }}
             >
-              <Title style={{ fontSize: 11, color: '#22D3EE', fontFamily: 'Inter-Medium' }}>
+              <Title style={{ fontSize: 11, color: tokens.colors.accent.cyan, fontFamily: 'Inter-Medium' }}>
                 Typing on your TV
               </Title>
             </View>

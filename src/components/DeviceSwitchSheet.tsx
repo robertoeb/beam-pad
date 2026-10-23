@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Animated, FlatList, Modal, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -70,7 +71,7 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
             borderRadius: 18,
             borderWidth: 1,
             borderColor: isActive ? 'rgba(34,211,238,0.4)' : 'rgba(255,255,255,0.07)',
-            backgroundColor: isActive ? 'rgba(34,211,238,0.08)' : '#13131E',
+            backgroundColor: isActive ? 'rgba(34,211,238,0.08)' : tokens.colors.surface.DEFAULT,
           }}
         >
           <View
@@ -83,13 +84,13 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
               justifyContent: 'center',
             }}
           >
-            <Tv size={18} color={isActive ? '#22D3EE' : '#B7BDCB'} />
+            <Tv size={18} color={isActive ? tokens.colors.accent.cyan : tokens.colors.text.secondary} />
           </View>
           <View style={{ flex: 1 }}>
-            <Label style={{ color: '#F5F6FA' }}>{item.name}</Label>
-            <Label style={{ color: '#9AA0B4', fontSize: 11 }}>{item.host}</Label>
+            <Label style={{ color: tokens.colors.text.primary }}>{item.name}</Label>
+            <Label style={{ color: tokens.colors.text.soft, fontSize: 11 }}>{item.host}</Label>
           </View>
-          {isActive ? <Check size={18} color="#22D3EE" /> : null}
+          {isActive ? <Check size={18} color={tokens.colors.accent.cyan} /> : null}
         </Pressable>
       );
     },
@@ -106,7 +107,7 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
                 borderRadius: 28,
                 borderWidth: 1,
                 borderColor: 'rgba(255,255,255,0.09)',
-                backgroundColor: '#10101A',
+                backgroundColor: tokens.colors.surface.sheet,
                 paddingTop: 12,
                 marginHorizontal: 8,
                 marginBottom: 8,
@@ -125,7 +126,7 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
               <Title style={{ paddingHorizontal: 20, paddingBottom: 12 }}>Switch Device</Title>
               {paired.length === 0 ? (
                 <View style={{ paddingVertical: 28 }}>
-                  <Label style={{ textAlign: 'center', color: '#747B8A' }}>No paired devices</Label>
+                  <Label style={{ textAlign: 'center', color: tokens.colors.text.muted }}>No paired devices</Label>
                 </View>
               ) : (
                 <FlatList
@@ -161,9 +162,9 @@ export function DeviceSwitchSheet({ visible, onClose }: DeviceSwitchSheetProps) 
                     justifyContent: 'center',
                   }}
                 >
-                  <Plus size={18} color="#8B8CF8" />
+                  <Plus size={18} color={tokens.colors.accent.violet} />
                 </View>
-                <Label style={{ color: '#8B8CF8', fontSize: 15 }}>Add Device</Label>
+                <Label style={{ color: tokens.colors.accent.violet, fontSize: 15 }}>Add Device</Label>
               </Pressable>
             </View>
           </Animated.View>

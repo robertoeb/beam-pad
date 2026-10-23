@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Title } from '@/theme/typography';
-import { space } from '@/theme/tokens';
+import {space, tokens} from '@/theme/tokens';
 
 interface ScreenHeaderProps {
   title: string;
@@ -52,7 +52,7 @@ export function ScreenHeader({
               borderColor: 'rgba(255,255,255,0.06)',
             }}
           >
-            <ArrowLeft size={20} color="#F5F6FA" />
+            <ArrowLeft size={20} color={tokens.colors.text.primary} />
           </Pressable>
         )}
         <View style={{ flex: 1 }}>
@@ -63,7 +63,7 @@ export function ScreenHeader({
               style={{
                 fontSize: 12,
                 lineHeight: 16,
-                color: '#747B8A',
+                color: tokens.colors.text.muted,
                 fontFamily: 'Inter-Regular',
               }}
             >

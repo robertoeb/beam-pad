@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { View } from 'react-native';
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CircleDot } from 'lucide-react-native';
 import { RemoteButton } from './RemoteButton';
@@ -16,7 +17,7 @@ export function DPad({ diameter = 228 }: DPadProps) {
   return (
     <View style={{ width: diameter, height: diameter, alignSelf: 'center' }}>
       <Glow
-        color="#22D3EE"
+        color={tokens.colors.accent.cyan}
         size={diameter * 0.62}
         x={diameter * 0.19}
         y={diameter * 0.19}

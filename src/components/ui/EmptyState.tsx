@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 import { Label } from '@/theme/typography';
-import { space, radius } from '@/theme/tokens';
+import {space, radius, tokens} from '@/theme/tokens';
 import type { LucideIcon } from 'lucide-react-native';
 
 interface EmptyStateProps {
@@ -52,7 +52,7 @@ export function EmptyState({
         <Label
           style={{
             textAlign: 'center',
-            color: '#B7BDCB',
+            color: tokens.colors.text.secondary,
             marginBottom: actionLabel ? space[5] : 0,
           }}
         >
@@ -74,13 +74,13 @@ export function EmptyState({
             borderRadius: radius.lg,
             borderWidth: 1,
             borderColor: 'rgba(255,255,255,0.12)',
-            backgroundColor: '#1A1A2A',
+            backgroundColor: tokens.colors.surface.elevated,
             opacity: pressed ? 0.75 : 1,
             transform: [{ scale: pressed ? 0.97 : 1 }],
           })}
         >
-          {ActionIcon ? <ActionIcon size={16} strokeWidth={2} color="#22D3EE" /> : null}
-          <Label style={{ color: '#22D3EE', fontSize: 15, fontWeight: '600' }}>{actionLabel}</Label>
+          {ActionIcon ? <ActionIcon size={16} strokeWidth={2} color={tokens.colors.accent.cyan} /> : null}
+          <Label style={{ color: tokens.colors.accent.cyan, fontWeight: '600' }}>{actionLabel}</Label>
         </Pressable>
       )}
     </View>

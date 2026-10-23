@@ -34,10 +34,13 @@ export function computeMetrics(
 ): RemoteMetrics {
   const factor = DENSITY_FACTOR[density];
   const available = frame.height - insets.top - insets.bottom - HEADER_HEIGHT - SHORTCUT_ROW_HEIGHT;
-  const dpad = roundEven(clamp(available * 0.62, 200, 288));
+  // Density nudges the pad size; the 200 floor protects touch targets (P0-2).
+  const dpad = roundEven(
+    clamp(available * 0.62 * (density === 'compact' ? 0.92 : density === 'spacious' ? 1.08 : 1), 200, 288),
+  );
   const actionSize = dpad >= 240 ? 72 : 56;
-  const tile = 64;
-  const gutterBase = 16;
+  const tile = Math.round(56 * factor);
+  const gutterBase = 20;
   const gutter = Math.round(gutterBase * factor);
   const zoneGapBase = 24;
   const zoneGap = Math.round(zoneGapBase * factor);

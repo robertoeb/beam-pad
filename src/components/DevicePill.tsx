@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { Pressable, View } from 'react-native';
 import { ChevronDown } from 'lucide-react-native';
 import { useDevicesStore } from '@/stores/devices';
@@ -26,10 +27,10 @@ export function DevicePill({ onPress }: { onPress: () => void }) {
           borderRadius: 5,
           backgroundColor: error ? 'transparent' : dotColor,
           borderWidth: error ? 1.5 : 0,
-          borderColor: '#FF453A',
+          borderColor: tokens.colors.accent.red,
         }}
       />
-      <Label style={{ color: '#F5F6FA', fontSize: 16 }}>{active?.name ?? 'No device'}</Label>
+      <Label style={{ color: tokens.colors.text.primary, fontSize: 16 }}>{active?.name ?? 'No device'}</Label>
       <View
         style={{
           width: 20,
@@ -40,7 +41,7 @@ export function DevicePill({ onPress }: { onPress: () => void }) {
           justifyContent: 'center',
         }}
       >
-        <ChevronDown size={14} color="#B7BDCB" strokeWidth={2} />
+        <ChevronDown size={14} color={tokens.colors.text.secondary} strokeWidth={2} />
       </View>
     </Pressable>
   );

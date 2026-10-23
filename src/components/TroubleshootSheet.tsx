@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { useCallback } from 'react';
 import { Pressable, ScrollView, View, Clipboard } from 'react-native';
 import { Sheet } from './Sheet';
@@ -61,11 +62,11 @@ export function TroubleshootSheet({
                     marginTop: 1,
                   }}
                 >
-                  <Title style={{ fontSize: 11, color: '#22D3EE', fontFamily: 'Inter-Medium' }}>
+                  <Title style={{ fontSize: 11, color: tokens.colors.accent.cyan, fontFamily: 'Inter-Medium' }}>
                     {i + 1}
                   </Title>
                 </View>
-                <Label style={{ flex: 1, color: '#B7BDCB', fontSize: 14 }}>{step}</Label>
+                <Label style={{ flex: 1, color: tokens.colors.text.secondary, fontSize: 14 }}>{step}</Label>
               </View>
             ))}
           </View>
@@ -85,7 +86,7 @@ export function TroubleshootSheet({
               }}
               testID="troubleshoot-retry"
             >
-              <Label style={{ color: '#22D3EE' }}>Retry</Label>
+              <Label style={{ color: tokens.colors.accent.cyan }}>Retry</Label>
             </Pressable>
           )}
 
@@ -102,7 +103,7 @@ export function TroubleshootSheet({
               }}
               testID="troubleshoot-repair"
             >
-              <Label style={{ color: '#22D3EE' }}>Re-pair</Label>
+              <Label style={{ color: tokens.colors.accent.cyan }}>Re-pair</Label>
             </Pressable>
           )}
 
@@ -110,7 +111,7 @@ export function TroubleshootSheet({
             onPress={handleCopyDiagnostics}
             style={{
               borderRadius: 14,
-              backgroundColor: '#1A1A2A',
+              backgroundColor: tokens.colors.surface.elevated,
               borderWidth: 1,
               borderColor: 'rgba(255,255,255,0.08)',
               paddingHorizontal: 20,
@@ -118,7 +119,7 @@ export function TroubleshootSheet({
             }}
             testID="troubleshoot-copy"
           >
-            <Label style={{ color: '#B7BDCB' }}>Copy diagnostics</Label>
+            <Label style={{ color: tokens.colors.text.secondary }}>Copy diagnostics</Label>
           </Pressable>
         </View>
       </ScrollView>

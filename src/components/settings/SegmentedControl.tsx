@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { Label } from '@/theme/typography';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
-import { radius } from '@/theme/tokens';
+import {radius, tokens} from '@/theme/tokens';
 
 interface SegmentedOption<T extends string> {
   value: T;
@@ -67,7 +67,7 @@ export function SegmentedControl<T extends string>({
             ) : null}
             <Label
               style={{
-                color: selected ? '#000000' : '#B7BDCB',
+                color: selected ? tokens.colors.background : tokens.colors.text.secondary,
                 fontWeight: selected ? '600' : '400',
               }}
             >

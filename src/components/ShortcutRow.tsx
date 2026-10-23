@@ -3,20 +3,21 @@ import { Plus } from 'lucide-react-native';
 import { router } from 'expo-router';
 
 import { ShortcutTile } from './ShortcutTile';
+import { useRemoteMetrics } from '@/lib/useRemoteMetrics';
 import { useLayoutStore } from '@/stores/layout';
 import { useSettingsStore } from '@/stores/settings';
 import { shortcutRegistry } from '@/shortcuts/registry';
 import { fireShortcut } from '@/services/shortcuts';
-import { space, radius } from '@/theme/tokens';
+import {space, radius, tokens} from '@/theme/tokens';
 
 export function ShortcutRow() {
   const shortcuts = useLayoutStore((s) => s.shortcuts);
   const showLabels = useSettingsStore((s) => s.showShortcutLabels);
 
-  const tileSize = 56;
+  const tileSize = useRemoteMetrics().tile;
 
   return (
-    <View style={{ height: showLabels ? 84 : 64, justifyContent: 'center' }}>
+    <View style={{ height: tileSize + (showLabels ? 28 : 8), justifyContent: 'center' }}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -57,7 +58,7 @@ export function ShortcutRow() {
             justifyContent: 'center',
           }}
         >
-          <Plus size={20} strokeWidth={1.5} color="#B7BDCB" />
+          <Plus size={20} strokeWidth={1.5} color={tokens.colors.text.secondary} />
         </Pressable>
       </ScrollView>
     </View>

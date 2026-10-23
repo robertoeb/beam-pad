@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import type { ConnectionState } from '@/protocol/RemoteClient';
 
 export interface ConnectionStatus {
@@ -6,9 +7,9 @@ export interface ConnectionStatus {
   pulse: boolean;
 }
 
-const CONNECTED_COLOR = '#22D3EE';
-const ERROR_COLOR = '#FF453A';
-const IDLE_COLOR = '#747B8A';
+const CONNECTED_COLOR = tokens.colors.accent.cyan;
+const ERROR_COLOR = tokens.colors.accent.red;
+const IDLE_COLOR = tokens.colors.text.muted;
 
 /**
  * Single FSM→presentation mapping for connection state. Consumed by both

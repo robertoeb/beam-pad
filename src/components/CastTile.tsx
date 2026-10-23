@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { Pressable } from 'react-native';
 import { Cast } from 'lucide-react-native';
 import { useCastStore } from '@/stores/cast';
@@ -9,7 +10,7 @@ export function CastTile({ size = 68 }: { size?: number }) {
   const setCastSheet = useCastStore((s) => s.setCastSheet);
 
   const active = connected;
-  const color = active ? '#22D3EE' : '#747B8A';
+  const color = active ? tokens.colors.accent.cyan : tokens.colors.text.muted;
 
   return (
     <Pressable

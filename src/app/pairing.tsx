@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
 import { Label, Micro, Title } from '@/theme/typography';
-import { space, radius } from '@/theme/tokens';
+import {space, radius, tokens} from '@/theme/tokens';
 import type { ConnectError } from '@/protocol/errors';
 import { COMMAND_PORT, PAIRING_PORT } from '@/protocol/ports';
 
@@ -177,9 +177,9 @@ export default function PairingScreen() {
           <View style={{ alignItems: 'center', gap: space[4] }}>
             <View
               style={{
-                width: 84,
-                height: 84,
-                borderRadius: 42,
+                width: 88,
+                height: 88,
+                borderRadius: radius.pill,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'rgba(139,140,248,0.1)',
@@ -187,9 +187,9 @@ export default function PairingScreen() {
                 borderColor: 'rgba(139,140,248,0.25)',
               }}
             >
-              <Spinner size={34} color="#8B8CF8" strokeWidth={2} />
+              <Spinner size={34} color={tokens.colors.accent.violet} strokeWidth={2} />
             </View>
-            <Label style={{ textAlign: 'center', color: '#B7BDCB' }}>
+            <Label style={{ textAlign: 'center', color: tokens.colors.text.secondary }}>
               {STEP_COPY[step] || 'Contacting TV…'}
             </Label>
           </View>
@@ -213,7 +213,7 @@ export default function PairingScreen() {
               style={{
                 width: 64,
                 height: 64,
-                borderRadius: 32,
+                borderRadius: radius.pill,
                 alignItems: 'center',
                 justifyContent: 'center',
                 overflow: 'hidden',
@@ -227,12 +227,12 @@ export default function PairingScreen() {
                 end={{ x: 1, y: 1 }}
                 opacity={0.25}
               />
-              <Tv size={28} color="#22D3EE" strokeWidth={1.6} />
+              <Tv size={28} color={tokens.colors.accent.cyan} strokeWidth={1.6} />
             </View>
 
             <View style={{ alignItems: 'center', gap: space[2] }}>
               <Title style={{ fontSize: 22 }}>Enter the code on your TV</Title>
-              <Label style={{ textAlign: 'center', color: '#B7BDCB' }}>
+              <Label style={{ textAlign: 'center', color: tokens.colors.text.secondary }}>
                 {STEP_COPY.awaiting_code || `The 6-character code for ${n} is on your screen`}
               </Label>
             </View>
@@ -252,8 +252,8 @@ export default function PairingScreen() {
                 borderColor: 'rgba(34,211,238,0.15)',
               }}
             >
-              <ShieldCheck size={14} color="#22D3EE" strokeWidth={1.8} />
-              <Micro style={{ color: '#9AA0B4', letterSpacing: 0.6 }}>
+              <ShieldCheck size={14} color={tokens.colors.accent.cyan} strokeWidth={1.8} />
+              <Micro style={{ color: tokens.colors.text.soft, letterSpacing: 0.6 }}>
                 SECURE · TV DISPLAYS A 6-CHARACTER CODE
               </Micro>
             </View>
@@ -264,9 +264,9 @@ export default function PairingScreen() {
           <View style={{ alignItems: 'center', gap: space[4] }}>
             <View
               style={{
-                width: 84,
-                height: 84,
-                borderRadius: 42,
+                width: 88,
+                height: 88,
+                borderRadius: radius.pill,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'rgba(52,211,153,0.12)',
@@ -274,16 +274,16 @@ export default function PairingScreen() {
                 borderColor: 'rgba(52,211,153,0.3)',
               }}
             >
-              <Check size={40} color="#34D399" strokeWidth={2.2} />
+              <Check size={40} color={tokens.colors.accent.green} strokeWidth={2.2} />
             </View>
             <Title>Paired Successfully</Title>
-            <Label style={{ color: '#B7BDCB' }}>{n} is ready to use</Label>
+            <Label style={{ color: tokens.colors.text.secondary }}>{n} is ready to use</Label>
           </View>
         )}
 
         {step === 'failed' && (
           <ErrorState
-            icon={<Monitor size={56} color="#FF453A" strokeWidth={1.5} />}
+            icon={<Monitor size={56} color={tokens.colors.accent.red} strokeWidth={1.5} />}
             title="Pairing Failed"
             body={
               connectError?.message ??
@@ -325,8 +325,8 @@ export default function PairingScreen() {
               paddingHorizontal: space[4],
             }}
           >
-            <Info size={13} color="#747B8A" strokeWidth={1.8} />
-            <Label style={{ color: '#9AA0B4', fontSize: 13 }}>
+            <Info size={13} color={tokens.colors.text.muted} strokeWidth={1.8} />
+            <Label style={{ color: tokens.colors.text.soft }}>
               No code? Check the troubleshooting tips
             </Label>
           </Pressable>
@@ -337,7 +337,7 @@ export default function PairingScreen() {
         <Label
           style={{
             textAlign: 'center',
-            color: '#9AA0B4',
+            color: tokens.colors.text.soft,
             fontSize: 12,
             paddingBottom: space[5],
           }}

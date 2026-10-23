@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { useEffect } from 'react';
 import Animated, {
   useAnimatedStyle,
@@ -13,7 +14,7 @@ interface SpinnerProps {
   strokeWidth?: number;
 }
 
-export function Spinner({ size = 22, color = '#22D3EE', strokeWidth = 2 }: SpinnerProps) {
+export function Spinner({ size = 22, color = tokens.colors.accent.cyan, strokeWidth = 2 }: SpinnerProps) {
   const rotation = useSharedValue(0);
 
   useEffect(() => {

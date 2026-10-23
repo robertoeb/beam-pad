@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Mic } from 'lucide-react-native';
@@ -46,7 +47,7 @@ export function MicButton({ voiceHolding, onPressIn, onPressOut, onPress }: MicB
               height: 44,
               borderRadius: 22,
               borderWidth: 2,
-              borderColor: '#22D3EE',
+              borderColor: tokens.colors.accent.cyan,
             },
           ]}
         />
@@ -70,13 +71,13 @@ export function MicButton({ voiceHolding, onPressIn, onPressOut, onPress }: MicB
           borderRadius: 22,
           borderWidth: 1,
           borderColor: active ? 'rgba(34,211,238,0.6)' : 'rgba(255,255,255,0.08)',
-          backgroundColor: active ? 'rgba(34,211,238,0.12)' : '#15151F',
+          backgroundColor: active ? 'rgba(34,211,238,0.12)' : tokens.colors.surface.sunken,
           alignItems: 'center',
           justifyContent: 'center',
           transform: [{ scale: p ? 0.92 : 1 }],
         })}
       >
-        <Mic size={20} strokeWidth={1.6} color={active ? '#22D3EE' : '#F5F6FA'} />
+        <Mic size={20} strokeWidth={1.6} color={active ? tokens.colors.accent.cyan : tokens.colors.text.primary} />
       </Pressable>
     </View>
   );

@@ -2,7 +2,7 @@ import { View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { useConnectionStore } from '@/stores/connection';
-import { space } from '@/theme/tokens';
+import {space, tokens} from '@/theme/tokens';
 import { Label } from '@/theme/typography';
 
 export function NowPlayingStrip() {
@@ -32,7 +32,7 @@ export function NowPlayingStrip() {
   if (state === 'RECONNECTING') {
     return (
       <View style={{ height: 28, justifyContent: 'center', alignItems: 'center' }}>
-        <Label style={{ color: '#FBBF24' }}>RECONNECTING</Label>
+        <Label style={{ color: tokens.colors.accent.yellow }}>RECONNECTING</Label>
       </View>
     );
   }
@@ -59,10 +59,10 @@ export function NowPlayingStrip() {
             width: 6,
             height: 6,
             borderRadius: 3,
-            backgroundColor: '#22D3EE',
+            backgroundColor: tokens.colors.accent.cyan,
           }}
         />
-        <Label style={{ color: '#B7BDCB', fontSize: 11 }} numberOfLines={1}>
+        <Label style={{ color: tokens.colors.text.secondary, fontSize: 11 }} numberOfLines={1}>
           {currentApp.label}
         </Label>
       </View>
@@ -84,7 +84,7 @@ export function NowPlayingStrip() {
           style={{
             height: '100%',
             width: `${fillRatio * 100}%`,
-            backgroundColor: '#22D3EE',
+            backgroundColor: tokens.colors.accent.cyan,
             borderRadius: 1,
           }}
         />

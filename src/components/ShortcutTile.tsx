@@ -9,13 +9,14 @@ import Animated, {
 import { MinusCircle } from 'lucide-react-native';
 import { useEffect } from 'react';
 import { haptic } from '@/lib/haptics';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 import { useConnectionStore } from '@/stores/connection';
 import { shortcutRegistry } from '@/shortcuts/registry';
 import { BRAND_ICONS, KEY_ICONS, initialsFallback } from '@/shortcuts/icons';
 import { BRAND_LOGOS } from '@/shortcuts/brandLogos';
 import { SPRING } from '@/lib/spring';
 import { Glow } from '@/theme/gradient';
-import { space, radius } from '@/theme/tokens';
+import {space, radius, tokens} from '@/theme/tokens';
 import type { Shortcut } from '@/shortcuts/types';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -52,13 +53,14 @@ export function ShortcutTile({
 
   const appIcon = shortcut?.action.kind === 'app' ? BRAND_LOGOS[shortcut.action.appId] : undefined;
 
+  const reducedMotion = useReducedMotion();
   useEffect(() => {
-    if (editMode) {
+    if (editMode && !reducedMotion) {
       rotation.value = withRepeat(withTiming(1.5, { duration: 120 }), -1, true);
     } else {
       rotation.value = withTiming(0, { duration: 120 });
     }
-  }, [editMode, rotation]);
+  }, [editMode, reducedMotion, rotation]);
 
   const animStyle = useAnimatedStyle(() => ({
     width: size,
@@ -89,13 +91,13 @@ export function ShortcutTile({
   const iconSize = Math.round(size * 0.5);
   const innerPad = space[3];
   const label = shortcut?.label ?? 'Unknown';
-  const tint = shortcut?.tint ?? '#747B8A';
+  const tint = shortcut?.tint ?? tokens.colors.text.muted;
   const bgTint = missing ? 'rgba(94,100,114,0.15)' : `${tint}24`;
   const tileBg = appIcon ? appIcon.background : bgTint;
 
   const renderIcon = () => {
     if (missing || !shortcut) {
-      return <Text style={{ fontWeight: '600', fontSize: 15, color: '#747B8A' }}>?</Text>;
+      return <Text style={{ fontWeight: '600', fontSize: 15, color: tokens.colors.text.muted }}>?</Text>;
     }
 
     if (shortcut.action.kind === 'app') {
@@ -122,22 +124,22 @@ export function ShortcutTile({
         );
       }
       const BrandIcon = BRAND_ICONS[shortcut.action.appId];
-      if (BrandIcon) return <BrandIcon size={iconSize} color="#FFFFFF" />;
+      if (BrandIcon) return <BrandIcon size={iconSize} color={tokens.colors.text.primary} />;
     }
 
     if (shortcut.action.kind === 'key') {
       const keyName = shortcut.icon;
       const LucideIcon = KEY_ICONS[keyName];
-      if (LucideIcon) return <LucideIcon size={iconSize} strokeWidth={1.5} color="#FFFFFF" />;
+      if (LucideIcon) return <LucideIcon size={iconSize} strokeWidth={1.5} color={tokens.colors.text.primary} />;
     }
 
     if (shortcut.action.kind === 'macro') {
       const LucideIcon = KEY_ICONS[shortcut.icon];
-      if (LucideIcon) return <LucideIcon size={iconSize} strokeWidth={1.5} color="#FFFFFF" />;
+      if (LucideIcon) return <LucideIcon size={iconSize} strokeWidth={1.5} color={tokens.colors.text.primary} />;
     }
 
     return (
-      <Text style={{ fontWeight: '600', fontSize: 15, color: '#FFFFFF' }}>
+      <Text style={{ fontWeight: '600', fontSize: 15, color: tokens.colors.text.primary }}>
         {initialsFallback(label)}
       </Text>
     );
@@ -147,7 +149,7 @@ export function ShortcutTile({
     <View style={{ alignItems: 'center' }}>
       <View>
         {isCurrent ? (
-          <Glow color="#22D3EE" size={size + 24} x={-12} y={-12} opacity={0.18} />
+          <Glow color={tokens.colors.accent.cyan} size={size + 24} x={-12} y={-12} opacity={0.18} />
         ) : null}
         <AnimatedPressable
           onPressIn={pressIn}
@@ -212,7 +214,7 @@ export function ShortcutTile({
                 width: 6,
                 height: 6,
                 borderRadius: 3,
-                backgroundColor: '#22D3EE',
+                backgroundColor: tokens.colors.accent.cyan,
               }}
             />
           )}
@@ -233,7 +235,7 @@ export function ShortcutTile({
                 justifyContent: 'center',
               }}
             >
-              <MinusCircle size={20} color="#FF453A" />
+              <MinusCircle size={20} color={tokens.colors.accent.red} />
             </Pressable>
           )}
         </AnimatedPressable>
@@ -244,7 +246,7 @@ export function ShortcutTile({
           style={{
             marginTop: space[1],
             fontSize: 11,
-            color: '#B7BDCB',
+            color: tokens.colors.text.secondary,
             textAlign: 'center',
           }}
           numberOfLines={1}

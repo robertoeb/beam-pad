@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
 import { Label } from '@/theme/typography';
-import { radius } from '@/theme/tokens';
+import {radius, tokens, space} from '@/theme/tokens';
 import type { LucideIcon } from 'lucide-react-native';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -17,10 +17,10 @@ interface ButtonProps {
 }
 
 const palette: Record<ButtonVariant, { fg: string; bg?: string }> = {
-  primary: { fg: '#0A0A12' },
-  secondary: { fg: '#F5F6FA' },
-  ghost: { fg: '#B7BDCB' },
-  danger: { fg: '#FF453A' },
+  primary: { fg: tokens.colors.background },
+  secondary: { fg: tokens.colors.text.primary },
+  ghost: { fg: tokens.colors.text.secondary },
+  danger: { fg: tokens.colors.accent.red },
 };
 
 export function Button({
@@ -41,7 +41,7 @@ export function Button({
         <Gradient colors={BRAND_GRADIENT} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} />
       ) : null}
       {Icon ? <Icon size={18} strokeWidth={1.8} color={fg} style={{ marginRight: 6 }} /> : null}
-      <Label style={{ color: fg, fontSize: 15, fontWeight: isPrimary ? '600' : '400' }}>
+      <Label style={{ color: fg, fontWeight: isPrimary ? '600' : '400' }}>
         {label}
       </Label>
     </View>
@@ -61,7 +61,7 @@ export function Button({
         overflow: 'hidden',
         backgroundColor: isPrimary
           ? undefined
-          : (bg ?? (variant === 'ghost' ? 'transparent' : '#13131E')),
+          : (bg ?? (variant === 'ghost' ? 'transparent' : tokens.colors.surface.DEFAULT)),
         borderWidth: variant === 'secondary' || variant === 'danger' ? 1 : 0,
         borderColor: variant === 'danger' ? 'rgba(255,69,58,0.4)' : 'rgba(255,255,255,0.08)',
         alignSelf: fullWidth ? 'stretch' : 'flex-start',
@@ -77,11 +77,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 13,
-    paddingHorizontal: 20,
+    paddingVertical: space[3],
+    paddingHorizontal: space[5],
   },
   primaryPad: {
-    paddingVertical: 15,
+    paddingVertical: space[4],
   },
   fullWidth: {
     alignSelf: 'stretch',

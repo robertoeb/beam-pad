@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { haptic } from '@/lib/haptics';
 import { SPRING } from '@/lib/spring';
-import { radius, zIndex } from '@/theme/tokens';
+import {radius, zIndex, tokens} from '@/theme/tokens';
 
 interface SheetProps {
   open: boolean;
@@ -84,7 +84,7 @@ export function Sheet({
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: '#05050A',
+            backgroundColor: tokens.colors.scrim,
           },
           backdropStyle,
         ]}
@@ -105,7 +105,7 @@ export function Sheet({
               borderRadius: radius.sheet,
               borderWidth: 1,
               borderColor: 'rgba(255,255,255,0.09)',
-              backgroundColor: '#10101A',
+              backgroundColor: tokens.colors.surface.sheet,
               overflow: 'hidden',
               maxHeight,
               marginHorizontal: 8,

@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { Pressable } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { SPRING } from '@/lib/spring';
@@ -56,7 +57,7 @@ export function Toggle({
             width: 24,
             height: 24,
             borderRadius: 12,
-            backgroundColor: '#F5F6FA',
+            backgroundColor: tokens.colors.text.primary,
           },
           knobStyle,
         ]}

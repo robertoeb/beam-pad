@@ -20,7 +20,7 @@ import { SegmentedControl } from '@/components/settings/SegmentedControl';
 import { Screen } from '@/components/ui/Screen';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { Label } from '@/theme/typography';
-import { radius, space } from '@/theme/tokens';
+import {radius, space, tokens} from '@/theme/tokens';
 
 function ExampleDpad() {
   const size = 20;
@@ -35,16 +35,16 @@ function ExampleDpad() {
   return (
     <View style={{ width: 88, height: 88, alignItems: 'center', justifyContent: 'center' }}>
       <View style={{ position: 'absolute', top: 6, left: 34, ...dot }}>
-        <ChevronUp size={12} color="#A7ADBF" />
+        <ChevronUp size={12} color={tokens.colors.text.secondary} />
       </View>
       <View style={{ position: 'absolute', bottom: 6, left: 34, ...dot }}>
-        <ChevronDown size={12} color="#A7ADBF" />
+        <ChevronDown size={12} color={tokens.colors.text.secondary} />
       </View>
       <View style={{ position: 'absolute', left: 6, top: 34, ...dot }}>
-        <ChevronLeft size={12} color="#A7ADBF" />
+        <ChevronLeft size={12} color={tokens.colors.text.secondary} />
       </View>
       <View style={{ position: 'absolute', right: 6, top: 34, ...dot }}>
-        <ChevronRight size={12} color="#A7ADBF" />
+        <ChevronRight size={12} color={tokens.colors.text.secondary} />
       </View>
       <View
         style={{
@@ -56,7 +56,7 @@ function ExampleDpad() {
           justifyContent: 'center',
         }}
       >
-        <CircleDot size={12} color="#22D3EE" />
+        <CircleDot size={12} color={tokens.colors.accent.cyan} />
       </View>
     </View>
   );
@@ -81,11 +81,11 @@ function ExampleTouchpad() {
           width: 12,
           height: 12,
           borderRadius: 6,
-          backgroundColor: '#22D3EE',
+          backgroundColor: tokens.colors.accent.cyan,
           marginBottom: 8,
         }}
       />
-      <Hand size={20} color="#747B8A" />
+      <Hand size={20} color={tokens.colors.text.muted} />
     </View>
   );
 }
@@ -129,7 +129,7 @@ export default function AppearanceScreen() {
                   }}
                 >
                   {opt.example}
-                  <Label style={{ marginTop: 8, color: selected ? '#22D3EE' : '#F5F6FA' }}>
+                  <Label style={{ marginTop: 8, color: selected ? tokens.colors.accent.cyan : tokens.colors.text.primary }}>
                     {opt.label}
                   </Label>
                 </Pressable>

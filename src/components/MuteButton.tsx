@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { Volume2, VolumeX } from 'lucide-react-native';
@@ -29,16 +30,16 @@ export function MuteButton() {
           : muted
             ? 'rgba(34,211,238,0.45)'
             : 'rgba(255,255,255,0.08)',
-        backgroundColor: pressed ? '#22D3EE' : muted ? 'rgba(34,211,238,0.1)' : '#15151F',
+        backgroundColor: pressed ? tokens.colors.accent.cyan : muted ? 'rgba(34,211,238,0.1)' : tokens.colors.surface.sunken,
         alignItems: 'center',
         justifyContent: 'center',
         transform: [{ scale: pressed ? 0.92 : 1 }],
       }}
     >
       {muted ? (
-        <VolumeX size={20} strokeWidth={1.6} color={pressed ? '#0A0A12' : '#22D3EE'} />
+        <VolumeX size={20} strokeWidth={1.6} color={pressed ? tokens.colors.background : tokens.colors.accent.cyan} />
       ) : (
-        <Volume2 size={20} strokeWidth={1.6} color={pressed ? '#0A0A12' : '#F5F6FA'} />
+        <Volume2 size={20} strokeWidth={1.6} color={pressed ? tokens.colors.background : tokens.colors.text.primary} />
       )}
     </Pressable>
   );

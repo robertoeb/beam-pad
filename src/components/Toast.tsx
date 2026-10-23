@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
 import { Label } from '@/theme/typography';
-import { zIndex } from '@/theme/tokens';
+import {zIndex, tokens} from '@/theme/tokens';
 import { TOAST_VISIBLE_MS, useToastStore } from '@/stores/toast';
 
 export { showToast } from '@/stores/toast';
@@ -45,7 +45,7 @@ export function ToastHost() {
           borderRadius: 999,
           borderWidth: 1,
           borderColor: 'rgba(34,211,238,0.3)',
-          backgroundColor: '#13131E',
+          backgroundColor: tokens.colors.surface.DEFAULT,
           paddingHorizontal: 16,
           paddingVertical: 9,
           overflow: 'hidden',
@@ -57,7 +57,7 @@ export function ToastHost() {
           end={{ x: 1, y: 0 }}
           opacity={0.12}
         />
-        <Label style={{ color: '#E8EAF2' }}>{message}</Label>
+        <Label style={{ color: tokens.colors.text.primary }}>{message}</Label>
       </View>
     </Animated.View>
   );

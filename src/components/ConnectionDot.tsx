@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { View } from 'react-native';
 import { useConnectionStore } from '@/stores/connection';
 import { statusFor } from './ConnectionStatus';
@@ -16,7 +17,7 @@ export function ConnectionDot() {
         borderRadius: 4,
         backgroundColor: isError ? 'transparent' : color,
         borderWidth: isError ? 1 : 0,
-        borderColor: '#FF453A',
+        borderColor: tokens.colors.accent.red,
       }}
     />
   );

@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import '../../global.css';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -24,11 +25,11 @@ export default function RootLayout() {
   }, [loaded]);
   if (!loaded) return null;
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#0A0A12' }}>
-      <View style={{ flex: 1, backgroundColor: '#0A0A12' }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: tokens.colors.background }}>
+      <View style={{ flex: 1, backgroundColor: tokens.colors.background }}>
         <StatusBar style="light" />
         <Stack
-          screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0A0A12' } }}
+          screenOptions={{ headerShown: false, contentStyle: { backgroundColor: tokens.colors.background } }}
         />
       </View>
     </GestureHandlerRootView>

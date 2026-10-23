@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 import { Label } from '@/theme/typography';
-import { radius } from '@/theme/tokens';
+import {radius, tokens} from '@/theme/tokens';
 import type { LucideIcon } from 'lucide-react-native';
 
 interface SettingRowProps {
@@ -55,15 +55,15 @@ export function SettingRow({
               justifyContent: 'center',
             }}
           >
-            <Icon size={17} strokeWidth={1.6} color="#8B8CF8" />
+            <Icon size={17} strokeWidth={1.6} color={tokens.colors.accent.violet} />
           </View>
         )}
-        <Label style={{ color: '#F5F6FA', flexShrink: 1, flex: 1 }}>{label}</Label>
+        <Label style={{ color: tokens.colors.text.primary, flexShrink: 1, flex: 1 }}>{label}</Label>
         {!stack &&
           (children ?? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              {value ? <Label style={{ color: '#B7BDCB' }}>{value}</Label> : null}
-              {onPress ? <ChevronRight size={16} color="#B7BDCB" /> : null}
+              {value ? <Label style={{ color: tokens.colors.text.secondary }}>{value}</Label> : null}
+              {onPress ? <ChevronRight size={16} color={tokens.colors.text.secondary} /> : null}
             </View>
           ))}
       </View>

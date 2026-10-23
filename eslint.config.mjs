@@ -49,6 +49,28 @@ export default tseslint.config(
     },
   },
   {
+    // Design tokens live in src/theme/: raw hex anywhere else is drift.
+    // Exempt: brand-identity data (per-app colors, logo SVG fills) and tests
+    // that pass brand colors as props.
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: [
+      'src/theme/**',
+      '**/__tests__/**',
+      '**/*.test.{ts,tsx}',
+      'src/protocol/deeplinks.ts',
+      'src/shortcuts/brandLogos.ts',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/^#[0-9A-Fa-f]{6}$/]',
+          message: 'Use tokens.colors.* from @/theme/tokens instead of raw hex.',
+        },
+      ],
+    },
+  },
+  {
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       // Deferred to a follow-up: the tree has ~40 pre-existing `any`s

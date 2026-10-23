@@ -12,7 +12,7 @@ import { Screen } from '@/components/ui/Screen';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { Label } from '@/theme/typography';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
-import { radius } from '@/theme/tokens';
+import {radius, tokens} from '@/theme/tokens';
 
 type RowStatus = 'idle' | 'sent' | 'unsupported' | 'failed';
 
@@ -68,10 +68,10 @@ export default function IrStudioScreen() {
   };
 
   const statusColor = (s: RowStatus) => {
-    if (s === 'sent') return '#22D3EE';
-    if (s === 'unsupported') return '#747B8A';
-    if (s === 'failed') return '#FF453A';
-    return '#B7BDCB';
+    if (s === 'sent') return tokens.colors.accent.cyan;
+    if (s === 'unsupported') return tokens.colors.text.muted;
+    if (s === 'failed') return tokens.colors.accent.red;
+    return tokens.colors.text.secondary;
   };
 
   return (
@@ -90,12 +90,12 @@ export default function IrStudioScreen() {
                     borderRadius: 999,
                     borderWidth: 1,
                     borderColor: 'rgba(255,255,255,0.07)',
-                    backgroundColor: '#13131E',
+                    backgroundColor: tokens.colors.surface.DEFAULT,
                     paddingHorizontal: 12,
                     paddingVertical: 5,
                   }}
                 >
-                  <Label style={{ color: '#B7BDCB', fontSize: 11 }}>
+                  <Label style={{ color: tokens.colors.text.secondary, fontSize: 11 }}>
                     {Math.round(r.min / 1000)}-{Math.round(r.max / 1000)} kHz
                   </Label>
                 </View>
@@ -117,17 +117,17 @@ export default function IrStudioScreen() {
                   width: 8,
                   height: 8,
                   borderRadius: 4,
-                  backgroundColor: '#34D399',
+                  backgroundColor: tokens.colors.accent.green,
                 }}
               />
-              <Label style={{ color: '#B7BDCB', fontSize: 11 }}>Verified</Label>
+              <Label style={{ color: tokens.colors.text.secondary, fontSize: 11 }}>Verified</Label>
             </View>
           )}
         </SettingsSection>
 
         <SettingsSection title="Command Matrix">
           {commands.length === 0 && (
-            <Label style={{ color: '#747B8A' }}>Select a profile to test commands.</Label>
+            <Label style={{ color: tokens.colors.text.muted }}>Select a profile to test commands.</Label>
           )}
           {commands.map((name) => {
             const status = rowStatuses[name] ?? 'idle';
@@ -160,7 +160,7 @@ export default function IrStudioScreen() {
                       opacity={0.1}
                     />
                   )}
-                  <Label style={{ color: '#F5F6FA', textTransform: 'capitalize' }}>{name}</Label>
+                  <Label style={{ color: tokens.colors.text.primary, textTransform: 'capitalize' }}>{name}</Label>
                   <Label
                     style={{
                       color: statusColor(status),
@@ -173,7 +173,7 @@ export default function IrStudioScreen() {
                 </Pressable>
                 {detail ? (
                   <Label
-                    style={{ marginTop: 4, paddingHorizontal: 16, color: '#747B8A', fontSize: 11 }}
+                    style={{ marginTop: 4, paddingHorizontal: 16, color: tokens.colors.text.muted, fontSize: 11 }}
                   >
                     {detail}
                   </Label>
@@ -197,14 +197,14 @@ export default function IrStudioScreen() {
                       borderRadius: radius.lg,
                       borderWidth: 1,
                       borderColor: selected ? 'rgba(34,211,238,0.4)' : 'rgba(255,255,255,0.07)',
-                      backgroundColor: selected ? 'rgba(34,211,238,0.12)' : '#13131E',
+                      backgroundColor: selected ? 'rgba(34,211,238,0.12)' : tokens.colors.surface.DEFAULT,
                       paddingVertical: 8,
                       alignItems: 'center',
                     }}
                     accessibilityRole="button"
                     accessibilityLabel={`Repeat ${n}`}
                   >
-                    <Label style={{ color: selected ? '#22D3EE' : '#F5F6FA' }}>{n}</Label>
+                    <Label style={{ color: selected ? tokens.colors.accent.cyan : tokens.colors.text.primary }}>{n}</Label>
                   </Pressable>
                 );
               })}
@@ -223,14 +223,14 @@ export default function IrStudioScreen() {
                       borderRadius: radius.lg,
                       borderWidth: 1,
                       borderColor: selected ? 'rgba(34,211,238,0.4)' : 'rgba(255,255,255,0.07)',
-                      backgroundColor: selected ? 'rgba(34,211,238,0.12)' : '#13131E',
+                      backgroundColor: selected ? 'rgba(34,211,238,0.12)' : tokens.colors.surface.DEFAULT,
                       paddingVertical: 8,
                       alignItems: 'center',
                     }}
                     accessibilityRole="button"
                     accessibilityLabel={`Gap ${ms} ms`}
                   >
-                    <Label style={{ color: selected ? '#22D3EE' : '#F5F6FA' }}>{ms}</Label>
+                    <Label style={{ color: selected ? tokens.colors.accent.cyan : tokens.colors.text.primary }}>{ms}</Label>
                   </Pressable>
                 );
               })}

@@ -1,4 +1,6 @@
-export const SPRING = { damping: 18, stiffness: 220, mass: 0.9 } as const;
+import { SPRING } from '@/lib/spring';
+
+export { SPRING };
 
 export const tokens = {
   colors: {
@@ -6,6 +8,10 @@ export const tokens = {
     surface: {
       DEFAULT: '#13131E',
       elevated: '#1A1A2A',
+      /** Sunken wells: inputs, button faces. */
+      sunken: '#15151F',
+      /** Modal sheets. */
+      sheet: '#10101A',
       border: 'rgba(255,255,255,0.07)',
       highlight: 'rgba(255,255,255,0.05)',
     },
@@ -26,7 +32,13 @@ export const tokens = {
       primary: '#F5F6FA',
       secondary: '#B7BDCB',
       muted: '#747B8A',
+      /** Small (<14px) muted text — the only grey that passes 4.5:1 on near-black. */
+      soft: '#9AA0B4',
     },
+    /** Disabled-control grey (volume rail, touchpad ring). */
+    disabled: '#5E6472',
+    /** Full-screen modal scrim. */
+    scrim: '#05050A',
   },
 } as const;
 

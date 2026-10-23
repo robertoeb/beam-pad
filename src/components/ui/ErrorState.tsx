@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 import { Label } from '@/theme/typography';
-import { space, radius } from '@/theme/tokens';
+import {space, radius, tokens} from '@/theme/tokens';
 
 interface ErrorStateProps {
   icon?: ReactNode;
@@ -53,7 +53,7 @@ export function ErrorState({
         <Label
           style={{
             textAlign: 'center',
-            color: '#B7BDCB',
+            color: tokens.colors.text.secondary,
             marginBottom: retryLabel || secondaryLabel ? space[5] : 0,
           }}
         >
@@ -76,7 +76,7 @@ export function ErrorState({
                 borderColor: 'rgba(34,211,238,0.35)',
               }}
             >
-              <Label style={{ color: '#22D3EE' }}>{retryLabel}</Label>
+              <Label style={{ color: tokens.colors.accent.cyan }}>{retryLabel}</Label>
             </Pressable>
           )}
           {secondaryLabel && onSecondary && (
@@ -88,12 +88,12 @@ export function ErrorState({
                 paddingVertical: space[3],
                 paddingHorizontal: space[5],
                 borderRadius: radius.md,
-                backgroundColor: '#1A1A2A',
+                backgroundColor: tokens.colors.surface.elevated,
                 borderWidth: 1,
                 borderColor: 'rgba(255,255,255,0.08)',
               }}
             >
-              <Label style={{ color: '#B7BDCB' }}>{secondaryLabel}</Label>
+              <Label style={{ color: tokens.colors.text.secondary }}>{secondaryLabel}</Label>
             </Pressable>
           )}
         </View>

@@ -6,7 +6,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useEffect } from 'react';
-import { radius } from '@/theme/tokens';
+import { useReducedMotion } from '@/lib/useReducedMotion';
+import {radius, tokens} from '@/theme/tokens';
 
 interface SkeletonProps {
   width?: number | string;
@@ -16,17 +17,22 @@ interface SkeletonProps {
 
 export function Skeleton({ width = '100%', height = 20, style }: SkeletonProps) {
   const opacity = useSharedValue(0.4);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) {
+      opacity.value = 0.7;
+      return;
+    }
     opacity.value = withRepeat(withTiming(1, { duration: 900 }), -1, true);
-  }, [opacity]);
+  }, [opacity, reducedMotion]);
 
   const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
   return (
     <Animated.View
       style={[
-        { width, height, borderRadius: radius.md, backgroundColor: '#1A1A2A' },
+        { width, height, borderRadius: radius.md, backgroundColor: tokens.colors.surface.elevated },
         animStyle,
         style,
       ]}

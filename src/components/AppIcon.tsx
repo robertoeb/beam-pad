@@ -2,7 +2,7 @@ import { Image, View } from 'react-native';
 import { BRAND_LOGOS } from '@/shortcuts/brandLogos';
 import { BRAND_ICONS, initialsFallback } from '@/shortcuts/icons';
 import { Label } from '@/theme/typography';
-import { radius } from '@/theme/tokens';
+import {radius, tokens} from '@/theme/tokens';
 
 interface AppIconProps {
   appId: string;
@@ -17,9 +17,9 @@ export function AppIcon({ appId, name, color, size = 64, rounded = true }: AppIc
 
   const glyph = () => {
     const BrandIcon = BRAND_ICONS[appId];
-    if (BrandIcon) return <BrandIcon size={Math.round(size * 0.42)} color="#FFFFFF" />;
+    if (BrandIcon) return <BrandIcon size={Math.round(size * 0.42)} color={tokens.colors.text.primary} />;
     return (
-      <Label style={{ color: '#FFFFFF', fontSize: Math.round(size * 0.24) }}>
+      <Label style={{ color: tokens.colors.text.primary, fontSize: Math.round(size * 0.24) }}>
         {initialsFallback(name)}
       </Label>
     );

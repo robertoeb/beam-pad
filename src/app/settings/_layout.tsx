@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { Stack } from 'expo-router';
 
 export default function SettingsLayout() {
@@ -5,7 +6,7 @@ export default function SettingsLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: '#0A0A12' },
+        contentStyle: { backgroundColor: tokens.colors.background },
         animation: 'slide_from_right',
       }}
     />

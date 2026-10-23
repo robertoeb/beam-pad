@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { useRef } from 'react';
 import { Pressable } from 'react-native';
 import Animated, {
@@ -7,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { haptic } from '@/lib/haptics';
+import { Micro } from '@/theme/typography';
 import { SPRING } from '@/lib/spring';
 import type { LucideIcon } from 'lucide-react-native';
 
@@ -106,7 +108,7 @@ export function RemoteButton({
     }
   };
 
-  const iconColor = accent === 'red' ? '#FF453A' : '#F5F6FA';
+  const iconColor = accent === 'red' ? tokens.colors.accent.red : tokens.colors.text.primary;
 
   return (
     <AnimatedPressable
@@ -121,23 +123,14 @@ export function RemoteButton({
           alignItems: 'center',
           justifyContent: 'center',
           borderWidth: 1,
-          backgroundColor: '#15151F',
+          backgroundColor: tokens.colors.surface.sunken,
           borderRadius: round ? size / 2 : 20,
         },
       ]}
     >
       <Icon size={label ? 20 : 22} strokeWidth={1.6} color={iconColor} />
       {label ? (
-        <Animated.Text
-          style={{
-            marginTop: 4,
-            fontFamily: 'Inter-Medium',
-            fontSize: 11,
-            color: '#B7BDCB',
-          }}
-        >
-          {label}
-        </Animated.Text>
+        <Micro style={{ marginTop: 4, color: tokens.colors.text.secondary }}>{label}</Micro>
       ) : null}
     </AnimatedPressable>
   );

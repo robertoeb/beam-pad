@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Plus, Check } from 'lucide-react-native';
@@ -49,7 +50,7 @@ export function AppGrid({ edit: editProp }: AppGridProps) {
             accessibilityLabel="Done editing"
             onPress={exitEdit}
           >
-            <Check size={20} color="#00E5FF" />
+            <Check size={20} color={tokens.colors.accent.cyan} />
           </Pressable>
         </View>
       )}
@@ -91,7 +92,7 @@ export function AppGrid({ edit: editProp }: AppGridProps) {
                   style={{
                     fontSize: 13,
                     fontWeight: '600',
-                    color: '#A1A1AA',
+                    color: tokens.colors.text.secondary,
                     marginBottom: 12,
                   }}
                 >
@@ -121,13 +122,13 @@ export function AppGrid({ edit: editProp }: AppGridProps) {
                           justifyContent: 'center',
                         }}
                       >
-                        <Plus size={20} color="#00E5FF" />
+                        <Plus size={20} color={tokens.colors.accent.cyan} />
                       </Pressable>
                       <Text
                         style={{
                           marginTop: 4,
                           fontSize: 11,
-                          color: '#A1A1AA',
+                          color: tokens.colors.text.secondary,
                           textAlign: 'center',
                         }}
                         numberOfLines={1}

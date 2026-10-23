@@ -9,8 +9,8 @@ import { irSend } from '@/services/volumeRouter';
 import { Screen } from '@/components/ui/Screen';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
-import { Label, Micro, Title } from '@/theme/typography';
-import { space, radius } from '@/theme/tokens';
+import {Label, Micro, Title, Display} from '@/theme/typography';
+import {space, radius, tokens} from '@/theme/tokens';
 
 export default function IrProfileScreen() {
   const irProfileId = useSettingsStore((s) => s.irProfileId);
@@ -104,12 +104,12 @@ export default function IrProfileScreen() {
                   end={{ x: 1, y: 1 }}
                   opacity={0.2}
                 />
-                <Title style={{ fontSize: 28, color: '#F5F6FA' }}>
+                <Display>
                   {currentProfile.brand[0]?.toUpperCase() ?? 'T'}
-                </Title>
+                </Display>
               </View>
               <Title style={{ marginBottom: 8, textAlign: 'center' }}>{currentProfile.brand}</Title>
-              <Label style={{ marginBottom: 32, textAlign: 'center', color: '#B7BDCB' }}>
+              <Label style={{ marginBottom: 32, textAlign: 'center', color: tokens.colors.text.secondary }}>
                 Trying {currentProfile.protocol.toUpperCase()} - did your TV respond?
               </Label>
               <Pressable
@@ -134,7 +134,7 @@ export default function IrProfileScreen() {
                   end={{ x: 1, y: 0.5 }}
                   opacity={0.08}
                 />
-                <Label style={{ color: '#22D3EE' }}>Send Power</Label>
+                <Label style={{ color: tokens.colors.accent.cyan }}>Send Power</Label>
               </Pressable>
               {wizardPinned && (
                 <Pressable
@@ -143,13 +143,13 @@ export default function IrProfileScreen() {
                     width: '100%',
                     alignItems: 'center',
                     borderRadius: radius.xl,
-                    backgroundColor: '#22D3EE',
+                    backgroundColor: tokens.colors.accent.cyan,
                     paddingVertical: 16,
                   }}
                   accessibilityRole="button"
                   accessibilityLabel="It worked"
                 >
-                  <Label style={{ color: '#000000', fontWeight: '600' }}>It worked!</Label>
+                  <Label style={{ color: tokens.colors.background, fontWeight: '600' }}>It worked!</Label>
                 </Pressable>
               )}
               <Pressable
@@ -161,11 +161,11 @@ export default function IrProfileScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="No, try next"
               >
-                <Label style={{ color: '#747B8A' }}>No, try next</Label>
+                <Label style={{ color: tokens.colors.text.muted }}>No, try next</Label>
               </Pressable>
             </>
           ) : (
-            <Label style={{ color: '#747B8A' }}>No more profiles to try.</Label>
+            <Label style={{ color: tokens.colors.text.muted }}>No more profiles to try.</Label>
           )}
         </View>
       </Screen>
@@ -188,16 +188,16 @@ export default function IrProfileScreen() {
           borderColor: 'rgba(255,255,255,0.09)',
           backgroundColor: 'rgba(19,19,30,0.8)',
           paddingHorizontal: 14,
-          paddingVertical: 11,
+          paddingVertical: space[3],
         }}
       >
-        <Search size={16} color="#B7BDCB" />
+        <Search size={16} color={tokens.colors.text.secondary} />
         <TextInput
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder="Search brand, type, protocol…"
-          placeholderTextColor="#747B8A"
-          style={{ flex: 1, color: '#F5F6FA', fontSize: 14, fontFamily: 'Inter-Medium' }}
+          placeholderTextColor={tokens.colors.text.muted}
+          style={{ flex: 1, color: tokens.colors.text.primary, fontSize: 14, fontFamily: 'Inter-Medium' }}
           autoCapitalize="none"
         />
       </View>
@@ -208,7 +208,7 @@ export default function IrProfileScreen() {
       >
         {Object.entries(groupedProfiles).map(([type, profiles]) => (
           <View key={type} style={{ marginBottom: 16 }}>
-            <Micro style={{ marginBottom: 8, color: '#747B8A' }}>{type}</Micro>
+            <Micro style={{ marginBottom: 8, color: tokens.colors.text.muted }}>{type}</Micro>
             {profiles.map((profile) => {
               const isSelected =
                 (activeDeviceId ? irPerDevice[activeDeviceId] : irProfileId) === profile.id;
@@ -234,12 +234,12 @@ export default function IrProfileScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={`Select ${profile.brand}`}
                 >
-                  <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
                     <View style={{ flex: 1 }}>
-                      <Label style={{ color: '#F5F6FA' }}>{profile.brand}</Label>
-                      <Label style={{ color: '#9AA0B4', fontSize: 11 }}>
+                      <Label style={{ color: tokens.colors.text.primary }}>{profile.brand}</Label>
+                      <Micro style={{ color: tokens.colors.text.soft }}>
                         {profile.protocol.toUpperCase()}
-                      </Label>
+                      </Micro>
                     </View>
                     {profile.verified && (
                       <View
@@ -247,12 +247,12 @@ export default function IrProfileScreen() {
                           width: 8,
                           height: 8,
                           borderRadius: 4,
-                          backgroundColor: '#34D399',
+                          backgroundColor: tokens.colors.accent.green,
                         }}
                       />
                     )}
                   </View>
-                  {isSelected && <Check size={18} color="#22D3EE" />}
+                  {isSelected && <Check size={18} color={tokens.colors.accent.cyan} />}
                 </Pressable>
               );
             })}

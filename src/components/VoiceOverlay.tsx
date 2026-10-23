@@ -1,3 +1,4 @@
+import { tokens } from '@/theme/tokens';
 import { View } from 'react-native';
 import { Mic } from 'lucide-react-native';
 import Animated, {
@@ -52,11 +53,11 @@ export function VoiceOverlay({ active }: VoiceOverlayProps) {
             height: 120,
             borderRadius: 60,
             borderWidth: 2,
-            borderColor: '#22D3EE',
+            borderColor: tokens.colors.accent.cyan,
             justifyContent: 'center',
             alignItems: 'center',
             overflow: 'hidden',
-            backgroundColor: '#0F0F1A',
+            backgroundColor: tokens.colors.surface.sheet,
           },
           ringStyle,
         ]}
@@ -67,9 +68,9 @@ export function VoiceOverlay({ active }: VoiceOverlayProps) {
           end={{ x: 1, y: 1 }}
           opacity={0.18}
         />
-        <Mic size={48} strokeWidth={1.5} color="#22D3EE" />
+        <Mic size={48} strokeWidth={1.5} color={tokens.colors.accent.cyan} />
       </Animated.View>
-      <Label style={{ marginTop: 24, color: '#B7BDCB' }}>Listening… release to send</Label>
+      <Label style={{ marginTop: 24, color: tokens.colors.text.secondary }}>Listening… release to send</Label>
     </View>
   );
 }

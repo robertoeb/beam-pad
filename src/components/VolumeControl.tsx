@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Pressable, View } from 'react-native';
 import { Minus, Plus } from 'lucide-react-native';
 import { haptic } from '@/lib/haptics';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -13,7 +14,7 @@ import { useConnectionStore } from '@/stores/connection';
 import { volumeCommand } from '@/services/volumeRouter';
 import { SPRING } from '@/lib/spring';
 import { Label } from '@/theme/typography';
-import { radius } from '@/theme/tokens';
+import {radius, tokens} from '@/theme/tokens';
 
 function VolButton({
   icon,
@@ -68,7 +69,7 @@ function VolButton({
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: '#22D3EE',
+            backgroundColor: tokens.colors.accent.cyan,
           },
         ]}
       />
@@ -84,10 +85,12 @@ export function VolumeControl() {
   const max = volume ? volume.max : 100;
   const pct = max > 0 ? Math.round((level / max) * 100) : 0;
   const pulse = useSharedValue(0);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) return;
     pulse.value = withSequence(withTiming(1, { duration: 120 }), withTiming(0, { duration: 260 }));
-  }, [pct, pulse]);
+  }, [pct, pulse, reducedMotion]);
 
   const numStyle = useAnimatedStyle(() => ({
     transform: [{ scale: 1 + 0.3 * pulse.value }],
@@ -121,7 +124,7 @@ export function VolumeControl() {
       <VolButton
         accessibilityLabel="Volume down"
         onPress={() => volumeCommand('volDown')}
-        icon={<Minus size={24} strokeWidth={2} color="#F5F6FA" />}
+        icon={<Minus size={24} strokeWidth={2} color={tokens.colors.text.primary} />}
       />
       <View style={{ minWidth: 52, alignItems: 'center' }}>
         <Animated.View style={numStyle}>
@@ -130,7 +133,7 @@ export function VolumeControl() {
               fontSize: 16,
               lineHeight: 20,
               fontWeight: '700',
-              color: '#F5F6FA',
+              color: tokens.colors.text.primary,
             }}
           >
             {muted ? '0' : pct}
@@ -140,7 +143,7 @@ export function VolumeControl() {
       <VolButton
         accessibilityLabel="Volume up"
         onPress={() => volumeCommand('volUp')}
-        icon={<Plus size={24} strokeWidth={2} color="#F5F6FA" />}
+        icon={<Plus size={24} strokeWidth={2} color={tokens.colors.text.primary} />}
       />
       <View
         style={{
@@ -159,7 +162,7 @@ export function VolumeControl() {
             left: 0,
             bottom: 0,
             width: `${pct}%`,
-            backgroundColor: muted ? '#5E6472' : '#22D3EE',
+            backgroundColor: muted ? tokens.colors.disabled : tokens.colors.accent.cyan,
           }}
         />
       </View>

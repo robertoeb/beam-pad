@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { haptic } from '@/lib/haptics';
 import { Label } from '@/theme/typography';
-import { radius, space } from '@/theme/tokens';
+import {radius, space, tokens} from '@/theme/tokens';
 
 interface PinInputProps {
   length?: number;
@@ -138,11 +138,11 @@ const styles = StyleSheet.create({
   boxText: {
     fontSize: 28,
     lineHeight: 34,
-    color: '#F5F6FA',
+    color: tokens.colors.text.primary,
     fontFamily: 'Inter-SemiBold',
   },
   boxTextFilled: {
-    color: '#22D3EE',
+    color: tokens.colors.accent.cyan,
   },
   caret: {
     position: 'absolute',
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 2,
     borderRadius: 1,
-    backgroundColor: '#22D3EE',
+    backgroundColor: tokens.colors.accent.cyan,
   },
   hiddenInput: {
     position: 'absolute',

@@ -8,9 +8,9 @@ import { COMMAND_PORT } from '@/protocol/ports';
 import { Screen } from '@/components/ui/Screen';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Label } from '@/theme/typography';
+import {Label, Micro} from '@/theme/typography';
 import { Gradient, BRAND_GRADIENT } from '@/theme/gradient';
-import { space, radius } from '@/theme/tokens';
+import {space, radius, tokens} from '@/theme/tokens';
 
 const SCAN_WINDOW_MS = 15_000;
 
@@ -72,16 +72,16 @@ export default function DevicesScreen() {
           borderColor: 'rgba(255,255,255,0.07)',
           backgroundColor: 'rgba(19,19,30,0.8)',
           paddingHorizontal: space[4],
-          paddingVertical: 14,
+          paddingVertical: space[4],
           marginBottom: space[2],
-          gap: 12,
+          gap: space[3],
         }}
       >
         <View
           style={{
             width: 40,
             height: 40,
-            borderRadius: 14,
+            borderRadius: radius.md,
             backgroundColor: 'rgba(139,140,248,0.1)',
             borderWidth: 1,
             borderColor: 'rgba(139,140,248,0.22)',
@@ -89,15 +89,15 @@ export default function DevicesScreen() {
             justifyContent: 'center',
           }}
         >
-          <Tv size={19} strokeWidth={1.6} color="#8B8CF8" />
+          <Tv size={19} strokeWidth={1.6} color={tokens.colors.accent.violet} />
         </View>
         <View style={{ flex: 1 }}>
-          <Label style={{ color: '#F5F6FA' }}>{item?.name}</Label>
+          <Label style={{ color: tokens.colors.text.primary }}>{item?.name}</Label>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 1 }}>
-            <Signal size={10} color="#747B8A" />
-            <Label style={{ color: '#9AA0B4', fontSize: 11 }}>
+            <Signal size={10} color={tokens.colors.text.muted} />
+            <Micro style={{ color: tokens.colors.text.soft }}>
               {item?.host}:{item?.port}
-            </Label>
+            </Micro>
           </View>
         </View>
         <Pressable
@@ -120,7 +120,7 @@ export default function DevicesScreen() {
             end={{ x: 1, y: 0.5 }}
             opacity={0.06}
           />
-          <Label style={{ color: '#22D3EE' }}>Pair</Label>
+          <Label style={{ color: tokens.colors.accent.cyan }}>Pair</Label>
         </Pressable>
       </View>
     ),
@@ -141,8 +141,8 @@ export default function DevicesScreen() {
               <RefreshControl
                 refreshing={scanning}
                 onRefresh={handleRescan}
-                tintColor="#8B8CF8"
-                colors={['#8B8CF8']}
+                tintColor={tokens.colors.accent.violet}
+                colors={[tokens.colors.accent.violet]}
               />
             )
           }
@@ -150,9 +150,9 @@ export default function DevicesScreen() {
           <EmptyState
             icon={
               scanning ? (
-                <Radar size={40} color="#8B8CF8" strokeWidth={1.6} />
+                <Radar size={40} color={tokens.colors.accent.violet} strokeWidth={1.6} />
               ) : (
-                <Search size={40} color="#8B8CF8" strokeWidth={1.6} />
+                <Search size={40} color={tokens.colors.accent.violet} strokeWidth={1.6} />
               )
             }
             title={scanning ? 'Scanning for TVs…' : 'No TVs found'}
@@ -178,8 +178,8 @@ export default function DevicesScreen() {
             <RefreshControl
               refreshing={scanning}
               onRefresh={handleRescan}
-              tintColor="#8B8CF8"
-              colors={['#8B8CF8']}
+              tintColor={tokens.colors.accent.violet}
+              colors={[tokens.colors.accent.violet]}
             />
           }
         />
@@ -195,13 +195,13 @@ export default function DevicesScreen() {
         >
           <TextInput
             placeholder="TV IP address"
-            placeholderTextColor="#747B8A"
+            placeholderTextColor={tokens.colors.text.muted}
             value={manualHost}
             onChangeText={setManualHost}
             keyboardType="url"
             autoCapitalize="none"
             keyboardAppearance="dark"
-            cursorColor="#22D3EE"
+            cursorColor={tokens.colors.accent.cyan}
             selectionColor="rgba(34,211,238,0.3)"
             style={{
               flex: 1,
@@ -213,7 +213,7 @@ export default function DevicesScreen() {
               paddingVertical: 12,
               minHeight: 44,
               justifyContent: 'center',
-              color: '#F5F6FA',
+              color: tokens.colors.text.primary,
               fontSize: 14,
               fontFamily: 'Inter-Medium',
             }}
@@ -238,7 +238,7 @@ export default function DevicesScreen() {
               end={{ x: 1, y: 0.5 }}
               opacity={0.06}
             />
-            <Label style={{ color: '#22D3EE' }}>Pair</Label>
+            <Label style={{ color: tokens.colors.accent.cyan }}>Pair</Label>
           </Pressable>
         </View>
       )}

@@ -16,7 +16,7 @@ import { Screen } from '@/components/ui/Screen';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Label, Micro } from '@/theme/typography';
-import { radius, space } from '@/theme/tokens';
+import {radius, space, tokens} from '@/theme/tokens';
 import { appShortcutId } from '@/shortcuts/types';
 
 function CatalogAppTile({
@@ -49,16 +49,16 @@ function CatalogAppTile({
             justifyContent: 'center',
           }}
         >
-          <Plus size={14} color="#22D3EE" strokeWidth={2} />
+          <Plus size={14} color={tokens.colors.accent.cyan} strokeWidth={2} />
         </View>
       </Pressable>
       {showLabel && (
-        <Label
-          style={{ marginTop: 4, fontSize: 10, color: '#B7BDCB', textAlign: 'center' }}
+        <Micro
+          style={{ marginTop: 4, color: tokens.colors.text.secondary, textAlign: 'center' }}
           numberOfLines={1}
         >
           {app.name}
-        </Label>
+        </Micro>
       )}
     </View>
   );
@@ -102,13 +102,13 @@ export default function ShortcutsScreen() {
               borderRadius: 20,
               borderWidth: 1,
               borderColor: edit ? 'transparent' : 'rgba(255,255,255,0.08)',
-              backgroundColor: edit ? '#22D3EE' : 'rgba(255,255,255,0.06)',
+              backgroundColor: edit ? tokens.colors.accent.cyan : 'rgba(255,255,255,0.06)',
             }}
           >
             {edit ? (
-              <Label style={{ color: '#0A0A12', fontWeight: '600' }}>Done</Label>
+              <Label style={{ color: tokens.colors.background, fontWeight: '600' }}>Done</Label>
             ) : (
-              <PenLine size={18} strokeWidth={1.6} color="#B7BDCB" />
+              <PenLine size={18} strokeWidth={1.6} color={tokens.colors.text.secondary} />
             )}
           </Pressable>
         }
@@ -116,7 +116,7 @@ export default function ShortcutsScreen() {
 
       {shortcuts.length === 0 && !edit ? (
         <EmptyState
-          icon={<LayoutGrid size={48} color="#8B8CF8" />}
+          icon={<LayoutGrid size={48} color={tokens.colors.accent.violet} />}
           title="No shortcuts yet"
           body="Pin your favorite apps for one-tap access."
           actionLabel="Add default shortcuts"
@@ -167,7 +167,7 @@ export default function ShortcutsScreen() {
 
           {catalogApps.length > 0 && (
             <View style={{ paddingTop: 24, paddingBottom: 32 }}>
-              <Micro style={{ color: '#747B8A', marginBottom: 12 }}>
+              <Micro style={{ color: tokens.colors.text.muted, marginBottom: 12 }}>
                 {edit ? 'More apps - tap to add' : 'Apps'}
               </Micro>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[3] }}>
