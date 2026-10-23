@@ -54,6 +54,15 @@ npm run android            # builds & installs the dev client
 ```
 
 > BeamPad uses native modules (MMKV, TLS sockets, IR) — it **cannot run in Expo Go**. Always use the dev client.
+>
+> After any dependency upgrade (`expo install`, SDK bumps), rebuild the dev
+> client from clean — otherwise the new JS bundle talks to the old native
+> binary and crashes in `Worklets`/`reanimated` init:
+>
+> ```bash
+> npx expo prebuild --platform android --clean
+> npm run android
+> ```
 
 ### Everyday commands
 
