@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   quality-gates:
-    name: Typecheck · Tests · Coverage gates
+    name: Lint · Typecheck · Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -20,25 +20,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node 20 (npm cache)
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      # The repo is docs-only until TASK_01 lands; skip gracefully pre-bootstrap.
-      - name: Bootstrap guard
-        id: guard
-        run: |
-          if [ -f package.json ]; then echo "bootstrapped=true" >> "$GITHUB_OUTPUT"; \
-          else echo "bootstrapped=false" >> "$GITHUB_OUTPUT"; echo "Pre-bootstrap repo — skipping build gates."; fi
-
       - name: Install dependencies
-        if: steps.guard.outputs.bootstrapped == 'true'
         run: npm ci
 
       - name: Verify protobuf bundle is up to date
-        if: steps.guard.outputs.bootstrapped == 'true'
         run: |
           npm run gen:proto
           if [ -n "$(git status --porcelain src/proto)" ]; then
@@ -46,72 +37,77 @@ jobs:
             exit 1
           fi
 
-      - name: Typecheck (strict)
-        if: steps.guard.outputs.bootstrapped == 'true'
+      - name: Typecheck (strict tsc)
         run: npm run typecheck
 
-      - name: Lint
-        if: steps.guard.outputs.bootstrapped == 'true'
+      - name: Lint (eslint, zero warnings)
         run: npm run lint
 
-      - name: Unit + component tests with coverage gates
-        if: steps.guard.outputs.bootstrapped == 'true'
+      - name: Tests with coverage gates
         run: npm run test:ci
 
-      - name: Print coverage summary
-        if: steps.guard.outputs.bootstrapped == 'true' && always()
-        run: cat coverage/coverage-summary.json
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "
+              const s = require('./coverage/coverage-summary.json').total;
+              const row = (k) => '| ' + k.padEnd(10) + ' | ' + ['statements','branches','functions','lines'].map(m => String(s[m].pct).padStart(6) + '%').join(' | ') + ' |';
+              const out = ['| metric     | statements | branches | functions | lines |', '|------------|------------|----------|-----------|-------|', row('total')].join('\n');
+              console.log(out);
+              require('fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY, out + '\n');
+            "
+          else
+            echo "No coverage report (tests did not run)."
+          fi
 
       - name: Upload coverage report
-        if: steps.guard.outputs.bootstrapped == 'true' && always()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ github.sha }}
-          path: |
-            coverage/
-            coverage/lcov.info
+          path: coverage/lcov.info
+          if-no-files-found: warn
           retention-days: 14
 
-  # ────────────────────────────────────────────────────────────
-  # Native smoke build — activates after TASK_02 (local modules exist).
-  # Runs only on demand or on main pushes to keep PR feedback fast.
-  # ────────────────────────────────────────────────────────────
-  android-build:
-    name: Android debug build (smoke)
+  preview-apk:
+    name: Preview APK (debug)
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # Every main push produces a sideloadable debug APK — no manual builds.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Bootstrap guard
-        id: guard
-        run: |
-          if [ -f package.json ]; then echo "bootstrapped=true" >> "$GITHUB_OUTPUT"; \
-          else echo "bootstrapped=false" >> "$GITHUB_OUTPUT"; fi
-
-      - name: Setup Node
-        if: steps.guard.outputs.bootstrapped == 'true'
+      - name: Setup Node 20 (npm cache)
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - name: Setup JDK 17 + Android SDK
-        if: steps.guard.outputs.bootstrapped == 'true'
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Install + prebuild
-        if: steps.guard.outputs.bootstrapped == 'true'
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install and prebuild
         run: |
           npm ci
           npx expo prebuild --platform android --no-install
 
-      - name: Gradle assembleDebug
-        if: steps.guard.outputs.bootstrapped == 'true'
+      - name: Assemble debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew :app:assembleDebug --no-daemon
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: beampad-debug-${{ github.sha }}
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

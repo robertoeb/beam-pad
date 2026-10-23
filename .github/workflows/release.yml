@@ -23,8 +23,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-release:
-    name: Signed Android build
+  store-release:
+    name: Store release (signed AAB)
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:
@@ -111,20 +111,23 @@ jobs:
       - name: Collect artifacts
         id: collect
         run: |
-          ls android/app/build/outputs/bundle/release/ android/app/build/outputs/apk/release/ 2>/dev/null || true
-          AAB=$(ls android/app/build/outputs/bundle/release/*.aab 2>/dev/null | head -n 1 || true)
-          APK=$(ls android/app/build/outputs/apk/release/*-release.apk 2>/dev/null | head -n 1 || true)
-          echo "aab=$AAB" >> "$GITHUB_OUTPUT"
-          echo "apk=$APK" >> "$GITHUB_OUTPUT"
-          echo "AAB=$AAB APK=$APK"
+          FILES=""
+          for f in android/app/build/outputs/bundle/release/*.aab android/app/build/outputs/apk/release/*-release.apk; do
+            [ -f "$f" ] && FILES="$FILES$f%0A" && echo "found: $f"
+          done
+          if [ -z "$FILES" ]; then
+            echo "::error::No AAB or APK produced."
+            exit 1
+          fi
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          printf '%b' "$FILES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ steps.version.outputs.app_version }}
-          path: |
-            ${{ steps.collect.outputs.aab }}
-            ${{ steps.collect.outputs.apk }}
+          path: ${{ steps.collect.outputs.files }}
           if-no-files-found: error
           retention-days: 90
 
@@ -132,7 +135,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ${{ steps.collect.outputs.aab }}
-            ${{ steps.collect.outputs.apk }}
+          files: ${{ steps.collect.outputs.files }}
           generate_release_notes: true
