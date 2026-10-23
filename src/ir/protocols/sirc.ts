@@ -3,7 +3,7 @@ import type { IrFrame } from '../types';
 export function encodeSirc(variant: 12 | 15 | 20, address: number, command: number): IrFrame {
   const pattern: number[] = [2400, 600];
 
-  let dataBits: number[] = [];
+  const dataBits: number[] = [];
   for (let i = 6; i >= 0; i--) dataBits.push((command >> i) & 1);
 
   if (variant === 12) {

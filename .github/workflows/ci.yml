@@ -50,20 +50,26 @@ jobs:
         if: steps.guard.outputs.bootstrapped == 'true'
         run: npm run typecheck
 
-      - name: Lint markdown-independent code
+      - name: Lint
         if: steps.guard.outputs.bootstrapped == 'true'
-        run: npx tsc --noEmit --pretty false
+        run: npm run lint
 
       - name: Unit + component tests with coverage gates
         if: steps.guard.outputs.bootstrapped == 'true'
-        run: npm test -- --coverage --ci --maxWorkers=2
+        run: npm run test:ci
+
+      - name: Print coverage summary
+        if: steps.guard.outputs.bootstrapped == 'true' && always()
+        run: cat coverage/coverage-summary.json
 
       - name: Upload coverage report
         if: steps.guard.outputs.bootstrapped == 'true' && always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ github.sha }}
-          path: coverage/
+          path: |
+            coverage/
+            coverage/lcov.info
           retention-days: 14
 
   # ────────────────────────────────────────────────────────────
