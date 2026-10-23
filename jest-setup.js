@@ -7,6 +7,23 @@ jest.mock('react-native-mmkv', () => ({
   }),
 }));
 
+// Silence exactly one known third-party warning: react-native-draggable-flatlist
+// ships classic-transform JSX (already latest; upstream issue, not our code).
+// The match is a full-string equality so any new warning still prints loudly.
+for (const method of ['warn', 'error']) {
+  const original = console[method].bind(console);
+  console[method] = (...args) => {
+    if (
+      args.length > 0 &&
+      typeof args[0] === 'string' &&
+      args[0].includes('outdated JSX transform')
+    ) {
+      return;
+    }
+    original(...args);
+  };
+}
+
 jest.mock('expo-haptics', () => ({
   __esModule: true,
   impactAsync: jest.fn(() => Promise.resolve()),
@@ -21,6 +38,15 @@ jest.mock('expo-haptics', () => ({
     Success: 'Success',
     Warning: 'Warning',
     Error: 'Error',
+  },
+}));
+
+jest.mock('@react-native-clipboard/clipboard', () => ({
+  __esModule: true,
+  default: {
+    setString: jest.fn(),
+    getString: jest.fn(() => Promise.resolve('')),
+    hasString: jest.fn(() => Promise.resolve(false)),
   },
 }));
 

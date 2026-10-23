@@ -2,9 +2,9 @@ import { render, userEvent } from '@testing-library/react-native';
 import { TroubleshootSheet } from '@/components/TroubleshootSheet';
 import type { ConnectError } from '@/protocol/errors';
 
-jest.mock('react-native/Libraries/Components/Clipboard/Clipboard', () => ({
+jest.mock('@react-native-clipboard/clipboard', () => ({
   __esModule: true,
-  default: { setString: jest.fn() },
+  default: { setString: jest.fn(), getString: jest.fn(() => Promise.resolve('')) },
 }));
 
 function makeError(overrides: Partial<ConnectError> = {}): ConnectError {

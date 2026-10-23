@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, act } from '@testing-library/react-native';
 import AppsRedirect from '../apps';
 import AboutScreen from '../settings/about';
 import AppearanceScreen from '../settings/appearance';
@@ -56,7 +56,9 @@ describe('app screen smoke coverage', () => {
     expect(useSettingsStore.getState().irProfileId).toBe('samsung-tv-nec');
     expect(router.back).toHaveBeenCalled();
 
-    useDevicesStore.setState({ activeDeviceId: 'tv-1' });
+    await act(async () => {
+      useDevicesStore.setState({ activeDeviceId: 'tv-1' });
+    });
     const second = await render(<IrProfileScreen />);
     await fireEvent.press(second.getByLabelText('Select LG'));
     expect(useSettingsStore.getState().irPerDevice['tv-1']).toBe('lg-tv-nec');

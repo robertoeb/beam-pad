@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, act } from '@testing-library/react-native';
 import IndexScreen from '../index';
 import { router } from 'expo-router';
 import { getActiveClient } from '@/services/session';
@@ -43,7 +43,9 @@ describe('IndexScreen extra paths', () => {
     const { getByLabelText } = await render(<IndexScreen />);
     const mic = getByLabelText('Voice');
     await fireEvent(mic, 'onPressIn', {});
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
     expect(voiceStart).toHaveBeenCalled();
     await fireEvent(mic, 'onPressOut', {});
     expect(voiceStop).toHaveBeenCalled();

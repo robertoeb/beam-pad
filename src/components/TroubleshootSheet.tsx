@@ -1,6 +1,7 @@
 import { tokens } from '@/theme/tokens';
 import { useCallback } from 'react';
-import { Pressable, ScrollView, View, Clipboard } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { Sheet } from './Sheet';
 import { Title, Label } from '@/theme/typography';
 import type { ConnectError } from '@/protocol/errors';

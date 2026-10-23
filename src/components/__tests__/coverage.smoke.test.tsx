@@ -53,15 +53,19 @@ describe('component smoke coverage', () => {
   });
 
   it('MuteButton toggles icon by muted state and handles presses', async () => {
-    useConnectionStore.setState({ volume: undefined });
+    await act(async () => {
+      useConnectionStore.setState({ volume: undefined });
+    });
     const a = await render(<MuteButton />);
     expect(a.getByLabelText('Mute')).toBeTruthy();
     await fireEvent(a.getByLabelText('Mute'), 'onPressIn', {});
     await fireEvent(a.getByLabelText('Mute'), 'onPressOut', {});
     await fireEvent.press(a.getByLabelText('Mute'));
 
-    useConnectionStore.setState({
-      volume: { level: 5, max: 20, muted: true, playerModel: 'X' },
+    await act(async () => {
+      useConnectionStore.setState({
+        volume: { level: 5, max: 20, muted: true, playerModel: 'X' },
+      });
     });
     const b = await render(<MuteButton />);
     expect(b.getByLabelText('Mute')).toBeTruthy();
@@ -70,7 +74,12 @@ describe('component smoke coverage', () => {
   it('MicButton renders holding/idle and forwards handlers', async () => {
     const handlers = { in: jest.fn(), out: jest.fn(), press: jest.fn() };
     const idle = await render(
-      <MicButton voiceHolding={false} onPressIn={handlers.in} onPressOut={handlers.out} onPress={handlers.press} />,
+      <MicButton
+        voiceHolding={false}
+        onPressIn={handlers.in}
+        onPressOut={handlers.out}
+        onPress={handlers.press}
+      />,
     );
     await fireEvent(idle.getByLabelText('Voice'), 'onPressIn', {});
     await fireEvent(idle.getByLabelText('Voice'), 'onPressOut', {});
@@ -80,25 +89,36 @@ describe('component smoke coverage', () => {
     expect(handlers.press).toHaveBeenCalled();
 
     const holding = await render(
-      <MicButton voiceHolding onPressIn={handlers.in} onPressOut={handlers.out} onPress={handlers.press} />,
+      <MicButton
+        voiceHolding
+        onPressIn={handlers.in}
+        onPressOut={handlers.out}
+        onPress={handlers.press}
+      />,
     );
     expect(holding.getByLabelText('Voice')).toBeTruthy();
   });
 
   it('VolumeControl renders empty/muted/level states and presses buttons', async () => {
-    useConnectionStore.setState({ volume: undefined });
+    await act(async () => {
+      useConnectionStore.setState({ volume: undefined });
+    });
     const a = await render(<VolumeControl />);
     await fireEvent.press(a.getByLabelText('Volume up'));
     await fireEvent.press(a.getByLabelText('Volume down'));
 
-    useConnectionStore.setState({
-      volume: { level: 0, max: 0, muted: false, playerModel: 'X' },
+    await act(async () => {
+      useConnectionStore.setState({
+        volume: { level: 0, max: 0, muted: false, playerModel: 'X' },
+      });
     });
     const b = await render(<VolumeControl />);
     expect(b.toJSON()).toBeTruthy();
 
-    useConnectionStore.setState({
-      volume: { level: 9, max: 20, muted: true, playerModel: 'X' },
+    await act(async () => {
+      useConnectionStore.setState({
+        volume: { level: 9, max: 20, muted: true, playerModel: 'X' },
+      });
     });
     const c = await render(<VolumeControl />);
     expect(c.getByText('0')).toBeTruthy();
@@ -124,17 +144,21 @@ describe('component smoke coverage', () => {
     const closed = await render(<CastSheet />);
     expect(closed.queryByTestId('cast-sheet')).toBeNull();
 
-    useCastStore.setState({
-      castSheetOpen: true,
-      deviceName: 'Living Room',
-      mediaTitle: undefined,
-      mediaStatus: 'idle',
+    await act(async () => {
+      useCastStore.setState({
+        castSheetOpen: true,
+        deviceName: 'Living Room',
+        mediaTitle: undefined,
+        mediaStatus: 'idle',
+      });
     });
     const open = await render(<CastSheet />);
     expect(open.getByTestId('cast-device-name')).toBeTruthy();
     await fireEvent.press(open.getByTestId('cast-play-pause'));
 
-    useCastStore.setState({ mediaTitle: 'Movie', mediaStatus: 'playing' });
+    await act(async () => {
+      useCastStore.setState({ mediaTitle: 'Movie', mediaStatus: 'playing' });
+    });
     const playing = await render(<CastSheet />);
     expect(playing.getByTestId('cast-media-title')).toBeTruthy();
     await fireEvent.press(playing.getByTestId('cast-stop'));
@@ -143,12 +167,14 @@ describe('component smoke coverage', () => {
   it('ImeSheet shows field, edits text, and dismisses', async () => {
     const hidden = await render(<ImeSheet />);
     expect(hidden.toJSON()).toBeTruthy();
-    useImeStore.getState().showField({
-      counterField: 1,
-      label: 'Search',
-      value: '',
-      start: 0,
-      end: 0,
+    await act(async () => {
+      useImeStore.getState().showField({
+        counterField: 1,
+        label: 'Search',
+        value: '',
+        start: 0,
+        end: 0,
+      });
     });
     const shown = await render(<ImeSheet />);
     await fireEvent.changeText(shown.getByTestId('ime-input'), 'hello');
@@ -171,7 +197,14 @@ describe('component smoke coverage', () => {
     };
     const onRetry = jest.fn();
     const open = await render(
-      <TroubleshootSheet open onClose={noop} error={err as never} host="1.2.3.4" port={6466} onRetry={onRetry} />,
+      <TroubleshootSheet
+        open
+        onClose={noop}
+        error={err as never}
+        host="1.2.3.4"
+        port={6466}
+        onRetry={onRetry}
+      />,
     );
     await fireEvent.press(open.getByTestId('troubleshoot-retry'));
     expect(onRetry).toHaveBeenCalled();
@@ -189,24 +222,32 @@ describe('component smoke coverage', () => {
   });
 
   it('NowPlayingStrip renders reconnecting, empty, and playing states', async () => {
-    useConnectionStore.setState({ state: 'RECONNECTING' });
+    await act(async () => {
+      useConnectionStore.setState({ state: 'RECONNECTING' });
+    });
     const r = await render(<NowPlayingStrip />);
     expect(r.getByText('RECONNECTING')).toBeTruthy();
 
-    useConnectionStore.setState({ state: 'ACTIVE', currentApp: undefined, volume: undefined });
+    await act(async () => {
+      useConnectionStore.setState({ state: 'ACTIVE', currentApp: undefined, volume: undefined });
+    });
     const empty = await render(<NowPlayingStrip />);
     expect(empty.queryByText('RECONNECTING')).toBeNull();
 
-    useConnectionStore.setState({
-      currentApp: { label: 'Netflix', packageName: 'com.netflix.ninja' },
-      volume: { level: 10, max: 20, muted: false, playerModel: 'X' },
+    await act(async () => {
+      useConnectionStore.setState({
+        currentApp: { label: 'Netflix', packageName: 'com.netflix.ninja' },
+        volume: { level: 10, max: 20, muted: false, playerModel: 'X' },
+      });
     });
     const playing = await render(<NowPlayingStrip />);
     expect(playing.toJSON()).toBeTruthy();
   });
 
   it('AppGrid renders view and edit modes', async () => {
-    useLayoutStore.setState({ shortcuts: ['app:netflix', 'app:youtube'] });
+    await act(async () => {
+      useLayoutStore.setState({ shortcuts: ['app:netflix', 'app:youtube'] });
+    });
     const view = await render(<AppGrid edit={false} />);
     expect(view.toJSON()).toBeTruthy();
     const edit = await render(<AppGrid edit />);
@@ -216,11 +257,22 @@ describe('component smoke coverage', () => {
   it('ReorderableGrid renders editable and locked', async () => {
     const renderItem = (id: string) => <Text>{id}</Text>;
     const locked = await render(
-      <ReorderableGrid data={['a', 'b']} onChange={() => {}} editable={false} renderItem={renderItem} />,
+      <ReorderableGrid
+        data={['a', 'b']}
+        onChange={() => {}}
+        editable={false}
+        renderItem={renderItem}
+      />,
     );
     expect(locked.getByText('a')).toBeTruthy();
     const editable = await render(
-      <ReorderableGrid data={['a', 'b', 'c']} onChange={() => {}} editable renderItem={renderItem} columns={2} />,
+      <ReorderableGrid
+        data={['a', 'b', 'c']}
+        onChange={() => {}}
+        editable
+        renderItem={renderItem}
+        columns={2}
+      />,
     );
     expect(editable.getByText('c')).toBeTruthy();
   });
