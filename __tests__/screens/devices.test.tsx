@@ -25,7 +25,7 @@ describe('DevicesScreen', () => {
     expect(getByText('No TVs found')).toBeTruthy();
 
     const hostInput = getByPlaceholderText('TV IP address');
-    fireEvent.changeText(hostInput, '192.168.1.120');
+    await user.type(hostInput, '192.168.1.120');
 
     const pairButtons = getAllByText('Pair');
     await user.press(pairButtons[0]!);

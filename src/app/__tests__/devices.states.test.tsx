@@ -59,6 +59,19 @@ describe('DevicesScreen states', () => {
     });
   });
 
+  it('scan window expiry re-enables manual entry', async () => {
+    jest.useFakeTimers();
+    try {
+      useDevicesStore.setState({ found: {}, scanning: true });
+      const { queryByPlaceholderText } = await render(<DevicesScreen />);
+      expect(queryByPlaceholderText('TV IP address')).toBeNull();
+      await jest.advanceTimersByTimeAsync(15_000);
+      expect(queryByPlaceholderText('TV IP address')).toBeTruthy();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it('manual entry with blank host does not navigate', async () => {
     const user = userEvent.setup();
     useDevicesStore.setState({ found: {}, scanning: false });

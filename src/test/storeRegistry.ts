@@ -6,6 +6,7 @@ import { useImeStore } from '@/stores/ime';
 import { useLayoutStore } from '@/stores/layout';
 import { useCastStore } from '@/stores/cast';
 import { useCapabilitiesStore } from '@/stores/capabilities';
+import { useToastStore } from '@/stores/toast';
 
 const registry = [
   useSettingsStore,
@@ -16,6 +17,7 @@ const registry = [
   useLayoutStore,
   useCastStore,
   useCapabilitiesStore,
+  useToastStore,
 ] as unknown as Array<{ setState: (s: any) => void; getInitialState: () => any }>;
 
 export function resetAllStores() {

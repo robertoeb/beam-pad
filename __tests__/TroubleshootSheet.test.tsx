@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, userEvent } from '@testing-library/react-native';
 import { TroubleshootSheet } from '@/components/TroubleshootSheet';
 import type { ConnectError } from '@/protocol/errors';
 
@@ -34,9 +34,10 @@ describe('TroubleshootSheet', () => {
     const { getByTestId } = await render(
       <TroubleshootSheet open={true} onClose={jest.fn()} error={error} onRetry={onRetry} />,
     );
+    const user = userEvent.setup();
     const btn = getByTestId('troubleshoot-retry');
     expect(btn).toBeTruthy();
-    fireEvent.press(btn);
+    await user.press(btn);
     expect(onRetry).toHaveBeenCalled();
   });
 
@@ -54,9 +55,10 @@ describe('TroubleshootSheet', () => {
     const { getByTestId } = await render(
       <TroubleshootSheet open={true} onClose={jest.fn()} error={error} onRepair={onRepair} />,
     );
+    const user = userEvent.setup();
     const btn = getByTestId('troubleshoot-repair');
     expect(btn).toBeTruthy();
-    fireEvent.press(btn);
+    await user.press(btn);
     expect(onRepair).toHaveBeenCalled();
   });
 

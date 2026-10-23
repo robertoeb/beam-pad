@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, userEvent } from '@testing-library/react-native';
 import { PinInput } from '@/components/PinInput';
 
 describe('PinInput', () => {
@@ -11,9 +11,10 @@ describe('PinInput', () => {
   it('filters invalid characters and invokes onComplete when length reached', async () => {
     const onComplete = jest.fn();
     const { getByDisplayValue } = await render(<PinInput length={4} onComplete={onComplete} />);
+    const user = userEvent.setup();
     const input = getByDisplayValue('');
 
-    fireEvent.changeText(input, '12abZ!');
+    await user.type(input, '12abZ!');
 
     expect(onComplete).toHaveBeenCalledWith('12AB');
   });

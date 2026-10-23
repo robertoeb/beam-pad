@@ -1,4 +1,4 @@
-import { render, fireEvent, act } from '@testing-library/react-native';
+import { render, userEvent } from '@testing-library/react-native';
 import ShortcutsScreen from '@/app/shortcuts';
 import { useLayoutStore } from '@/stores/layout';
 import { useConnectionStore } from '@/stores/connection';
@@ -48,9 +48,7 @@ describe('ShortcutsScreen', () => {
   it('defaults CTA adds 4 default shortcuts', async () => {
     useLayoutStore.setState({ shortcuts: [], hidden: [] });
     const { getByLabelText } = await render(<ShortcutsScreen />);
-    await act(async () => {
-      fireEvent.press(getByLabelText('Add default shortcuts'));
-    });
+    await userEvent.setup().press(getByLabelText('Add default shortcuts'));
     expect(useLayoutStore.getState().shortcuts).toEqual([
       'app:netflix',
       'app:youtube',
@@ -61,17 +59,13 @@ describe('ShortcutsScreen', () => {
 
   it('edit toggle works', async () => {
     const { getByLabelText } = await render(<ShortcutsScreen />);
-    await act(async () => {
-      fireEvent.press(getByLabelText('Edit shortcuts'));
-    });
+    await userEvent.setup().press(getByLabelText('Edit shortcuts'));
     expect(getByLabelText('Done editing')).toBeTruthy();
   });
 
   it('back button navigates back', async () => {
     const { getByLabelText } = await render(<ShortcutsScreen />);
-    await act(async () => {
-      fireEvent.press(getByLabelText('Go back'));
-    });
+    await userEvent.setup().press(getByLabelText('Go back'));
     expect(router.back).toHaveBeenCalled();
   });
 });

@@ -4,6 +4,7 @@ import { useCapabilitiesStore } from '@/stores/capabilities';
 import { useDevicesStore } from '@/stores/devices';
 import { IR_PROFILES, encodeCommand, type IrProfile } from '@/ir/profiles';
 import { getActiveClient } from './session';
+import { showToast } from '@/stores/toast';
 import { KEYS } from '@/protocol/keycodes';
 
 type VolCmd = 'volUp' | 'volDown' | 'mute' | 'power';
@@ -58,8 +59,29 @@ export async function volumeCommand(name: Exclude<VolCmd, 'power'>) {
   if (volumeTarget === 'ir' && isIrAvailable()) {
     const result = await irSend(name);
     if (result.ok) return;
+    // The user explicitly routed volume to IR: a silent fallback to network
+    // hides real problems (no emitter, bad profile). Say why, once per
+    // debounce window, then fall through to the network path below.
+    if (!result.ok) {
+      showToast(irFailureMessage(result));
+    }
   }
   const client = getActiveClient();
   if (!client) return;
   client.keyPress(name === 'volUp' ? KEYS.volUp : name === 'volDown' ? KEYS.volDown : KEYS.mute);
+}
+
+function irFailureMessage(result: Extract<IrResult, { ok: false }>): string {
+  switch (result.reason) {
+    case 'no-profile':
+      return 'No IR profile selected — using network volume';
+    case 'no-command':
+      return `IR profile lacks this button (${result.detail ?? 'unknown'}) — using network volume`;
+    case 'no-emitter':
+      return 'No IR emitter on this phone — using network volume';
+    case 'freq-unsupported':
+      return `TV needs an IR frequency this phone lacks (${result.detail ?? '?'}) — using network volume`;
+    case 'transmit-failed':
+      return 'IR transmit failed — using network volume';
+  }
 }

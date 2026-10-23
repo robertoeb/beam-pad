@@ -314,6 +314,12 @@ try {
 
 afterEach(() => {
   jest.useRealTimers();
+  // Drain cast listener arrays: suites push handlers into the module-level
+  // mocks on every render, and without this they accumulate across suites.
+  castStateListeners.length = 0;
+  sessionStartedListeners.length = 0;
+  sessionEndedListeners.length = 0;
+  mediaStatusListeners.length = 0;
 });
 jest.mock('react-native-google-cast', () => {
   const CastState = {
