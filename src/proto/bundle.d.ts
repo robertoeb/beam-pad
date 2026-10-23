@@ -4060,6 +4060,9 @@ export namespace pairing {
     /** Status enum. */
     enum Status {
 
+        /** UNKNOWN value */
+        UNKNOWN = 0,
+
         /** STATUS_OK value */
         STATUS_OK = 200,
 
@@ -4067,7 +4070,10 @@ export namespace pairing {
         STATUS_ERROR = 400,
 
         /** STATUS_BAD_CONFIGURATION value */
-        STATUS_BAD_CONFIGURATION = 401
+        STATUS_BAD_CONFIGURATION = 401,
+
+        /** STATUS_BAD_SECRET value */
+        STATUS_BAD_SECRET = 402
     }
 
     /** RoleType enum. */
@@ -4244,6 +4250,9 @@ export namespace pairing {
         /** Unknown fields preserved while decoding when enabled */
         $unknowns?: Uint8Array[];
 
+        /** PairingRequestAck serverName. */
+        serverName: string;
+
         /**
          * Creates a new PairingRequestAck instance using the specified properties.
          * @param [properties] Properties to set
@@ -4327,6 +4336,9 @@ export namespace pairing {
 
         /** Properties of a PairingRequestAck. */
         interface $Properties {
+
+            /** PairingRequestAck serverName */
+            serverName?: (string|null);
 
             /** Unknown fields preserved while decoding when enabled */
             $unknowns?: Uint8Array[];
@@ -4478,14 +4490,14 @@ export namespace pairing {
         /** Unknown fields preserved while decoding when enabled */
         $unknowns?: Uint8Array[];
 
-        /** PairingOption preferredRole. */
-        preferredRole: number;
+        /** PairingOption inputEncodings. */
+        inputEncodings: pairing.PairingEncoding.$Properties[];
 
         /** PairingOption outputEncodings. */
         outputEncodings: pairing.PairingEncoding.$Properties[];
 
-        /** PairingOption inputEncodings. */
-        inputEncodings: pairing.PairingEncoding.$Properties[];
+        /** PairingOption preferredRole. */
+        preferredRole: pairing.RoleType;
 
         /**
          * Creates a new PairingOption instance using the specified properties.
@@ -4571,14 +4583,14 @@ export namespace pairing {
         /** Properties of a PairingOption. */
         interface $Properties {
 
-            /** PairingOption preferredRole */
-            preferredRole?: (number|null);
+            /** PairingOption inputEncodings */
+            inputEncodings?: (pairing.PairingEncoding.$Properties[]|null);
 
             /** PairingOption outputEncodings */
             outputEncodings?: (pairing.PairingEncoding.$Properties[]|null);
 
-            /** PairingOption inputEncodings */
-            inputEncodings?: (pairing.PairingEncoding.$Properties[]|null);
+            /** PairingOption preferredRole */
+            preferredRole?: (pairing.RoleType|null);
 
             /** Unknown fields preserved while decoding when enabled */
             $unknowns?: Uint8Array[];

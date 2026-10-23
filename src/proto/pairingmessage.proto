@@ -1,7 +1,7 @@
 syntax = "proto3";
 package pairing;
 
-enum Status { STATUS_OK = 200; STATUS_ERROR = 400; STATUS_BAD_CONFIGURATION = 401; }
+enum Status { UNKNOWN = 0; STATUS_OK = 200; STATUS_ERROR = 400; STATUS_BAD_CONFIGURATION = 401; STATUS_BAD_SECRET = 402; }
 enum RoleType { ROLE_TYPE_UNKNOWN = 0; ROLE_TYPE_INPUT = 1; ROLE_TYPE_OUTPUT = 2; }
 enum EncodingType {
   ENCODING_TYPE_UNKNOWN = 0; ENCODING_TYPE_ALPHANUMERIC = 1;
@@ -9,14 +9,14 @@ enum EncodingType {
 }
 
 message PairingRequest { string service_name = 1; string client_name = 2; }
-message PairingRequestAck {}
+message PairingRequestAck { string server_name = 1; }
 
 message PairingEncoding { EncodingType type = 1; int32 symbol_length = 2; }
 
 message PairingOption {
-  int32 preferred_role = 1;
+  repeated PairingEncoding input_encodings = 1;
   repeated PairingEncoding output_encodings = 2;
-  repeated PairingEncoding input_encodings = 3;
+  RoleType preferred_role = 3;
 }
 
 message PairingConfiguration { PairingEncoding encoding = 1; RoleType client_role = 2; }
@@ -28,11 +28,11 @@ message PairingSecretAck { bytes secret = 1; }
 message PairingMessage {
   uint32 protocol_version = 1;
   Status status = 2;
-  PairingRequest pairing_request = 101;
-  PairingRequestAck pairing_request_ack = 102;
-  PairingOption pairing_option = 201;
-  PairingConfiguration pairing_configuration = 301;
-  PairingConfigurationAck pairing_configuration_ack = 302;
-  PairingSecret pairing_secret = 401;
-  PairingSecretAck pairing_secret_ack = 402;
+  PairingRequest pairing_request = 10;
+  PairingRequestAck pairing_request_ack = 11;
+  PairingOption pairing_option = 20;
+  PairingConfiguration pairing_configuration = 30;
+  PairingConfigurationAck pairing_configuration_ack = 31;
+  PairingSecret pairing_secret = 40;
+  PairingSecretAck pairing_secret_ack = 41;
 }

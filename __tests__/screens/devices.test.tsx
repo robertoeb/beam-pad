@@ -9,12 +9,20 @@ jest.mock('@/services/discovery', () => ({
 }));
 
 describe('DevicesScreen', () => {
-  it('shows looking for TVs when empty and supports manual entry', async () => {
+  it('shows scanning state while empty and hides manual entry', async () => {
+    useDevicesStore.setState({ found: {}, scanning: true });
+
+    const { getByText, queryByPlaceholderText } = await render(<DevicesScreen />);
+    expect(getByText('Scanning for TVs…')).toBeTruthy();
+    expect(queryByPlaceholderText('TV IP address')).toBeNull();
+  });
+
+  it('supports manual entry when not scanning', async () => {
     const user = userEvent.setup();
-    useDevicesStore.setState({ found: {} });
+    useDevicesStore.setState({ found: {}, scanning: false });
 
     const { getByPlaceholderText, getAllByText, getByText } = await render(<DevicesScreen />);
-    expect(getByText('Looking for TVs on your Wi-Fi…')).toBeTruthy();
+    expect(getByText('No TVs found')).toBeTruthy();
 
     const hostInput = getByPlaceholderText('TV IP address');
     fireEvent.changeText(hostInput, '192.168.1.120');

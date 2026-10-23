@@ -52,7 +52,7 @@ export class FakeAtvSocket {
     this.stateListeners.forEach((cb) => cb({ id, state: 'open' }));
   }
 
-  send(id: string, base64: string) {
+  send(_id: string, base64: string) {
     this.sentFrames.push(base64);
   }
 

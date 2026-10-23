@@ -24,9 +24,11 @@ interface DevicesState {
   found: Record<string, FoundDevice>;
   paired: Record<string, PairedDevice>;
   activeDeviceId: string | null;
+  scanning: boolean;
   upsertFound: (d: FoundDevice) => void;
   removeFound: (host: string) => void;
   clearFound: () => void;
+  setScanning: (scanning: boolean) => void;
   addPaired: (d: PairedDevice) => void;
   removePaired: (id: string) => void;
   setActive: (id: string | null) => void;
@@ -41,6 +43,7 @@ export const useDevicesStore = createPersistedStore<DevicesState>(
     found: {},
     paired: {},
     activeDeviceId: null,
+    scanning: false,
     upsertFound: (d) => set((s) => ({ ...s, found: { ...s.found, [d.host]: d } })),
     removeFound: (host) =>
       set((s) => {
@@ -49,6 +52,7 @@ export const useDevicesStore = createPersistedStore<DevicesState>(
         return { ...s, found: f };
       }),
     clearFound: () => set((s) => ({ ...s, found: {} })),
+    setScanning: (scanning) => set((s) => ({ ...s, scanning })),
     addPaired: (d) => set((s) => ({ ...s, paired: { ...s.paired, [d.id]: d } })),
     removePaired: (id) =>
       set((s) => {
