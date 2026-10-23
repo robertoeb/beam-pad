@@ -13,6 +13,7 @@ class TlsSession(
 ) {
   private var socket: SSLSocket? = null
   @Volatile private var running = false
+  private val sendLock = Any()
 
   companion object {
     private fun trustAll() = arrayOf<TrustManager>(object : X509TrustManager {
@@ -79,8 +80,18 @@ class TlsSession(
   }
 
   fun send(base64: String) {
-    val bytes = Base64.decode(base64, Base64.NO_WRAP)
-    socket?.outputStream?.apply { write(bytes); flush() }
+    // Guarded: send() runs on the JS thread and races close(), which clears
+    // `running` and shuts the socket. Without the check + catch, a write
+    // landing mid-teardown throws into JS or writes to a dead socket.
+    // Early sends (before the handshake completes) are dropped: the protocol
+    // layer only sends after 'open' today.
+    synchronized(sendLock) {
+      if (!running) return
+      try {
+        val bytes = Base64.decode(base64, Base64.NO_WRAP)
+        socket?.outputStream?.apply { write(bytes); flush() }
+      } catch (_: Exception) {}
+    }
   }
 
   fun close() {

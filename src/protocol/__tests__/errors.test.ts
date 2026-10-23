@@ -48,6 +48,21 @@ describe('classify', () => {
     const result = classify('ECONNREFUSED something', { phase: 'connect' });
     expect(result.detail).toBe('ECONNREFUSED something');
   });
+
+  it.each([
+    ['PORT_CLOSED', 'PORT_CLOSED'],
+    ['HOST_UNREACHABLE', 'HOST_UNREACHABLE'],
+    ['TLS_HANDSHAKE', 'TLS_HANDSHAKE'],
+  ])('trusts native code %s over message text', (nativeCode, expected) => {
+    // Message text alone would classify differently — the native hint wins.
+    const result = classify('something weird', { phase: 'connect', nativeCode });
+    expect(result.code).toBe(expected);
+  });
+
+  it('falls back to string matching when the native code is UNKNOWN', () => {
+    const result = classify('ECONNREFUSED', { phase: 'connect', nativeCode: 'UNKNOWN' });
+    expect(result.code).toBe('PORT_CLOSED');
+  });
 });
 
 describe('copy completeness', () => {

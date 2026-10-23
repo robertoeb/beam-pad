@@ -101,7 +101,15 @@ interface ClassifyCtx {
   phase: 'probe' | 'pair' | 'connect';
   host?: string;
   hasCerts?: boolean;
+  /**
+   * Precise code from the native socket layer (TlsSession.codeOf):
+   * PORT_CLOSED | HOST_UNREACHABLE | TLS_HANDSHAKE | UNKNOWN.
+   * Trusted over substring matching; UNKNOWN falls through to heuristics.
+   */
+  nativeCode?: string;
 }
+
+const NATIVE_CODES = new Set(['PORT_CLOSED', 'HOST_UNREACHABLE', 'TLS_HANDSHAKE']);
 
 export function classify(raw: unknown, ctx: ClassifyCtx): ConnectError {
   const msg = raw == null ? '' : typeof raw === 'string' ? raw : String(raw);
@@ -109,7 +117,9 @@ export function classify(raw: unknown, ctx: ClassifyCtx): ConnectError {
 
   let code: ConnectErrorCode;
 
-  if (lower.includes('wifi') && (lower.includes('off') || lower.includes('disabled'))) {
+  if (ctx.nativeCode && NATIVE_CODES.has(ctx.nativeCode)) {
+    code = ctx.nativeCode as ConnectErrorCode;
+  } else if (lower.includes('wifi') && (lower.includes('off') || lower.includes('disabled'))) {
     code = 'WIFI_OFF';
   } else if (lower.includes('econnrefused') || lower.includes('connection refused')) {
     code = 'PORT_CLOSED';

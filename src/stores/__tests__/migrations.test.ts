@@ -1,6 +1,6 @@
 import { useSettingsStore, SETTINGS_VERSION } from '@/stores/settings';
 import { useLayoutStore, LAYOUT_VERSION } from '@/stores/layout';
-import { useDevicesStore } from '@/stores/devices';
+import { useDevicesStore, DEVICES_VERSION } from '@/stores/devices';
 import { useCapabilitiesStore } from '@/stores/capabilities';
 import { mmkvStorage, mmkv } from '@/stores/mmkv';
 import { aDevice } from '@/test/factories';
@@ -85,6 +85,24 @@ describe('layout migrations', () => {
   it('empty pinned list keeps defaults', () => {
     const out = layoutMigrate()({ pinned: [] }, 0);
     expect(out.shortcuts).toEqual(['app:netflix', 'app:youtube', 'app:prime', 'app:disney']);
+  });
+});
+
+describe('devices migrations', () => {
+  it(`current version is ${DEVICES_VERSION} and rewrites pairing-port entries to the command port`, () => {
+    expect(DEVICES_VERSION).toBe(2);
+    const migrate = (useDevicesStore as any).persist.getOptions().migrate;
+    const out = migrate(
+      {
+        paired: {
+          'old-tv': { ...aDevice(), id: 'old-tv', port: 6467 },
+          'kept-tv': { ...aDevice(), id: 'kept-tv', port: 8443 },
+        },
+      },
+      0,
+    );
+    expect(out.paired['old-tv'].port).toBe(6466);
+    expect(out.paired['kept-tv'].port).toBe(8443);
   });
 });
 

@@ -31,9 +31,20 @@ export interface PairingResult {
   keyPem: string;
 }
 
+/**
+ * Socket ids must be unique per pairing attempt: two overlapping attempts
+ * (auto-retry racing a manual retry) share nothing, and a loser's close()
+ * must never kill the winner's socket. Date.now() alone collides within
+ * the same millisecond under load.
+ */
+function newSocketId(): string {
+  const rand = Math.floor(Math.random() * 0xffffff).toString(36);
+  return `pairing-${Date.now().toString(36)}-${rand}`;
+}
+
 export class PairingProtocol {
   private codec = new FrameCodec();
-  private socketId = `pairing-${Date.now()}`;
+  private socketId = newSocketId();
   private step: PairingStep = 'probing';
   private serviceName = SERVICE_NAME;
   private handshakeTimer: ReturnType<typeof setTimeout> | null = null;
@@ -86,10 +97,16 @@ export class PairingProtocol {
                   return;
                 }
                 if (e.state === 'error') {
-                  this.fail(classify(e.error, { phase: 'pair', host: this.host }));
+                  this.fail(
+                    classify(e.error, { phase: 'pair', host: this.host, nativeCode: e.code }),
+                  );
                 } else {
                   this.fail(
-                    classify(e.error ?? 'socket closed', { phase: 'pair', host: this.host }),
+                    classify(e.error ?? 'socket closed', {
+                      phase: 'pair',
+                      host: this.host,
+                      nativeCode: e.code,
+                    }),
                   );
                 }
               }
@@ -290,11 +307,19 @@ export class PairingProtocol {
       '[PairingProtocol] Retrying pairing with fresh socket connection & serviceName:',
       newServiceName,
     );
+    // Fully reset instance state: start() re-subscribes and regenerates the
+    // client cert, so anything left over (cancelled flag, dead subs, stale
+    // keys) would corrupt the retry or collide with a concurrent attempt.
     this.destroy();
     this.serviceName = newServiceName;
     this.codec = new FrameCodec();
-    this.socketId = `pairing-${Date.now()}`;
+    this.socketId = newSocketId();
+    this.subs = [];
+    this.cancelled = false;
+    this.client = null;
+    this.serverKeys = null;
     await new Promise((r) => setTimeout(r, 200));
+    if (this.cancelled) return;
     await this.start();
   }
 

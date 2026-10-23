@@ -211,12 +211,13 @@ export class RemoteClient {
     this.send({ remoteVoiceEnd: { sessionId } });
   }
 
-  private onDrop(error?: string, _code?: string) {
+  private onDrop(error?: string, code?: string) {
     if (this.destroyed) return;
     const classified = classify(error, {
       phase: 'connect',
       host: this.device.host,
       hasCerts: true,
+      nativeCode: code,
     });
     this.lastError = classified;
     if (this.reconnectAttempt >= 5) {

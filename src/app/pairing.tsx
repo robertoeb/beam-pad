@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { PanResponder, Pressable, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Check, Info, Monitor, ShieldCheck, Tv } from 'lucide-react-native';
-import { PairingProtocol } from '@/protocol/PairingProtocol';
+import { cancelPairing as cancelPairingService, getPairingResult, startPairing as startPairingService, submitPairingCode } from '@/services/pairing';
 import { PinInput } from '@/components/PinInput';
 import { TroubleshootSheet } from '@/components/TroubleshootSheet';
 import { useDevicesStore } from '@/stores/devices';
@@ -54,7 +54,6 @@ export default function PairingScreen() {
   const [step, setStep] = useState<PairStep>('probing');
   const [connectError, setConnectError] = useState<ConnectError | undefined>();
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
-  const protoRef = useRef<PairingProtocol | null>(null);
   const leftScreenRef = useRef(false);
 
   const addPaired = useDevicesStore((s) => s.addPaired);
@@ -67,7 +66,7 @@ export default function PairingScreen() {
   }, []);
 
   const cancelPairing = useCallback(() => {
-    protoRef.current?.cancel();
+    cancelPairingService();
     goBack();
   }, [goBack]);
 
@@ -100,34 +99,27 @@ export default function PairingScreen() {
   }, []);
 
   const startPairing = useCallback(() => {
-    protoRef.current?.cancel();
     setConnectError(undefined);
     setShowTroubleshoot(false);
     setStep('probing');
-    const p = new PairingProtocol(h, { onStep: handleProtoStep });
-    protoRef.current = p;
-    p.start();
+    startPairingService(h, handleProtoStep);
   }, [h, handleProtoStep]);
 
   useEffect(() => {
     startPairing();
-    const p = protoRef.current;
     return () => {
       leftScreenRef.current = true;
-      p?.cancel();
+      cancelPairingService();
     };
   }, [startPairing]);
 
-  const handleCodeSubmit = useCallback(
-    (code: string) => {
-      protoRef.current?.submitCode(code);
-    },
-    [],
-  );
+  const handleCodeSubmit = useCallback((code: string) => {
+    submitPairingCode(code);
+  }, []);
 
   useEffect(() => {
-    if (step === 'done' && protoRef.current) {
-      const result = protoRef.current.getResult();
+    if (step === 'done') {
+      const result = getPairingResult();
       // Never persist a device that can never connect (empty PEMs).
       if (!result?.certPem || !result?.keyPem) return;
       const device = {
