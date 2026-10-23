@@ -54,9 +54,11 @@ function toConnectError(e: unknown): ConnectError {
  * Resolves when the client reaches ACTIVE, rejects with a ConnectError.
  */
 export async function connect(deviceId: string): Promise<void> {
+  // Bump first: even a failed pre-check invalidates any in-flight attempt,
+  // so a superseded budget timer can never touch the winner's box.
+  const myGen = ++gen;
   const device = useDevicesStore.getState().paired[deviceId];
   if (!device) throw new Error(`unknown device ${deviceId}`);
-  const myGen = ++gen;
   box.current?.destroy();
   box.current = null;
   useConnectionStore.getState().resetTelemetry();
@@ -74,6 +76,9 @@ export async function connect(deviceId: string): Promise<void> {
       useConnectionStore.getState().mergeTelemetry(t);
     },
     onImeShow: (status) => {
+      // Loser listeners are removed synchronously on destroy, so this guard
+      // is defense-in-depth only (unreachable while destroy() unsubscribes).
+      /* istanbul ignore next */
       if (!isCurrent(client, myGen)) return;
       useImeStore.getState().showField(status);
     },

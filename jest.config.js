@@ -10,6 +10,8 @@ module.exports = {
     '!src/proto/**',
     '!src/**/types.ts',
     '!src/test/**',
+    // Deprecated 1:1 re-export shim (see session.ts); exercised through it.
+    '!src/services/sessionManager.ts',
   ],
   coverageReporters: ['json-summary', 'lcov', 'text'],
   // Coverage gates (TASK_17): all buckets green as of the branch-gap

@@ -129,6 +129,20 @@ describe('session generation guard and active rollback (arch P0-2/P0-3, QA P0-3)
     jest.useRealTimers();
   });
 
+  it('superseded budget timer settles quietly without touching the winner', async () => {
+    jest.useFakeTimers();
+    const pA = switchTo(DEVICE_ID);
+    // Failed pre-check still invalidates A's generation; A's 12s timer must
+    // fire harmlessly instead of clearing the box or rejecting.
+    await expect(connect('ghost')).rejects.toThrow('unknown device ghost');
+    jest.advanceTimersByTime(13_000);
+    activate();
+    const rA = await pA;
+    expect(rA.ok).toBe(true);
+    expect(useDevicesStore.getState().activeDeviceId).toBe(DEVICE_ID);
+    jest.useRealTimers();
+  });
+
   it('clears stale telemetry on connect so a new TV never shows the old TV volume', async () => {
     jest.useFakeTimers();
     const p = switchTo(DEVICE_ID);
