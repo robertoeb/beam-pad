@@ -1,0 +1,13 @@
+# Flow 3: IME round-trip. Precondition: TV is on a screen with a focused
+# text field (e.g. YouTube search) so the remote keyboard sheet appears.
+appId: com.beampad.app
+---
+- launchApp
+- tapOn:
+    label: "Keyboard"
+- assertVisible: "Start typing..."
+- tapOn:
+    text: "Start typing..."
+- inputText: "beam test"
+- hideKeyboard
+# Human: the TV search field must show the typed text; submit from the TV.

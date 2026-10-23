@@ -1,0 +1,17 @@
+# Flow 2: volume rail over the network path.
+# Precondition: Flow 1 paired and active (same install, same session).
+appId: com.beampad.app
+---
+- launchApp
+- assertVisible: "Volume down"
+- tapOn:
+    label: "Volume up"
+- tapOn:
+    label: "Volume up"
+- tapOn:
+    label: "Volume down"
+# Mute toggle round-trip (human: TV OSD / sound confirms).
+- tapOn:
+    label: "Mute"
+- tapOn:
+    label: "Mute"

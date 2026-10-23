@@ -1,0 +1,35 @@
+# Maestro e2e flows for BeamPad. Physical Android TV required on the same
+# Wi-Fi as the test phone. These are NOT part of CI (no device farm);
+# run on demand against a pinned lab TV before a 1.0 release gate.
+#
+#   maestro --device <id> test maestro/
+#
+# Env: TV_HOST (manual-entry IP fallback), MAESTRO_TV_NAME (expected device).
+appId: com.beampad.app
+---
+# Flow 1: discover (or manually enter) a TV, pair with it, press D-pad keys.
+- launchApp
+- assertVisible: "Devices"
+# Prefer discovery; fall back to the manual entry field when empty.
+- runIf:
+    visible: "No TVs found"
+    commands:
+      - tapOn:
+          text: "TV IP address"
+      - inputText: "${TV_HOST}"
+      - tapOn:
+          text: "Pair"
+- tapOn:
+    text: "Pair"
+# Pairing screen: enter the on-TV code within 60s (human step for 1.0).
+- assertVisible: "Pairing"
+- extendedWaitUntil:
+    visible: "Paired Successfully"
+    timeout: 120000
+# Remote screen: send three keys; the TV must visibly respond (human check).
+- tapOn:
+    label: "Back"
+- tapOn:
+    label: "Home"
+- tapOn:
+    label: "TV Settings"

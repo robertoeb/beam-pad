@@ -116,6 +116,24 @@ Issues and PRs welcome. Please run the full gate before pushing:
 npm run lint && npm run typecheck && npm run test:ci
 ```
 
+## 📦 Releases
+
+Releases are tag-driven. Push `vMAJOR.MINOR.PATCH` (e.g. `v1.2.0`):
+
+1. `APP_VERSION` / `VERSION_CODE` derive from the tag (`M*10000+m*100+p`).
+2. `.github/workflows/release.yml` prebuilds fresh, assembles a signed AAB (needs `ANDROID_KEYSTORE_B64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` repo secrets; unsigned artifact otherwise), and attaches it to a GitHub Release.
+3. `preview` builds (sideload APK) run via manual workflow dispatch.
+4. No OTA updates by design (native socket/discovery/IR modules can't ship over the air) — every release is a full binary.
+
+## 🧪 Release QA gate (1.0 and beyond)
+
+Order matters — cheap deterministic gates first, hardware last. Anything red blocks the tag:
+
+1. `npm run typecheck`, `npm run lint` (`--max-warnings 0`).
+2. `npm run test:ci` — no threshold may be lowered to green a release.
+3. Manual hardware matrix on 2 TVs × IR-emitter/no-emitter phones: discovery/lost, pairing accept/reject/cancel, volume network+IR, IME round-trip, 30 s voice stream, Cast play/disconnect, rapid A→B→A device switch, upgrade over real persisted data.
+4. Maestro flows in `maestro/` (pair → keys, volume, IME) run on demand against the lab TV — needs a physical device, not wired into CI.
+
 ## 📄 License
 
 MIT — see [LICENSE](LICENSE).

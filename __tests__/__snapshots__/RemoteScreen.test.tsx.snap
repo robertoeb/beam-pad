@@ -38,7 +38,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
       {
         "left": -160,
         "position": "absolute",
-        "top": -160,
+        "top": -140,
       }
     }
     width={420}
@@ -52,12 +52,12 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
       >
         <View
           offset="0"
-          stopColor="#6D5DF6"
-          stopOpacity={0.18}
+          stopColor="#8B8CF8"
+          stopOpacity={0.16}
         />
         <View
           offset="1"
-          stopColor="#6D5DF6"
+          stopColor="#8B8CF8"
           stopOpacity={0}
         />
       </View>
@@ -69,16 +69,16 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
     />
   </View>
   <View
-    height={360}
+    height={380}
     pointerEvents="none"
     style={
       {
-        "left": 30,
+        "left": -120,
         "position": "absolute",
-        "top": 420,
+        "top": 520,
       }
     }
-    width={360}
+    width={380}
   >
     <View>
       <View
@@ -101,15 +101,15 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
     </View>
     <View
       fill="url(#glow)"
-      height={360}
-      width={360}
+      height={380}
+      width={380}
     />
   </View>
   <View
     style={
       {
         "flex": 1,
-        "paddingHorizontal": 16,
+        "paddingHorizontal": 20,
         "paddingTop": 8,
       }
     }
@@ -1527,7 +1527,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
             {
               "busy": undefined,
               "checked": undefined,
-              "disabled": true,
+              "disabled": undefined,
               "expanded": undefined,
               "selected": undefined,
             }
@@ -1561,7 +1561,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
               "borderWidth": 1,
               "height": 44,
               "justifyContent": "center",
-              "opacity": 0.45,
+              "opacity": 0.7,
               "overflow": "hidden",
               "width": 44,
             }
@@ -2288,6 +2288,8 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
                 Text Input
               </Text>
               <TextInput
+                cursorColor="#22D3EE"
+                keyboardAppearance="dark"
                 onChangeText={[Function]}
                 placeholder="Start typing..."
                 placeholderTextColor="#747B8A"
@@ -2298,7 +2300,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
                     "borderColor": "rgba(255,255,255,0.09)",
                     "borderRadius": 16,
                     "borderWidth": 1,
-                    "color": "#FFFFFF",
+                    "color": "#F5F6FA",
                     "fontFamily": "Inter-Regular",
                     "fontSize": 17,
                     "marginBottom": 16,
@@ -2406,13 +2408,13 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
                         "flexDirection": "row",
                         "justifyContent": "center",
                         "paddingHorizontal": 20,
-                        "paddingVertical": 13,
+                        "paddingVertical": 12,
                       },
                       {
                         "alignSelf": "stretch",
                       },
                       {
-                        "paddingVertical": 15,
+                        "paddingVertical": 16,
                       },
                     ]
                   }
@@ -2441,7 +2443,6 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
                         },
                         {
                           "color": "#0A0A12",
-                          "fontSize": 15,
                           "fontWeight": "600",
                         },
                       ]
@@ -2479,7 +2480,7 @@ exports[`Remote Screen — 4-element default layout snapshot test guards against
         [
           {
             "alignItems": "center",
-            "backgroundColor": "#0F0F1A",
+            "backgroundColor": "#10101A",
             "borderColor": "#22D3EE",
             "borderRadius": 60,
             "borderWidth": 2,
