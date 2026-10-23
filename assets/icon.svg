@@ -1,0 +1,14 @@
+<!-- BeamPad app icon source (1024x1024). Full-bleed legacy icon:
+     near-black rounded square + gradient ring-and-dot broadcast mark.
+     Regenerate PNGs with: scripts/gen-icon.sh (rsvg-convert). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#8B8CF8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="232" fill="#0A0A12"/>
+  <circle cx="512" cy="512" r="280" fill="none" stroke="url(#beam)" stroke-width="72"/>
+  <circle cx="512" cy="512" r="92" fill="#22D3EE"/>
+</svg>

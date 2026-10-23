@@ -14,9 +14,28 @@ const config = {
   orientation: 'portrait',
   platforms: ['android'],
   newArchEnabled: true,
+  // Launcher + splash artwork (sources: assets/*.svg, PNGs via scripts/gen-icon.sh).
+  icon: './assets/icon.png',
+  splash: {
+    image: './assets/icon.png',
+    imageWidth: 200,
+    resizeMode: 'contain',
+    backgroundColor: '#0A0A12',
+    dark: {
+      image: './assets/icon.png',
+      imageWidth: 200,
+      resizeMode: 'contain',
+      backgroundColor: '#0A0A12',
+    },
+  },
   android: {
     package: 'com.beampad.app',
     versionCode,
+    adaptiveIcon: {
+      foregroundImage: './assets/adaptive-icon.png',
+      monochromeImage: './assets/adaptive-icon-monochrome.png',
+      backgroundColor: '#0A0A12',
+    },
     // Preflight pings TVs over cleartext LAN HTTP (http://<tv>:6466/).
     // Without this, Android 9+ blocks the check on release builds.
     usesCleartextTraffic: true,

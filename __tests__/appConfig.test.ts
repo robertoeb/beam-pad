@@ -21,3 +21,25 @@ describe('app.config.ts', () => {
     expect(platforms).not.toContain('ios');
   });
 });
+
+describe('app.config.ts launch artwork', () => {
+  const config = require('../app.config').default;
+
+  it('has a launcher icon', () => {
+    expect(config.icon).toBe('./assets/icon.png');
+  });
+
+  it('has a dark splash matching the OLED theme', () => {
+    expect(config.splash.image).toBe('./assets/icon.png');
+    expect(config.splash.resizeMode).toBe('contain');
+    expect(config.splash.backgroundColor).toBe('#0A0A12');
+    expect(config.splash.dark?.backgroundColor).toBe('#0A0A12');
+  });
+
+  it('has an adaptive icon with monochrome variant', () => {
+    const adaptive = config.android.adaptiveIcon;
+    expect(adaptive.foregroundImage).toBe('./assets/adaptive-icon.png');
+    expect(adaptive.monochromeImage).toBe('./assets/adaptive-icon-monochrome.png');
+    expect(adaptive.backgroundColor).toBe('#0A0A12');
+  });
+});
