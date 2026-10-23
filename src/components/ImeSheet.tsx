@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, TextInput, View } from 'react-native';
+import type { TextInputInstance } from 'react-native';
 import { Sheet } from './Sheet';
 import { useImeStore } from '@/stores/ime';
 import { commitImeText, dismissIme } from '@/services/ime';
@@ -11,7 +12,7 @@ export function ImeSheet() {
   const visible = useImeStore((s) => s.visible);
   const label = useImeStore((s) => s.label);
   const value = useImeStore((s) => s.value);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance | null>(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {

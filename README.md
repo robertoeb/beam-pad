@@ -45,7 +45,7 @@ BeamPad turns your Android phone into a fast, beautiful remote for every Android
 
 ## 🚀 Getting started
 
-**Prerequisites:** Node ≥ 20 · JDK 17 · Android Studio (SDK 34+) · a physical Android device or emulator (API 26+) · an Android TV on the same Wi-Fi for full testing.
+**Prerequisites:** Node ≥ 22 · JDK 17 · Android Studio (SDK 34+) · a physical Android device or emulator (API 26+) · an Android TV on the same Wi-Fi for full testing.
 
 ```bash
 npm install

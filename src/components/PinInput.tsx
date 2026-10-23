@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
+import type { TextInputInstance } from 'react-native';
 import { haptic } from '@/lib/haptics';
 import { Label } from '@/theme/typography';
 import {radius, space, tokens} from '@/theme/tokens';
@@ -13,7 +14,7 @@ const BOX_SIZE = 46;
 const BOX_HEIGHT = 58;
 
 export function PinInput({ length = 6, onComplete }: PinInputProps) {
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance | null>(null);
   const [digits, setDigits] = useState<string[]>([]);
 
   const focusInput = useCallback(() => {

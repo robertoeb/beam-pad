@@ -5,7 +5,7 @@ var $protobuf = require("protobufjs/minimal");
 
 // Common aliases
 var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
-var $Object = $util.global.Object, $undefined = $util.global.undefined, $Error = $util.global.Error, $TypeError = $util.global.TypeError, $String = $util.global.String, $Number = $util.global.Number, $Boolean = $util.global.Boolean, $Array = $util.global.Array;
+var $Object = $util.global.Object, $undefined = $util.global.undefined, $Error = $util.global.Error, $RangeError = $util.global.RangeError, $TypeError = $util.global.TypeError, $String = $util.global.String, $Number = $util.global.Number, $Boolean = $util.global.Boolean, $Array = $util.global.Array;
 
 // Exported root namespace
 var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
@@ -135,7 +135,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteAppLinkLaunchRequest(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteAppLinkLaunchRequest();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -161,6 +171,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -179,7 +194,7 @@ $root.remote = (function() {
         RemoteAppLinkLaunchRequest.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -384,7 +399,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteResetPreferredAudioDevice();
+            var end, message;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteResetPreferredAudioDevice();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -397,6 +422,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -416,7 +446,7 @@ $root.remote = (function() {
         RemoteResetPreferredAudioDevice.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -603,7 +633,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteSetPreferredAudioDevice();
+            var end, message;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteSetPreferredAudioDevice();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -616,6 +656,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -635,7 +680,7 @@ $root.remote = (function() {
         RemoteSetPreferredAudioDevice.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -822,7 +867,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteAdjustVolumeLevel();
+            var end, message;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteAdjustVolumeLevel();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -835,6 +890,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -854,7 +914,7 @@ $root.remote = (function() {
         RemoteAdjustVolumeLevel.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -1129,7 +1189,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteSetVolumeLevel(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteSetVolumeLevel();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -1218,6 +1288,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -1236,7 +1311,7 @@ $root.remote = (function() {
         RemoteSetVolumeLevel.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -1516,7 +1591,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteStart(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteStart();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -1542,6 +1627,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -1560,7 +1650,7 @@ $root.remote = (function() {
         RemoteStart.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -1776,7 +1866,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteVoiceEnd(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteVoiceEnd();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -1802,6 +1902,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -1820,7 +1925,7 @@ $root.remote = (function() {
         RemoteVoiceEnd.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -2047,7 +2152,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteVoicePayload(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteVoicePayload();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -2082,6 +2197,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -2100,7 +2220,7 @@ $root.remote = (function() {
         RemoteVoicePayload.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -2346,7 +2466,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteVoiceBegin(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteVoiceBegin();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -2381,6 +2511,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -2399,7 +2534,7 @@ $root.remote = (function() {
         RemoteVoiceBegin.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -2680,7 +2815,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteTextFieldStatus(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteTextFieldStatus();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -2751,6 +2896,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -2769,7 +2919,7 @@ $root.remote = (function() {
         RemoteTextFieldStatus.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -3031,7 +3181,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteImeShowRequest(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteImeShowRequest();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -3044,7 +3204,7 @@ $root.remote = (function() {
                 case 2: {
                         if (wireType !== 2)
                             break;
-                        message.remoteTextFieldStatus = $root.remote.RemoteTextFieldStatus.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteTextFieldStatus);
+                        message.remoteTextFieldStatus = $root.remote.RemoteTextFieldStatus.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteTextFieldStatus);
                         continue;
                     }
                 }
@@ -3053,6 +3213,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -3072,7 +3237,7 @@ $root.remote = (function() {
         RemoteImeShowRequest.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -3303,7 +3468,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteEditInfo(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteEditInfo();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -3325,7 +3500,7 @@ $root.remote = (function() {
                 case 2: {
                         if (wireType !== 2)
                             break;
-                        message.textFieldStatus = $root.remote.RemoteImeObject.decode(reader, reader.uint32(), $undefined, _depth + 1, message.textFieldStatus);
+                        message.textFieldStatus = $root.remote.RemoteImeObject.decode(reader, reader.size(), $undefined, _depth + 1, message.textFieldStatus);
                         continue;
                     }
                 }
@@ -3334,6 +3509,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -3353,7 +3533,7 @@ $root.remote = (function() {
         RemoteEditInfo.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -3605,7 +3785,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteImeObject(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteImeObject();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -3649,6 +3839,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -3667,7 +3862,7 @@ $root.remote = (function() {
         RemoteImeObject.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -3926,7 +4121,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteImeBatchEdit(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteImeBatchEdit();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -3959,7 +4164,7 @@ $root.remote = (function() {
                             break;
                         if (!(message.editInfo && message.editInfo.length))
                             message.editInfo = [];
-                        message.editInfo.push($root.remote.RemoteEditInfo.decode(reader, reader.uint32(), $undefined, _depth + 1));
+                        message.editInfo.push($root.remote.RemoteEditInfo.decode(reader, reader.size(), $undefined, _depth + 1));
                         continue;
                     }
                 }
@@ -3968,6 +4173,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -3987,7 +4197,7 @@ $root.remote = (function() {
         RemoteImeBatchEdit.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -4327,7 +4537,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteAppInfo(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteAppInfo();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -4425,6 +4645,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -4443,7 +4668,7 @@ $root.remote = (function() {
         RemoteAppInfo.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -4743,7 +4968,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteImeKeyInject(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteImeKeyInject();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -4756,13 +4991,13 @@ $root.remote = (function() {
                 case 1: {
                         if (wireType !== 2)
                             break;
-                        message.appInfo = $root.remote.RemoteAppInfo.decode(reader, reader.uint32(), $undefined, _depth + 1, message.appInfo);
+                        message.appInfo = $root.remote.RemoteAppInfo.decode(reader, reader.size(), $undefined, _depth + 1, message.appInfo);
                         continue;
                     }
                 case 2: {
                         if (wireType !== 2)
                             break;
-                        message.textFieldStatus = $root.remote.RemoteTextFieldStatus.decode(reader, reader.uint32(), $undefined, _depth + 1, message.textFieldStatus);
+                        message.textFieldStatus = $root.remote.RemoteTextFieldStatus.decode(reader, reader.size(), $undefined, _depth + 1, message.textFieldStatus);
                         continue;
                     }
                 }
@@ -4771,6 +5006,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -4790,7 +5030,7 @@ $root.remote = (function() {
         RemoteImeKeyInject.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -5053,7 +5293,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteKeyInject(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteKeyInject();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -5088,6 +5338,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -5106,7 +5361,7 @@ $root.remote = (function() {
         RemoteKeyInject.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -6574,7 +6829,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemotePingResponse(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemotePingResponse();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -6600,6 +6865,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -6618,7 +6888,7 @@ $root.remote = (function() {
         RemotePingResponse.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -6845,7 +7115,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemotePingRequest(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemotePingRequest();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -6880,6 +7160,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -6898,7 +7183,7 @@ $root.remote = (function() {
         RemotePingRequest.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -7124,7 +7409,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteSetActive(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteSetActive();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -7150,6 +7445,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -7168,7 +7468,7 @@ $root.remote = (function() {
         RemoteSetActive.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -7439,7 +7739,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteDeviceInfo(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteDeviceInfo();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -7510,6 +7820,11 @@ $root.remote = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -7528,7 +7843,7 @@ $root.remote = (function() {
         RemoteDeviceInfo.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -7801,7 +8116,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteConfigure(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteConfigure();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -7823,7 +8148,7 @@ $root.remote = (function() {
                 case 2: {
                         if (wireType !== 2)
                             break;
-                        message.deviceInfo = $root.remote.RemoteDeviceInfo.decode(reader, reader.uint32(), $undefined, _depth + 1, message.deviceInfo);
+                        message.deviceInfo = $root.remote.RemoteDeviceInfo.decode(reader, reader.size(), $undefined, _depth + 1, message.deviceInfo);
                         continue;
                     }
                 }
@@ -7832,6 +8157,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -7851,7 +8181,7 @@ $root.remote = (function() {
         RemoteConfigure.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -8092,7 +8422,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteError(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteError();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -8114,7 +8454,7 @@ $root.remote = (function() {
                 case 2: {
                         if (wireType !== 2)
                             break;
-                        message.message = $root.remote.RemoteMessage.decode(reader, reader.uint32(), $undefined, _depth + 1, message.message);
+                        message.message = $root.remote.RemoteMessage.decode(reader, reader.size(), $undefined, _depth + 1, message.message);
                         continue;
                     }
                 }
@@ -8123,6 +8463,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -8142,7 +8487,7 @@ $root.remote = (function() {
         RemoteError.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -8559,7 +8904,17 @@ $root.remote = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.remote.RemoteMessage(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.remote.RemoteMessage();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -8572,109 +8927,109 @@ $root.remote = (function() {
                 case 1: {
                         if (wireType !== 2)
                             break;
-                        message.remoteConfigure = $root.remote.RemoteConfigure.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteConfigure);
+                        message.remoteConfigure = $root.remote.RemoteConfigure.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteConfigure);
                         continue;
                     }
                 case 2: {
                         if (wireType !== 2)
                             break;
-                        message.remoteSetActive = $root.remote.RemoteSetActive.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteSetActive);
+                        message.remoteSetActive = $root.remote.RemoteSetActive.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteSetActive);
                         continue;
                     }
                 case 3: {
                         if (wireType !== 2)
                             break;
-                        message.remoteError = $root.remote.RemoteError.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteError);
+                        message.remoteError = $root.remote.RemoteError.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteError);
                         continue;
                     }
                 case 8: {
                         if (wireType !== 2)
                             break;
-                        message.remotePingRequest = $root.remote.RemotePingRequest.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remotePingRequest);
+                        message.remotePingRequest = $root.remote.RemotePingRequest.decode(reader, reader.size(), $undefined, _depth + 1, message.remotePingRequest);
                         continue;
                     }
                 case 9: {
                         if (wireType !== 2)
                             break;
-                        message.remotePingResponse = $root.remote.RemotePingResponse.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remotePingResponse);
+                        message.remotePingResponse = $root.remote.RemotePingResponse.decode(reader, reader.size(), $undefined, _depth + 1, message.remotePingResponse);
                         continue;
                     }
                 case 10: {
                         if (wireType !== 2)
                             break;
-                        message.remoteKeyInject = $root.remote.RemoteKeyInject.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteKeyInject);
+                        message.remoteKeyInject = $root.remote.RemoteKeyInject.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteKeyInject);
                         continue;
                     }
                 case 20: {
                         if (wireType !== 2)
                             break;
-                        message.remoteImeKeyInject = $root.remote.RemoteImeKeyInject.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteImeKeyInject);
+                        message.remoteImeKeyInject = $root.remote.RemoteImeKeyInject.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteImeKeyInject);
                         continue;
                     }
                 case 21: {
                         if (wireType !== 2)
                             break;
-                        message.remoteImeBatchEdit = $root.remote.RemoteImeBatchEdit.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteImeBatchEdit);
+                        message.remoteImeBatchEdit = $root.remote.RemoteImeBatchEdit.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteImeBatchEdit);
                         continue;
                     }
                 case 22: {
                         if (wireType !== 2)
                             break;
-                        message.remoteImeShowRequest = $root.remote.RemoteImeShowRequest.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteImeShowRequest);
+                        message.remoteImeShowRequest = $root.remote.RemoteImeShowRequest.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteImeShowRequest);
                         continue;
                     }
                 case 30: {
                         if (wireType !== 2)
                             break;
-                        message.remoteVoiceBegin = $root.remote.RemoteVoiceBegin.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteVoiceBegin);
+                        message.remoteVoiceBegin = $root.remote.RemoteVoiceBegin.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteVoiceBegin);
                         continue;
                     }
                 case 31: {
                         if (wireType !== 2)
                             break;
-                        message.remoteVoicePayload = $root.remote.RemoteVoicePayload.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteVoicePayload);
+                        message.remoteVoicePayload = $root.remote.RemoteVoicePayload.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteVoicePayload);
                         continue;
                     }
                 case 32: {
                         if (wireType !== 2)
                             break;
-                        message.remoteVoiceEnd = $root.remote.RemoteVoiceEnd.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteVoiceEnd);
+                        message.remoteVoiceEnd = $root.remote.RemoteVoiceEnd.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteVoiceEnd);
                         continue;
                     }
                 case 40: {
                         if (wireType !== 2)
                             break;
-                        message.remoteStart = $root.remote.RemoteStart.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteStart);
+                        message.remoteStart = $root.remote.RemoteStart.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteStart);
                         continue;
                     }
                 case 50: {
                         if (wireType !== 2)
                             break;
-                        message.remoteSetVolumeLevel = $root.remote.RemoteSetVolumeLevel.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteSetVolumeLevel);
+                        message.remoteSetVolumeLevel = $root.remote.RemoteSetVolumeLevel.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteSetVolumeLevel);
                         continue;
                     }
                 case 51: {
                         if (wireType !== 2)
                             break;
-                        message.remoteAdjustVolumeLevel = $root.remote.RemoteAdjustVolumeLevel.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteAdjustVolumeLevel);
+                        message.remoteAdjustVolumeLevel = $root.remote.RemoteAdjustVolumeLevel.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteAdjustVolumeLevel);
                         continue;
                     }
                 case 60: {
                         if (wireType !== 2)
                             break;
-                        message.remoteSetPreferredAudioDevice = $root.remote.RemoteSetPreferredAudioDevice.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteSetPreferredAudioDevice);
+                        message.remoteSetPreferredAudioDevice = $root.remote.RemoteSetPreferredAudioDevice.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteSetPreferredAudioDevice);
                         continue;
                     }
                 case 61: {
                         if (wireType !== 2)
                             break;
-                        message.remoteResetPreferredAudioDevice = $root.remote.RemoteResetPreferredAudioDevice.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteResetPreferredAudioDevice);
+                        message.remoteResetPreferredAudioDevice = $root.remote.RemoteResetPreferredAudioDevice.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteResetPreferredAudioDevice);
                         continue;
                     }
                 case 90: {
                         if (wireType !== 2)
                             break;
-                        message.remoteAppLinkLaunchRequest = $root.remote.RemoteAppLinkLaunchRequest.decode(reader, reader.uint32(), $undefined, _depth + 1, message.remoteAppLinkLaunchRequest);
+                        message.remoteAppLinkLaunchRequest = $root.remote.RemoteAppLinkLaunchRequest.decode(reader, reader.size(), $undefined, _depth + 1, message.remoteAppLinkLaunchRequest);
                         continue;
                     }
                 }
@@ -8683,6 +9038,11 @@ $root.remote = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -8702,7 +9062,7 @@ $root.remote = (function() {
         RemoteMessage.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -9843,7 +10203,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingRequest(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingRequest();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -9878,6 +10248,11 @@ $root.pairing = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -9896,7 +10271,7 @@ $root.pairing = (function() {
         PairingRequest.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -10122,7 +10497,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingRequestAck(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingRequestAck();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -10148,6 +10533,11 @@ $root.pairing = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -10166,7 +10556,7 @@ $root.pairing = (function() {
         PairingRequestAck.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -10393,7 +10783,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingEncoding(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingEncoding();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -10428,6 +10828,11 @@ $root.pairing = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -10446,7 +10851,7 @@ $root.pairing = (function() {
         PairingEncoding.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -10721,7 +11126,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingOption(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingOption();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -10736,7 +11151,7 @@ $root.pairing = (function() {
                             break;
                         if (!(message.inputEncodings && message.inputEncodings.length))
                             message.inputEncodings = [];
-                        message.inputEncodings.push($root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, _depth + 1));
+                        message.inputEncodings.push($root.pairing.PairingEncoding.decode(reader, reader.size(), $undefined, _depth + 1));
                         continue;
                     }
                 case 2: {
@@ -10744,7 +11159,7 @@ $root.pairing = (function() {
                             break;
                         if (!(message.outputEncodings && message.outputEncodings.length))
                             message.outputEncodings = [];
-                        message.outputEncodings.push($root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, _depth + 1));
+                        message.outputEncodings.push($root.pairing.PairingEncoding.decode(reader, reader.size(), $undefined, _depth + 1));
                         continue;
                     }
                 case 3: {
@@ -10762,6 +11177,11 @@ $root.pairing = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -10781,7 +11201,7 @@ $root.pairing = (function() {
         PairingOption.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -11075,7 +11495,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingConfiguration(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingConfiguration();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -11088,7 +11518,7 @@ $root.pairing = (function() {
                 case 1: {
                         if (wireType !== 2)
                             break;
-                        message.encoding = $root.pairing.PairingEncoding.decode(reader, reader.uint32(), $undefined, _depth + 1, message.encoding);
+                        message.encoding = $root.pairing.PairingEncoding.decode(reader, reader.size(), $undefined, _depth + 1, message.encoding);
                         continue;
                     }
                 case 2: {
@@ -11106,6 +11536,11 @@ $root.pairing = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -11125,7 +11560,7 @@ $root.pairing = (function() {
         PairingConfiguration.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -11359,7 +11794,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingConfigurationAck();
+            var end, message;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingConfigurationAck();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -11372,6 +11817,11 @@ $root.pairing = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -11391,7 +11841,7 @@ $root.pairing = (function() {
         PairingConfigurationAck.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -11589,7 +12039,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingSecret(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingSecret();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -11615,6 +12075,11 @@ $root.pairing = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -11633,7 +12098,7 @@ $root.pairing = (function() {
         PairingSecret.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -11858,7 +12323,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingSecretAck(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingSecretAck();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -11884,6 +12359,11 @@ $root.pairing = (function() {
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
             }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
+            }
             if (_end !== $undefined)
                 throw $Error("missing end group");
             return message;
@@ -11902,7 +12382,7 @@ $root.pairing = (function() {
         PairingSecretAck.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
@@ -12215,7 +12695,17 @@ $root.pairing = (function() {
                 _depth = 0;
             if (_depth > $Reader.recursionLimit)
                 throw $Error("max depth exceeded");
-            var end = length === $undefined ? reader.len : reader.pos + length, message = _target || new $root.pairing.PairingMessage(), value;
+            var end, message, value;
+            if (length === $undefined)
+                end = reader.len;
+            else {
+                end = reader.pos + length;
+                if (end > reader.len)
+                    throw $RangeError("index out of range");
+                length = reader.len;
+                reader.len = end;
+            }
+            message = _target || new $root.pairing.PairingMessage();
             while (reader.pos < end) {
                 var start = reader.pos;
                 var tag = reader.tag();
@@ -12246,43 +12736,43 @@ $root.pairing = (function() {
                 case 10: {
                         if (wireType !== 2)
                             break;
-                        message.pairingRequest = $root.pairing.PairingRequest.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingRequest);
+                        message.pairingRequest = $root.pairing.PairingRequest.decode(reader, reader.size(), $undefined, _depth + 1, message.pairingRequest);
                         continue;
                     }
                 case 11: {
                         if (wireType !== 2)
                             break;
-                        message.pairingRequestAck = $root.pairing.PairingRequestAck.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingRequestAck);
+                        message.pairingRequestAck = $root.pairing.PairingRequestAck.decode(reader, reader.size(), $undefined, _depth + 1, message.pairingRequestAck);
                         continue;
                     }
                 case 20: {
                         if (wireType !== 2)
                             break;
-                        message.pairingOption = $root.pairing.PairingOption.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingOption);
+                        message.pairingOption = $root.pairing.PairingOption.decode(reader, reader.size(), $undefined, _depth + 1, message.pairingOption);
                         continue;
                     }
                 case 30: {
                         if (wireType !== 2)
                             break;
-                        message.pairingConfiguration = $root.pairing.PairingConfiguration.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingConfiguration);
+                        message.pairingConfiguration = $root.pairing.PairingConfiguration.decode(reader, reader.size(), $undefined, _depth + 1, message.pairingConfiguration);
                         continue;
                     }
                 case 31: {
                         if (wireType !== 2)
                             break;
-                        message.pairingConfigurationAck = $root.pairing.PairingConfigurationAck.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingConfigurationAck);
+                        message.pairingConfigurationAck = $root.pairing.PairingConfigurationAck.decode(reader, reader.size(), $undefined, _depth + 1, message.pairingConfigurationAck);
                         continue;
                     }
                 case 40: {
                         if (wireType !== 2)
                             break;
-                        message.pairingSecret = $root.pairing.PairingSecret.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingSecret);
+                        message.pairingSecret = $root.pairing.PairingSecret.decode(reader, reader.size(), $undefined, _depth + 1, message.pairingSecret);
                         continue;
                     }
                 case 41: {
                         if (wireType !== 2)
                             break;
-                        message.pairingSecretAck = $root.pairing.PairingSecretAck.decode(reader, reader.uint32(), $undefined, _depth + 1, message.pairingSecretAck);
+                        message.pairingSecretAck = $root.pairing.PairingSecretAck.decode(reader, reader.size(), $undefined, _depth + 1, message.pairingSecretAck);
                         continue;
                     }
                 }
@@ -12291,6 +12781,11 @@ $root.pairing = (function() {
                     $util.makeProp(message, "$unknowns", false);
                     (message.$unknowns || (message.$unknowns = [])).push(reader.raw(start, reader.pos));
                 }
+            }
+            if (length !== $undefined) {
+                if (reader.pos !== end)
+                    throw $RangeError("index out of range");
+                reader.len = length;
             }
             if (_end !== $undefined)
                 throw $Error("missing end group");
@@ -12310,7 +12805,7 @@ $root.pairing = (function() {
         PairingMessage.decodeDelimited = function(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
+            return this.decode(reader, reader.size());
         };
 
         /**
