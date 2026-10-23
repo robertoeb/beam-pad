@@ -1,3 +1,4 @@
+import 'fast-text-encoding';
 import { tokens } from '@/theme/tokens';
 import '../../global.css';
 import { useFonts } from 'expo-font';
@@ -9,6 +10,10 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import { initCastListeners } from '@/services/cast';
 
+// protobufjs instantiates a TextDecoder at import time, but Hermes has no
+// such global. fast-text-encoding defines it (side effect) and must load
+// before any route module (which pulls in src/proto/bundle.js) evaluates.
+// (Import order above matters — do not move this below other imports.)
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
