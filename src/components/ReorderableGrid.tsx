@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { LayoutChangeEvent, PanResponder, View } from 'react-native';
+import {
+  LayoutChangeEvent,
+  PanResponder,
+  PanResponderGestureState,
+  View,
+} from 'react-native';
 import Animated, { Layout, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 const springLayout =
@@ -13,6 +18,8 @@ interface ReorderableGridProps {
   editable: boolean;
   columns?: number;
   renderItem: (id: string, index: number, isActive: boolean) => React.ReactNode;
+  /** Fires when a drag starts/ends so the parent can lock its ScrollView. */
+  onActiveChange?: (active: boolean) => void;
 }
 
 export function ReorderableGrid({
@@ -21,6 +28,7 @@ export function ReorderableGrid({
   editable,
   columns = 4,
   renderItem,
+  onActiveChange,
 }: ReorderableGridProps) {
   const [order, setOrder] = useState<string[]>(data);
   const [grid, setGrid] = useState({ w: 350, h: 200 });
@@ -43,16 +51,28 @@ export function ReorderableGrid({
     orderRef.current = data;
   }, [data]);
 
+  const setDragging = (id: string | null) => {
+    setActive(id);
+    onActiveChange?.(id !== null);
+  };
+
   const getResponder = (id: string) => {
     let responder = responders.current.get(id);
     if (responder) return responder;
 
+    // NOTE: cells contain Pressables (tile + remove badge) and usually live
+    // inside a ScrollView. Both claim the touch first, so the takeover must
+    // happen in the *capture* phase — bubble-phase alone never engages and
+    // drags feel dead. Taps (no qualifying move) still reach the children.
+    const shouldTakeOver = (_e: unknown, g: PanResponderGestureState) =>
+      editableRef.current && (Math.abs(g.dx) > 8 || Math.abs(g.dy) > 8);
+
     responder = PanResponder.create({
-      onMoveShouldSetPanResponder: (_e, g) =>
-        editableRef.current && (Math.abs(g.dx) > 8 || Math.abs(g.dy) > 8),
+      onMoveShouldSetPanResponder: shouldTakeOver,
+      onMoveShouldSetPanResponderCapture: shouldTakeOver,
       onPanResponderGrant: () => {
         baseIndex.current = orderRef.current.indexOf(id);
-        setActive(id);
+        setDragging(id);
       },
       onPanResponderMove: (_e, g) => {
         const { w, h } = gridRef.current;
@@ -84,13 +104,13 @@ export function ReorderableGrid({
       },
       onPanResponderRelease: () => {
         onChange(orderRef.current);
-        setActive(null);
+        setDragging(null);
         tx.value = 0;
         ty.value = 0;
       },
       onPanResponderTerminate: () => {
         onChange(orderRef.current);
-        setActive(null);
+        setDragging(null);
         tx.value = 0;
         ty.value = 0;
       },
@@ -119,6 +139,7 @@ export function ReorderableGrid({
         return (
           <Animated.View
             key={id}
+            testID={`grid-cell-${id}`}
             layout={isActive ? undefined : springLayout}
             style={{
               width: `${100 / columns}%`,

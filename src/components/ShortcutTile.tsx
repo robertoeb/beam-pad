@@ -66,12 +66,10 @@ export function ShortcutTile({
     width: size,
     height: size,
     transform: [{ scale: scale.value }, { rotate: `${rotation.value}deg` }],
+    // The currently-playing app is marked by the dot below, not by a full
+    // cyan frame — a persistent blue border reads as a stuck press state.
     borderColor:
-      flash.value > 0
-        ? 'rgba(34,211,238,0.65)'
-        : isCurrent
-          ? 'rgba(34,211,238,0.7)'
-          : 'rgba(255,255,255,0.08)',
+      flash.value > 0 ? 'rgba(34,211,238,0.65)' : 'rgba(255,255,255,0.08)',
   }));
 
   const flashStyle = useAnimatedStyle(() => ({
@@ -86,6 +84,13 @@ export function ShortcutTile({
   const pressOut = () => {
     scale.value = withSpring(1, SPRING);
     flash.value = withTiming(0, { duration: 140 });
+  };
+
+  // If the OS interrupts the touch (scroll steal, sheet dismiss), pressOut
+  // never fires and the cyan flash stays stuck on. Always decay.
+  const pressTerminate = () => {
+    scale.value = 1;
+    flash.value = 0;
   };
 
   const iconSize = Math.round(size * 0.5);
@@ -154,8 +159,10 @@ export function ShortcutTile({
         <AnimatedPressable
           onPressIn={pressIn}
           onPressOut={pressOut}
+          onResponderTerminate={pressTerminate}
           onPress={() => {
             if (onPress) {
+              flash.value = 0;
               haptic('light');
               onPress();
             }

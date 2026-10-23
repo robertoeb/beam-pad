@@ -72,6 +72,7 @@ export default function ShortcutsScreen() {
   const addShortcut = useLayoutStore((s) => s.addShortcut);
   const showLabels = useSettingsStore((s) => s.showShortcutLabels);
   const [edit, setEdit] = useState(params.edit === '1');
+  const [dragging, setDragging] = useState(false);
 
   const pinnedIds = new Set(shortcuts);
 
@@ -126,13 +127,18 @@ export default function ShortcutsScreen() {
           }}
         />
       ) : (
-        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={!dragging}
+        >
           {shortcuts.length > 0 && (
             <ReorderableGrid
               data={shortcuts}
               onChange={setShortcuts}
               editable={edit}
               columns={4}
+              onActiveChange={setDragging}
               renderItem={(id, _index, isActive) => {
                 const shortcut = shortcutRegistry.resolve(id);
                 return (
