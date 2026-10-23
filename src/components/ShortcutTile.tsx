@@ -15,7 +15,6 @@ import { shortcutRegistry } from '@/shortcuts/registry';
 import { BRAND_ICONS, KEY_ICONS, initialsFallback } from '@/shortcuts/icons';
 import { BRAND_LOGOS } from '@/shortcuts/brandLogos';
 import { SPRING } from '@/lib/spring';
-import { Glow } from '@/theme/gradient';
 import {space, radius, tokens} from '@/theme/tokens';
 import type { Shortcut } from '@/shortcuts/types';
 
@@ -99,6 +98,10 @@ export function ShortcutTile({
   const tint = shortcut?.tint ?? tokens.colors.text.muted;
   const bgTint = missing ? 'rgba(94,100,114,0.15)' : `${tint}24`;
   const tileBg = appIcon ? appIcon.background : bgTint;
+  // Full-bleed brand artwork carries its own edges — a container frame on
+  // top of it reads as a knife-edge slicing the logo. Border only tiles
+  // that render icon glyphs/initials on a flat tint.
+  const showFrame = !appIcon;
 
   const renderIcon = () => {
     if (missing || !shortcut) {
@@ -153,9 +156,6 @@ export function ShortcutTile({
   return (
     <View style={{ alignItems: 'center' }}>
       <View>
-        {isCurrent ? (
-          <Glow color={tokens.colors.accent.cyan} size={size + 24} x={-12} y={-12} opacity={0.18} />
-        ) : null}
         <AnimatedPressable
           onPressIn={pressIn}
           onPressOut={pressOut}
@@ -185,7 +185,7 @@ export function ShortcutTile({
             animStyle,
             {
               borderRadius: radius.lg,
-              borderWidth: 1,
+              borderWidth: showFrame ? 1 : 0,
               backgroundColor: tileBg,
               alignItems: 'center',
               justifyContent: 'center',
