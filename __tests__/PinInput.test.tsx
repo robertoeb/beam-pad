@@ -1,6 +1,10 @@
 import { render, userEvent } from '@testing-library/react-native';
 import { PinInput } from '@/components/PinInput';
 
+// Interaction-heavy suite (userEvent typing): CI runners can stall
+// past the 5s default under load. 15s still catches real hangs.
+jest.setTimeout(15_000);
+
 describe('PinInput', () => {
   it('renders empty input by default', async () => {
     const onComplete = jest.fn();

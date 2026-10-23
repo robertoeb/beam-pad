@@ -3,6 +3,10 @@ import DevicesScreen from '@/app/devices';
 import { useDevicesStore } from '@/stores/devices';
 import { router } from 'expo-router';
 
+// Interaction-heavy suite (userEvent typing): CI runners can stall
+// past the 5s default under load. 15s still catches real hangs.
+jest.setTimeout(15_000);
+
 jest.mock('@/services/discovery', () => ({
   startDiscovery: jest.fn(),
   stopDiscovery: jest.fn(),
